@@ -12,11 +12,13 @@ import { LatticeGrid } from './LatticeGrid';
 import { AnimatedBackground } from './AnimatedBackground';
 import { StarField } from './StarField';
 import { BreathingNodes } from './BreathingNodes';
+import svgPaths from '../../imports/svg-bziglz2xr9';
 
 export default function ShanxiCultureGraph() {
   const chartRef = useRef<any>(null);
   const [chartReady, setChartReady] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [showSidePanels, setShowSidePanels] = useState(true);
   const rippleCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const rippleEffectRef = useRef<RippleEffect | null>(null);
 
@@ -122,8 +124,9 @@ export default function ShanxiCultureGraph() {
 
   // 生成山西省地图的SVG路径
   const getShanxiMapSVG = () => {
-    // 简化的山西省轮廓SVG路径（相对坐标）
-    return 'path://M 50,0 L 60,5 L 75,8 L 90,15 L 100,25 L 105,40 L 105,55 L 100,70 L 90,85 L 80,95 L 65,100 L 50,98 L 35,92 L 25,82 L 20,70 L 18,55 L 20,40 L 30,25 L 40,12 Z';
+    // 使用 Figma 导入的精确山西省轮廓 SVG 路径
+    // viewBox: 0 0 230.2 413 (南北长，东西窄，符合山西地形)
+    return `path://${svgPaths.pf4b0c00}`;
   };
 
   // 构建节点数据 - 使用优化后的节点配置
@@ -755,7 +758,7 @@ export default function ShanxiCultureGraph() {
           }
         });
         
-        // 琉璃冰蓝发光等高线
+        // 琉璃蓝发光等高线
         ctx.strokeStyle = `rgba(135, 206, 250, ${line.opacity})`;
         ctx.lineWidth = 1;
         ctx.shadowBlur = 3;
@@ -999,11 +1002,42 @@ export default function ShanxiCultureGraph() {
       {/* 标题 - 使用增强的标题组件 */}
       <EnhancedTitle fenjiu_colors={fenjiu_colors} />
 
-      {/* 左侧时间轴 */}
-      <Timeline fenjiu_colors={fenjiu_colors} />
+      {/* 切换侧边栏按钮 */}
+      <button
+        onClick={() => setShowSidePanels(!showSidePanels)}
+        className="fixed top-6 right-6 z-50 group"
+        style={{
+          background: 'rgba(10, 11, 16, 0.8)',
+          backdropFilter: 'blur(12px)',
+          border: `1px solid ${fenjiu_colors.ice_blue}`,
+          borderRadius: '8px',
+          padding: '12px 20px',
+          color: fenjiu_colors.ice_blue_light,
+          fontSize: '13px',
+          fontWeight: '500',
+          cursor: 'pointer',
+          boxShadow: `0 4px 24px rgba(135, 206, 250, 0.2)`,
+          transition: 'all 0.3s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = 'rgba(135, 206, 250, 0.15)';
+          e.currentTarget.style.boxShadow = `0 6px 32px rgba(135, 206, 250, 0.4)`;
+          e.currentTarget.style.transform = 'translateY(-2px)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'rgba(10, 11, 16, 0.8)';
+          e.currentTarget.style.boxShadow = `0 4px 24px rgba(135, 206, 250, 0.2)`;
+          e.currentTarget.style.transform = 'translateY(0)';
+        }}
+      >
+        {showSidePanels ? '隐藏侧边栏' : '显示侧边栏'}
+      </button>
 
-      {/* 右侧数据统计 */}
-      <DataStats fenjiu_colors={fenjiu_colors} />
+      {/* 左侧时间轴 - 条件渲染 */}
+      {showSidePanels && <Timeline fenjiu_colors={fenjiu_colors} />}
+
+      {/* 右侧数据统计 - 条件渲染 */}
+      {showSidePanels && <DataStats fenjiu_colors={fenjiu_colors} />}
 
       {/* ECharts 图表 */}
       {chartReady && (
