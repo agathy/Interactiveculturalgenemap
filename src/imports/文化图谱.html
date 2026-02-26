@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成都市武侯区文化图谱</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 100vw; height: 100vh; overflow: hidden; background: #060e1a; font-family: 'PingFang SC', 'Microsoft YaHei', 'SimHei', sans-serif; color: #fff; user-select: none; }
+.bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at 30% 30%, rgba(15,55,100,0.2) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(20,50,90,0.15) 0%, transparent 45%), radial-gradient(ellipse at 50% 50%, #0a1628 0%, #060e1a 60%, #030810 100%); }
+.stars { position: absolute; width: 100%; height: 100%; }
+.star { position: absolute; border-radius: 50%; background: #fff; animation: twinkle var(--d) ease-in-out infinite; animation-delay: var(--dl); }
+@keyframes twinkle { 0%,100%{opacity:0.15;} 50%{opacity:0.8;} }
+.title-bar { position: absolute; top: 0; left: 0; right: 0; height: 64px; display: flex; align-items: center; justify-content: center; z-index: 100; }
+.title-text { font-size: 32px; font-weight: bold; letter-spacing: 10px; background: linear-gradient(180deg, #fff 0%, #a0d8ef 50%, #4db8d8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 12px rgba(42,245,255,0.3)); }
+.title-line { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 620px; height: 1px; background: linear-gradient(90deg, transparent, rgba(42,245,255,0.5) 20%, rgba(42,245,255,0.5) 80%, transparent); }
+
+.container { position: absolute; top: 64px; left: 0; right: 0; bottom: 0; display: flex; }
+
+/* 左侧时间轴 */
+.timeline { width: 280px; padding: 20px; overflow-y: auto; }
+.timeline::-webkit-scrollbar { width: 4px; }
+.timeline::-webkit-scrollbar-thumb { background: rgba(42,245,255,0.3); border-radius: 2px; }
+.timeline-title { font-size: 18px; color: #2af5ff; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(42,245,255,0.2); }
+.timeline-item { position: relative; padding-left: 30px; margin-bottom: 25px; }
+.timeline-item::before { content: ''; position: absolute; left: 0; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: #2af5ff; box-shadow: 0 0 10px rgba(42,245,255,0.5); }
+.timeline-item::after { content: ''; position: absolute; left: 4.5px; top: 16px; width: 1px; height: calc(100% + 10px); background: linear-gradient(180deg, rgba(42,245,255,0.3), transparent); }
+.timeline-item:last-child::after { display: none; }
+.timeline-year { font-size: 16px; color: #2af5ff; font-weight: bold; margin-bottom: 5px; }
+.timeline-desc { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.6; }
+
+/* 中心区域 */
+.center { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; min-width: 0; }
+.core-ring { position: relative; width: 580px; height: 580px; }
+.hex-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 180px; height: 180px; z-index: 25; background: radial-gradient(circle, rgba(10,22,40,0.6) 0%, transparent 70%); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.hex-bg { width: 100%; height: 100%; background: radial-gradient(circle, rgba(42,245,255,0.12) 0%, transparent 70%); border-radius: 50%; animation: centerPulse 4s ease-in-out infinite; }
+@keyframes centerPulse { 0%,100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.1); opacity: 1; } }
+.hex-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 5; }
+.hex-title { font-size: 26px; font-weight: bold; letter-spacing: 4px; background: linear-gradient(180deg, #fff, #4db8d8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hex-sub { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; letter-spacing: 2px; }
+
+/* 地图背景 */
+.district-map { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -52%); width: 240px; height: auto; z-index: 8; opacity: 0.55; filter: drop-shadow(0 0 30px rgba(42,245,255,0.4)) drop-shadow(0 0 60px rgba(42,245,255,0.2)); pointer-events: none; animation: mapBreath 5s ease-in-out infinite; }
+.district-map svg { width: 100%; height: auto; display: block; }
+.district-map path { fill: rgba(42,245,255,0.15); stroke: rgba(42,245,255,0.6); stroke-width: 2; filter: drop-shadow(0 0 8px rgba(42,245,255,0.4)); }
+@keyframes mapBreath { 0%, 100% { opacity: 0.5; transform: translate(-50%, -52%) scale(1); } 50% { opacity: 0.65; transform: translate(-50%, -52%) scale(1.02); } }
+
+.orbit { position: absolute; top: 50%; left: 50%; border-radius: 50%; border: 1px solid rgba(42,245,255,0.06); transform: translate(-50%, -50%); }
+.orbit-1 { width: 240px; height: 240px; border-color: rgba(42,245,255,0.1); }
+.orbit-2 { width: 360px; height: 360px; border-color: rgba(42,245,255,0.07); }
+.orbit-3 { width: 480px; height: 480px; border-color: rgba(42,245,255,0.05); border-style: dashed; }
+.orbit-4 { width: 560px; height: 560px; border-color: rgba(42,245,255,0.03); }
+
+.v-node { position: absolute; z-index: 30; cursor: pointer; transition: transform 0.3s, filter 0.3s; }
+.v-node:hover { transform: scale(1.08); filter: brightness(1.2); }
+.v-circle { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13px; font-weight: bold; line-height: 1.4; position: relative; box-shadow: 0 0 20px var(--gc), inset 0 0 15px rgba(255,255,255,0.08); animation: nodePulse 3.5s ease-in-out infinite; animation-delay: var(--pd, 0s); }
+@keyframes nodePulse { 0%,100% { box-shadow: 0 0 18px var(--gc); } 50% { box-shadow: 0 0 30px var(--gc), 0 0 50px var(--gc); } }
+.v-circle::after { content: ''; position: absolute; width: 92px; height: 92px; border-radius: 50%; border: 1px solid var(--gc); opacity: 0.35; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.v-label { position: absolute; white-space: nowrap; font-size: 11px; font-weight: normal; color: rgba(255,255,255,0.65); text-shadow: 0 0 8px rgba(0,0,0,0.6); }
+.v-sublabel { position: absolute; white-space: nowrap; font-size: 10px; color: rgba(255,255,255,0.4); }
+.conn-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 15; }
+
+/* 右侧数据统计 */
+.stats { width: 300px; padding: 20px; overflow-y: auto; }
+.stats::-webkit-scrollbar { width: 4px; }
+.stats::-webkit-scrollbar-thumb { background: rgba(42,245,255,0.3); border-radius: 2px; }
+.stats-title { font-size: 18px; color: #2af5ff; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(42,245,255,0.2); }
+.stat-card { background: rgba(10,30,60,0.5); border: 1px solid rgba(42,245,255,0.2); border-radius: 8px; padding: 15px; margin-bottom: 15px; transition: all 0.3s; }
+.stat-card:hover { border-color: #2af5ff; background: rgba(42,245,255,0.05); }
+.stat-label { font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 8px; }
+.stat-value { font-size: 24px; color: #2af5ff; font-weight: bold; }
+.stat-unit { font-size: 14px; color: rgba(255,255,255,0.6); margin-left: 5px; }
+.stat-desc { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 5px; line-height: 1.5; }
+
+.connection-line { position: absolute; stroke: rgba(42,245,255,0.2); stroke-width: 1; fill: none; pointer-events: none; }
+
+/* 点击提示 */
+.click-hint { position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%); font-size: 10px; color: rgba(255,255,255,0.5); white-space: nowrap; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.v-node[data-clickable="true"]:hover .click-hint { opacity: 1; }
+.v-node[data-clickable="true"] { cursor: pointer; }
+
+/* 图谱弹窗 */
+.graph-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; display: none; backdrop-filter: blur(3px); }
+.graph-modal-overlay.active { display: flex; align-items: center; justify-content: center; }
+.graph-modal { width: 75vw; height: 70vh; background: linear-gradient(145deg, #0a1628 0%, #060e1a 100%); border: 1px solid rgba(42,245,255,0.3); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 40px rgba(42,245,255,0.15); display: flex; flex-direction: column; overflow: hidden; }
+.graph-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: rgba(42,245,255,0.08); border-bottom: 1px solid rgba(42,245,255,0.2); }
+.graph-back-btn { background: rgba(42,245,255,0.15); border: 1px solid rgba(42,245,255,0.3); color: #2af5ff; padding: 5px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; transition: all 0.3s; }
+.graph-back-btn:hover { background: rgba(42,245,255,0.25); }
+.graph-back-btn.hidden { opacity: 0; pointer-events: none; }
+.graph-modal-title { font-size: 20px; font-weight: bold; color: #2af5ff; letter-spacing: 2px; text-shadow: 0 0 10px rgba(42,245,255,0.3); }
+.graph-modal-close { background: transparent; border: none; color: #2af5ff; font-size: 28px; cursor: pointer; line-height: 1; opacity: 0.7; transition: opacity 0.3s; }
+.graph-modal-close:hover { opacity: 1; }
+.graph-breadcrumb { padding: 8px 20px; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(42,245,255,0.1); display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.graph-breadcrumb-item { color: rgba(255,255,255,0.5); cursor: pointer; transition: color 0.3s; }
+.graph-breadcrumb-item:hover { color: #2af5ff; }
+.graph-breadcrumb-item.active { color: #2af5ff; font-weight: bold; }
+.graph-breadcrumb-sep { color: rgba(255,255,255,0.3); }
+.graph-modal-body { flex: 1; display: flex; overflow: hidden; }
+.graph-area { flex: 1; position: relative; background: rgba(0,0,0,0.1); overflow: hidden; }
+.graph-svg { width: 100%; height: 100%; }
+.graph-legend { position: absolute; top: 14px; left: 14px; background: rgba(10,22,40,0.85); border: 1px solid rgba(42,245,255,0.2); border-radius: 6px; padding: 10px; }
+.graph-legend-title { font-size: 12px; color: #2af5ff; margin-bottom: 6px; font-weight: bold; }
+.graph-legend-item { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; font-size: 11px; color: rgba(255,255,255,0.7); }
+.graph-legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+.graph-hint-text { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); font-size: 12px; color: rgba(42,245,255,0.4); pointer-events: none; }
+.graph-tooltip { position: absolute; background: rgba(10,22,40,0.95); border: 1px solid rgba(42,245,255,0.3); border-radius: 5px; padding: 6px 10px; font-size: 11px; color: #fff; pointer-events: none; opacity: 0; transition: opacity 0.2s; white-space: nowrap; z-index: 100; }
+.graph-info-panel { width: 280px; background: rgba(10,22,40,0.65); border-left: 1px solid rgba(42,245,255,0.15); overflow-y: auto; padding: 16px; display: none; }
+.graph-info-panel.active { display: block; }
+.graph-info-panel::-webkit-scrollbar { width: 5px; }
+.graph-info-panel::-webkit-scrollbar-thumb { background: rgba(42,245,255,0.3); border-radius: 3px; }
+.g-info-header { margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid rgba(42,245,255,0.15); }
+.g-info-title { font-size: 16px; color: #2af5ff; font-weight: bold; margin-bottom: 4px; }
+.g-info-subtitle { font-size: 11px; color: rgba(255,255,255,0.5); }
+.g-info-tag { display: inline-block; margin-top: 6px; padding: 3px 8px; background: rgba(42,245,255,0.15); border: 1px solid rgba(42,245,255,0.3); border-radius: 4px; font-size: 10px; color: #2af5ff; }
+.g-info-content { font-size: 12px; color: rgba(255,255,255,0.8); line-height: 1.7; }
+.g-info-section { margin-bottom: 14px; }
+.g-info-section-title { font-size: 13px; color: #2af5ff; font-weight: bold; margin-bottom: 6px; }
+.g-info-section-text { font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.5; }
+
+/* 丝路文化弹窗 - 橙色主题 */
+.silk-road-theme { border-color: rgba(255,167,38,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 40px rgba(255,167,38,0.15); }
+.silk-road-header { background: rgba(255,167,38,0.08); border-bottom-color: rgba(255,167,38,0.2); }
+.silk-road-btn { background: rgba(255,167,38,0.15); border-color: rgba(255,167,38,0.3); color: #ffa726; }
+.silk-road-btn:hover { background: rgba(255,167,38,0.25); }
+.silk-road-title { color: #ffa726; text-shadow: 0 0 10px rgba(255,167,38,0.3); }
+.silk-road-close { color: #ffa726; }
+.silk-road-breadcrumb { border-bottom-color: rgba(255,167,38,0.1); }
+.silk-road-breadcrumb .graph-breadcrumb-item:hover { color: #ffa726; }
+.silk-road-breadcrumb .graph-breadcrumb-item.active { color: #ffa726; }
+.silk-road-legend { border-color: rgba(255,167,38,0.2); }
+.silk-road-legend .graph-legend-title { color: #ffa726; }
+.silk-road-hint { color: rgba(255,167,38,0.4); }
+.silk-road-panel { border-left-color: rgba(255,167,38,0.15); }
+.silk-road-panel::-webkit-scrollbar-thumb { background: rgba(255,167,38,0.3); }
+.silk-road-info-title { color: #ffa726; }
+.silk-road-tag { background: rgba(255,167,38,0.15); border-color: rgba(255,167,38,0.3); color: #ffa726; }
+.silk-road-panel .g-info-section-title { color: #ffa726; }
+#silkRoadTooltip { border-color: rgba(255,167,38,0.3); }
+
+/* 导航按钮 */
+.nav-buttons { position: absolute; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 200; }
+.nav-btn { padding: 8px 16px; background: rgba(10,30,60,0.7); border: 1px solid rgba(42,245,255,0.3); border-radius: 6px; color: #2af5ff; font-size: 13px; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-block; backdrop-filter: blur(5px); }
+.nav-btn:hover { background: rgba(42,245,255,0.15); border-color: #2af5ff; box-shadow: 0 0 15px rgba(42,245,255,0.3); }
+
+/* 历史沿革标题 - 可点击跳转 */
+.timeline-title { font-size: 18px; color: #2af5ff; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(42,245,255,0.2); display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.3s; }
+.timeline-title:hover { color: #fff; }
+.timeline-title-text { flex: 1; }
+.timeline-jump-icon { font-size: 14px; opacity: 0.6; transition: all 0.3s; }
+.timeline-title:hover .timeline-jump-icon { opacity: 1; transform: translateX(3px); }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="stars" id="stars"></div>
+
+<div class="title-bar">
+<div>
+<div class="title-text">成都市武侯区文化图谱</div>
+<div class="title-line"></div>
+</div>
+</div>
+
+<!-- 右上角导航按钮 -->
+<div class="nav-buttons">
+<a href="https://gewu.shuwen.com/app/visualization-share?id=e05c5a8b67f8494498f95060991fbb97&tenantId=277477244611337217&token=UBhlWBVCnVjvbtKE" target="_blank" class="nav-btn">📊 文化星谱</a>
+<a href="wuhou-map-final.html" target="_blank" class="nav-btn">🗺️ 空间格局</a>
+<a href="#" target="_blank" class="nav-btn">🌱 培育项目</a>
+</div>
+
+<div class="container">
+<!-- 左侧时间轴 -->
+<div class="timeline">
+<a href="武侯区历史对照时间轴.html" target="_blank" class="timeline-title">
+<span class="timeline-title-text">📜 历史沿革</span>
+<span class="timeline-jump-icon">→</span>
+</a>
+
+<div class="timeline-item">
+<div class="timeline-year">223年</div>
+<div class="timeline-desc">章武三年，惠陵、汉昭烈庙建成，刘备入葬惠陵，奠定三国文化基础</div>
+</div>
+
+<div class="timeline-item">
+<div class="timeline-year">南北朝</div>
+<div class="timeline-desc">原建于成都少城的武侯祠迁入惠陵旁，形成"先主武侯同閟宫"君臣合祀格局</div>
+</div>
+
+<div class="timeline-item">
+<div class="timeline-year">1390-1391年</div>
+<div class="timeline-desc">明蜀献王朱樁拆除原武侯祠，惠陵、汉昭烈庙、武侯祠三者合一</div>
+</div>
+
+<div class="timeline-item">
+<div class="timeline-year">1522-1566年</div>
+<div class="timeline-desc">嘉靖年间，红牌楼建成，按藏俗着红色，成为通藏大道重要节点</div>
+</div>
+
+<div class="timeline-item">
+<div class="timeline-year">1671-1672年</div>
+<div class="timeline-desc">康熙年间重修武侯祠，恢复诸葛亮"专祠"格局，形成今日主要建筑布局</div>
+</div>
+
+<div class="timeline-item">
+<div class="timeline-year">1925年</div>
+<div class="timeline-desc">川藏公路（成都-康定段）在武侯祠举行开工典礼</div>
+</div>
+
+<div class="timeline-item">
+<div class="timeline-year">1938年</div>
+<div class="timeline-desc">因日机轰炸，长机业迁至机投桥，织造业迅速发展至20余户100余台织机</div>
+</div>
+
+<div class="timeline-item">
+<div class="timeline-year">1952年</div>
+<div class="timeline-desc">川藏公路（成都-康定段）全线通车</div>
+</div>
+
+<div class="timeline-item">
+<div class="timeline-year">1980年7月</div>
+<div class="timeline-desc">邓小平视察簇桥沼气建设</div>
+</div>
+
+<div class="timeline-item">
+<div class="timeline-year">1990年9月</div>
+<div class="timeline-desc">国务院批准成立武侯区，成为成都市五城区之一</div>
+</div>
+
+<div class="timeline-item">
+<div class="timeline-year">1991年3月</div>
+<div class="timeline-desc">国务院批准成都在武侯区内建立国家高新技术产业开发区</div>
+</div>
+
+<div class="timeline-item">
+<div class="timeline-year">2002年5月</div>
+<div class="timeline-desc">江泽民视察中国科学院成都分院</div>
+</div>
+
+<div class="timeline-item">
+<div class="timeline-year">2005年11月</div>
+<div class="timeline-desc">武侯区被授予"中国女鞋之都"称号</div>
+</div>
+</div>
+
+<!-- 中心文化主题 -->
+<div class="center">
+<div class="core-ring">
+<!-- 轨道圈 -->
+<div class="orbit orbit-1"></div>
+<div class="orbit orbit-2"></div>
+<div class="orbit orbit-3"></div>
+<div class="orbit orbit-4"></div>
+
+<!-- 连接线 -->
+<svg class="conn-svg" viewBox="0 0 580 580">
+<line x1="290" y1="290" x2="290" y2="50" stroke="rgba(42,245,255,0.15)" stroke-width="1"/>
+<line x1="290" y1="290" x2="493" y2="120" stroke="rgba(42,245,255,0.15)" stroke-width="1"/>
+<line x1="290" y1="290" x2="530" y2="290" stroke="rgba(42,245,255,0.15)" stroke-width="1"/>
+<line x1="290" y1="290" x2="493" y2="460" stroke="rgba(42,245,255,0.15)" stroke-width="1"/>
+<line x1="290" y1="290" x2="290" y2="530" stroke="rgba(42,245,255,0.15)" stroke-width="1"/>
+<line x1="290" y1="290" x2="87" y2="460" stroke="rgba(42,245,255,0.15)" stroke-width="1"/>
+<line x1="290" y1="290" x2="50" y2="290" stroke="rgba(42,245,255,0.15)" stroke-width="1"/>
+<line x1="290" y1="290" x2="87" y2="120" stroke="rgba(42,245,255,0.15)" stroke-width="1"/>
+</svg>
+
+<!-- 地图背景 -->
+<div class="district-map">
+<svg viewBox="0 0 717 433" xmlns="http://www.w3.org/2000/svg">
+<path d="M171.228,27.443L172.004,26.043L173.397,25.875L178.023,27.443L179.19,27.629L181.341,27.018L182.85,25.156L184.752,20.354L186.035,19.003L187.707,18.734L191.207,18.954L192.948,18.593L193.837,18.077L196.724,15.438L197.292,14.356L197.25,13.393L196.724,12.736L195.117,11.901L195.188,10.813L196.285,10.11L197.318,10L198.486,10.272L200.913,11.58L206.041,12.042L208.215,12.333L213.963,13.604L216.459,13.913L223.188,14.213L224.448,15.072L224.608,16.236L223.438,17.872L220.921,22.161L217.671,26.899L217.211,28.507L217.463,30.79L218.037,31.842L219.207,33.107L220.877,34.156L222.249,34.626L224.448,34.859L225.594,34.724L227.148,33.709L232.46,25.936L234.521,24.322L237.001,23.518L240.777,21.265L242.447,20.837L244.648,20.663L246.136,21.124L247.419,21.959L248.797,23.438L249.615,24.835L251.314,28.29L252.665,29.662L254.866,29.888L255.731,29.439L256.444,28.556L262.056,19.593L262.902,18.783L264.646,18.248L265.653,18.401L266.639,18.991L268.043,21.106L268.858,21.427L271.522,21.341L273.018,21.885L273.712,22.677L273.991,23.946L274.488,28.623L275.151,29.311L276.805,29.415L277.809,28.106L277.901,26.945L277.623,24.007L277.901,22.628L279.092,20.919L280.862,20.968L282.019,22.378L282.301,24.407L282.74,25.817L284.115,27.085L285.211,27.226L287.873,26.96L289.066,27.507L289.661,28.372L289.782,29.641L289.437,30.766L286.808,33.709L286.368,34.73L286.15,36.292L286.242,37.885L286.681,39.334L287.528,40.459L288.467,41.07L290.034,41.214L291.257,40.847L296.014,37.053L296.668,35.675L296.54,34.51L295.183,32.108L295.149,29.748L297.407,22.521L297.933,21.613L298.846,20.886L300.281,20.262L302.041,19.932L303.384,19.96L304.904,20.485L306.874,21.638L310.063,24.673L311.788,24.994L313.792,24.154L316.109,23.958L317.019,24.358L317.831,25.227L318.77,26.89L319.785,29.188L320.008,31.732L319.504,33L317.376,35.51L317.061,36.922L317.25,38.447L318.097,40.48L319.848,42.721L321.868,44.255L323.745,45.08L325.935,45.255L328.41,44.811L337.911,41.024L339.57,40.11L340.724,38.982L341.51,37.604L342.573,34.553L343.262,33.098L344.2,32.297L345.423,31.784L352.497,31.218L353.591,31.359L354.719,31.9L355.61,32.713L356.391,33.908L356.646,35.394L356.928,38.872L358.8,44.778L360.159,47.633L361.792,47.807L361.703,48.871L365.886,49.445L367.824,49.87L373.449,51.398L385.224,51.27L387.515,51.328L396.773,51.209L401.146,51.221L408.062,48.999L409.343,48.822L411.475,48.874L426.887,48.599L427.542,49.555L428.546,49.989L431.455,50.09L434.247,49.766L436.735,49.103L439.254,48.085L441.208,47.52L443.259,47.572L445.002,48.437L446.619,50.032L447.997,51.942L450.522,56.491L453.096,59.309L455.944,61.736L457.088,62.359L460.8,62.842L466.07,63.643L470.422,63.435L473.27,63.56L476.118,64.095L479.255,64.224L486.862,65.828L493.951,66.764L497.317,66.959L505.682,66.947L507.828,67.283L509.923,68.093L512.563,69.74L516.744,72.837L520.286,74.927L526.44,78.222L530.381,79.567L533.747,80.508L535.491,81.52L536.819,83.072L541.957,90.517L544.221,94.567L546.075,99.282L548.799,108.787L550.103,111.519L550.858,114.147L550.921,116.371L550.224,120.011L549.348,122.034L547.61,123.654L545.23,124.732L542.911,125.001L535.199,124.934L532.59,125.475L530.497,126.957L526.49,131.886L525.509,134.111L525.243,136.974L525.535,140.075L527.334,144.86L528.496,147.421L528.783,149.377L528.317,151.192L526.363,154.015L525.369,155.995L525.369,158.445L526.15,160.251L529.737,164.685L530.826,167.132L531.139,169.57L531.373,173.286L531.838,174.822L534.644,179.347L535.038,182.06L534.881,189.216L533.944,193.737L532.461,197.18L530.2,199.264L521.856,202.166L519.789,203.575L518.393,205.56L517.999,207.733L518.777,218.504L519.482,221.764L520.647,224.296L522.445,227.281L523.145,229.272L523.069,231.353L522.13,233.161L520.418,235.07L518.859,235.794L514.02,236.43L512.5,237.474L511.406,239.103L509.461,244.986L508.995,248.428L509.379,251.684L510.631,255.661L512.89,261.181L513.358,264.535L513.124,269.144L511.293,273.539L508.64,275.897L506.536,277.073L504.272,279.699L497.407,288.394L496.707,290.658L496.86,292.737L497.798,295.453L499.981,297.893L502.555,298.879L506.889,299.261L515.664,298.198L517.512,298.687L519.516,300.275L520.626,302.48L521.017,304.905L520.828,307.049L520.031,309.742L518.354,312.588L514.501,318.409L513.129,321.17L512.813,323.561L513.444,325.638L514.922,327.476L523.684,334.386L525.717,337.66L526.508,341.52L526.405,346.665L525.717,349.85L523.918,352.427L521.125,354.69L518.114,356.351L515.264,356.964L507.82,357.584L504.704,358.265L502.279,359.795L500.775,361.477L499.878,363.566L499.608,366.137L499.878,367.789L500.736,369.288L502.471,380.02L505.353,385.436L516.673,389.882L517.349,391.28L517.507,393.21L517.126,395.139L515.995,396.895L513.802,398.824L508.135,401.108L506.4,401.196L501.035,399.975L499.45,400.155L498.088,400.68L494.84,402.619L493.631,403.666L492.497,405.159L486.189,412.043L484.296,413.451L471.14,420.814L468.729,418.983L471.287,416.843L471.419,416.494L471.211,407.971L467.361,407.699L454.224,407.489L454.027,410.49L444.484,409.711L441.663,409.739L441.571,407.507L441.528,400.534L425.825,400.586L425.864,403.227L418.875,403.092L418.749,417.09L418.433,418.778L413.361,420.283L407.184,420.604L399.676,420.332L395.884,422.322L388.885,422.603L383.299,423L375.056,421.69L369.757,420.469L365.781,419.825L356.641,419.37L357.093,415.194L354.614,409.668L351.842,407.467L347.332,405.663L352.131,397.2L348.069,394.547L346.094,393.982L344.626,394.321L338.699,397.258L337.287,398.44L334.016,398.211L333.054,396.635L331.308,393.194L331.87,389.018L335.649,385.8L341.495,382.218L346.543,382.64L349.391,381.312L350.464,380.13L350.577,377.706L350.493,374.378L350.07,372.485L354.472,366.845L359.044,361.682L359.72,360.076L361.976,345.45L364.177,340.915L371.693,327.641L372.245,325.436L372.755,320.712L374.588,320.681L379.016,320.15L382.374,319.389L385.274,318.965L388.661,317.295L393.329,305.137L394.454,300.568L394.838,297.239L394.954,293.987L394.706,291.461L394.018,288.504L392.987,285.936L390.578,281.981L386.941,276.859L385.637,275.393L384.333,274.504L383.092,274L381.585,273.878L378.535,274.947L375.329,276.767L373.725,277.448L371.94,277.708L369.123,277.213L366.468,275.579L364.632,273.514L363.031,270.857L360.809,266.474L358.2,262.118L355.263,258.453L352.539,255.726L349.815,253.914L345.762,252.283L332.312,248.447L328.555,247.597L326.377,247.396L324.5,247.469L323.098,247.955L322.391,248.633L321.978,249.769L321.986,251.165L326.125,254.146L327.332,256.052L327.474,257.476L325.612,260.045L324.35,262.98L323.498,263.957L320.855,264.644L319.527,267.43L318.189,268.688L318.247,271.44L317.237,273.649L317.826,276.086L315.601,276.446L312.012,275.487L313.153,264.638L311.873,264.745L306.834,264.617L303.469,264.391L300.074,263.762L296.114,262.638L292.219,260.756L281.793,254.122L279.708,252.879L277.12,252.173L274.578,252.017L271.209,252.323L267.728,253.099L262.645,255.472L260.123,257.066L257.606,259.376L248.6,269.709L247.869,271.211L247.638,273.154L247.504,283.227L246.975,287.133L246.31,288.941L245.232,290.517L244.322,291.235L243.496,290.633L242.026,290.517L239.202,291.888L236.951,292.353L232.765,292.45L229.191,292.209L226.133,291.62L221.337,289.066L217.232,286.675L215.473,285.23L214.794,284.198L214.566,282.973L214.742,281.571L215.281,280.163L216.246,279.244L218.891,277.415L219.536,276.669L219.607,275.054L219.002,274.305L218.105,273.896L214.637,273.905L213.172,272.955L212.707,272.005L212.528,269.977L213.829,266.269L213.44,265.026L211.042,262.965L210.577,262.299L210.227,259.208L209.877,258.945L207.437,258.679L203.624,259.235L203.143,258.835L203.624,257.555L201.207,254.837L200.306,255.081L199.824,253.56L198.439,253.648L196.437,252.054L196.022,252.448L193.745,250.695L193.811,249.574L190.634,247.423L190.161,246.217L190.161,244.726L194.063,237.887L195.407,238.516L195.704,238.061L196.658,238.324L197.174,237.007L200.237,238.266L200.377,240.505L201,240.505L200.795,239.39L201.623,239.387L201.831,240.666L205.604,241.818L205.31,245.09L204.665,244.98L204.421,249.452L203.874,249.626L204.018,250.945L205.21,252.604L205.757,251.913L205.062,250.536L206.006,251.226L208.381,253.398L211.15,254.766L212.607,256.407L213.167,256.48L214.155,254.617L213.779,252.491L212.062,248.608L211.705,246.324L211.954,245.291L212.956,243.755L214.387,242.053L215.281,240.269L215.746,238.611L215.728,236.891L215.084,233.702L214.442,232.339L213.151,230.809L212.047,228.203L211.797,226.587L211.831,224.186L212.349,222.176L214.566,217.075L214.889,214.838L214.534,213.678L212.599,211.2L212.278,210.039L212.349,208.502L213.101,207.134L214.55,205.243L215.623,203.419L215.944,202.133L215.799,200.352L214.8,195.803L214.744,192.298L215.673,189.106L215.715,186.411L214.818,184.841L213.995,184.593L213.175,184.887L209.738,189.662L208.31,190.618L207.453,190.453L206.098,189.008L204.416,184.126L203.913,183.047L203.195,182.387L201.108,182.332L199.106,183.124L197.282,183.622L195.53,183.796L192.885,183.597L191.886,183.307L190.742,182.363L189.879,180.951L189.169,178.639L188.099,173.417L187.542,167.593L187.397,164.41L187.505,162.745L188.756,157.193L188.904,155.744L188.383,154.027L186.987,151.497L186.671,150.095L186.629,148.185L186.987,146.899L187.707,145.902L188.738,145.114L190.923,143.904L192.782,142.618L194.21,141.414L195.209,139.266L195.283,136.925L194.949,135.917L193.771,134.978L193.976,132.769L194.421,131.874L195.11,131.544L196.085,131.681L199.822,133.884L201.1,134.147L202.254,133.848L203.059,132.042L202.985,131.088L202.414,130.056L198.82,126.856L196.143,123.629L195.141,122.881L191.954,120.949L190.957,120.124L189.777,118.59L189.527,117.511L189.385,114.608L188.988,113.575L188.294,112.851L183.292,109.389L181.076,107.399L179.895,105.452L180.11,103.796L181.933,100.104L182.522,98.423L182.488,96.144L182.022,94.777L180.521,93.078L179.166,92.339L177.231,91.807L175.588,90.609L175.164,88.83L176.093,86.132L178.701,81.978L179.127,79.325L178.843,74.307L178.412,71.201L177.397,69.016L176.284,68.221L175.046,68.118L173.789,68.625L171.57,70.043L170.426,70.34L168.664,69.814L167.378,68.457L166.944,66.822L166.647,63.478L166.079,59.724L166.305,58.15L166.694,57.301L168.043,55.549L168.798,54.926L171.454,53.394L172.324,52.716L173.652,50.689L175.64,44.668L175.919,42.54L175.372,41.217L172.758,37.952L172.211,36.803L171.846,35.18L171.983,33.615L172.782,31.496L172.966,29.922L172.716,29.155Z"/>
+</svg>
+</div>
+
+<!-- 中心节点 -->
+<div class="hex-center">
+<div class="hex-bg"></div>
+<div class="hex-label">
+<div class="hex-title">武侯<br>文化</div>
+<div class="hex-sub">Cultural Map</div>
+</div>
+</div>
+
+<!-- 文化节点 8个 按圆形排列 -->
+<!-- 1. 三国文化圣地 - 正上方 0° -->
+<div class="v-node" style="top: 10px; left: 50%; transform: translateX(-50%);" data-clickable="true" onclick="openSanguoCulture()">
+<div class="v-circle" style="background: linear-gradient(135deg, rgba(239,83,80,0.2), rgba(239,83,80,0.05)); --gc: rgba(239,83,80,0.5); --pd: 0s;">
+三国文化<br>圣地
+</div>
+<div class="v-label" style="top: -18px; left: 50%; transform: translateX(-50%);">诸葛智慧</div>
+<div class="v-sublabel" style="bottom: -16px; left: 50%; transform: translateX(-50%);">君臣合祀</div>
+<div class="click-hint">点击查看详情</div>
+</div>
+
+<!-- 2. 丝路文化重镇 - 右上 45° -->
+<div class="v-node" style="top: 57px; right: 57px;" data-clickable="true" onclick="openSilkRoad()">
+<div class="v-circle" style="background: linear-gradient(135deg, rgba(255,167,38,0.2), rgba(255,167,38,0.05)); --gc: rgba(255,167,38,0.5); --pd: 0.2s;">
+丝路文化<br>重镇
+</div>
+<div class="v-label" style="top: -18px; left: 50%; transform: translateX(-50%);">南丝路起点</div>
+<div class="v-sublabel" style="bottom: -16px; left: 50%; transform: translateX(-50%);">锦官城·蜀锦</div>
+<div class="click-hint">点击查看详情</div>
+</div>
+
+<!-- 3. 科教文化高地 - 正右方 90° -->
+<div class="v-node" style="top: 50%; right: 10px; transform: translateY(-50%);">
+<div class="v-circle" style="background: linear-gradient(135deg, rgba(79,195,247,0.2), rgba(79,195,247,0.05)); --gc: rgba(79,195,247,0.5); --pd: 0.4s;">
+科教文化<br>高地
+</div>
+<div class="v-label" style="top: -18px; left: 50%; transform: translateX(-50%);">华西坝</div>
+<div class="v-sublabel" style="bottom: -16px; left: 50%; transform: translateX(-50%);">10余所高校</div>
+</div>
+
+<!-- 4. 市井文化传承 - 右下 135° -->
+<div class="v-node" style="bottom: 57px; right: 57px;">
+<div class="v-circle" style="background: linear-gradient(135deg, rgba(171,71,188,0.2), rgba(171,71,188,0.05)); --gc: rgba(171,71,188,0.5); --pd: 0.6s;">
+市井文化<br>传承
+</div>
+<div class="v-label" style="top: -18px; left: 50%; transform: translateX(-50%);">码头商贸</div>
+<div class="v-sublabel" style="bottom: -16px; left: 50%; transform: translateX(-50%);">非遗技艺</div>
+</div>
+
+<!-- 5. 现代化先行区 - 正下方 180° -->
+<div class="v-node" style="bottom: 10px; left: 50%; transform: translateX(-50%);">
+<div class="v-circle" style="background: linear-gradient(135deg, rgba(102,187,106,0.2), rgba(102,187,106,0.05)); --gc: rgba(102,187,106,0.5); --pd: 0.8s;">
+现代化<br>先行区
+</div>
+<div class="v-label" style="top: -18px; left: 50%; transform: translateX(-50%);">1990建区</div>
+<div class="v-sublabel" style="bottom: -16px; left: 50%; transform: translateX(-50%);">文商旅融合</div>
+</div>
+
+<!-- 6. 民俗文化传承 - 左下 225° -->
+<div class="v-node" style="bottom: 57px; left: 57px;">
+<div class="v-circle" style="background: linear-gradient(135deg, rgba(255,179,0,0.2), rgba(255,179,0,0.05)); --gc: rgba(255,179,0,0.5); --pd: 1s;">
+民俗文化<br>传承
+</div>
+<div class="v-label" style="top: -18px; left: 50%; transform: translateX(-50%);">武侯闹春</div>
+<div class="v-sublabel" style="bottom: -16px; left: 50%; transform: translateX(-50%);">10余项非遗</div>
+</div>
+
+<!-- 7. 音乐文化强区 - 正左方 270° -->
+<div class="v-node" style="top: 50%; left: 10px; transform: translateY(-50%);">
+<div class="v-circle" style="background: linear-gradient(135deg, rgba(233,30,99,0.2), rgba(233,30,99,0.05)); --gc: rgba(233,30,99,0.5); --pd: 1.2s;">
+音乐文化<br>强区
+</div>
+<div class="v-label" style="top: -18px; left: 50%; transform: translateX(-50%);">产业第二</div>
+<div class="v-sublabel" style="bottom: -16px; left: 50%; transform: translateX(-50%);">原创活力第1</div>
+</div>
+
+<!-- 8. 生态宜居示范 - 左上 315° -->
+<div class="v-node" style="top: 57px; left: 57px;">
+<div class="v-circle" style="background: linear-gradient(135deg, rgba(0,188,212,0.2), rgba(0,188,212,0.05)); --gc: rgba(0,188,212,0.5); --pd: 1.4s;">
+生态宜居<br>示范
+</div>
+<div class="v-label" style="top: -18px; left: 50%; transform: translateX(-50%);">三水环抱</div>
+<div class="v-sublabel" style="bottom: -16px; left: 50%; transform: translateX(-50%);">公园城市</div>
+</div>
+
+</div>
+</div>
+
+<!-- 右侧数据统计 -->
+<div class="stats">
+<div class="stats-title">📊 数据统计（2024年）</div>
+
+<div class="stat-card">
+<div class="stat-label">📍 辖区面积</div>
+<div class="stat-value">75.36<span class="stat-unit">km²</span></div>
+<div class="stat-desc">土地面积75.36平方千米</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">🏘️ 行政区划</div>
+<div class="stat-value">15<span class="stat-unit">个街道</span></div>
+<div class="stat-desc">浆洗街、望江路、玉林、火车南站、晋阳、红牌楼、簇桥、机投桥、金花桥、簇锦、华兴、芳草街、肖家河、石羊、桂溪街道</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">🏛️ 博物馆</div>
+<div class="stat-value">12<span class="stat-unit">个</span></div>
+<div class="stat-desc">包括武侯祠博物馆、民族博物馆、四川汉室古床博物馆等</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">🏛️ 文物保护单位</div>
+<div class="stat-value">16<span class="stat-unit">处</span></div>
+<div class="stat-desc">国家级3处、省级3处、市级6处、区级4处</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">🎨 综合文化中心</div>
+<div class="stat-value">82<span class="stat-unit">个</span></div>
+<div class="stat-desc">街道综合性文化服务中心11个，社区综合性文化服务中心71个</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">👥 常住人口</div>
+<div class="stat-value">123.2<span class="stat-unit">万人</span></div>
+<div class="stat-desc">2024年末常住人口123.2万人，比上年末增加0.73万人，增长0.6%</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">🏠 户籍人口</div>
+<div class="stat-value">69.97<span class="stat-unit">万人</span></div>
+<div class="stat-desc">其中男性33.49万人，女性36.47万人</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">🏙️ 城镇化率</div>
+<div class="stat-value">100<span class="stat-unit">%</span></div>
+<div class="stat-desc">全区城镇化率达到100%</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">👥 年接待游客</div>
+<div class="stat-value">1500+<span class="stat-unit">万人次</span></div>
+<div class="stat-desc">武侯祠年吸引游览参观和参与观众量超过1500万人次</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">🎊 大庙会客流</div>
+<div class="stat-value">77<span class="stat-unit">万人次</span></div>
+<div class="stat-desc">2025年武侯祠成都大庙会7日接待77.01万人次，同比增长5%</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">🏭 战略新兴产业</div>
+<div class="stat-value">57.4<span class="stat-unit">亿元</span></div>
+<div class="stat-desc">2024年规模以上工业战略性新兴产业总产值，占规上工业总产值31.6%</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">🎓 高等院校</div>
+<div class="stat-value">10+<span class="stat-unit">所</span></div>
+<div class="stat-desc">四川大学、西南民族大学、成都体育学院等知名高校</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">🌊 水系资源</div>
+<div class="stat-value">3<span class="stat-unit">大河流</span></div>
+<div class="stat-desc">东、北、西三面被锦江、清水河、江安河环抱</div>
+</div>
+</div>
+</div>
+
+<!-- 三国文化图谱弹窗 -->
+<div class="graph-modal-overlay" id="graphModal">
+  <div class="graph-modal" onclick="event.stopPropagation()">
+    <div class="graph-modal-header">
+      <button class="graph-back-btn" id="graphBackBtn" onclick="goBackGraph()">← 返回上一级</button>
+      <div class="graph-modal-title">三国文化圣地</div>
+      <button class="graph-modal-close" onclick="closeGraphModal()">&times;</button>
+    </div>
+    <div class="graph-breadcrumb" id="graphBreadcrumb">
+      <span class="graph-breadcrumb-item active" data-level="0" onclick="navigateGraphTo(0)">三国文化圣地</span>
+    </div>
+    <div class="graph-modal-body">
+      <div class="graph-area" id="graphArea">
+        <svg class="graph-svg" id="graphSvg"></svg>
+        <div class="graph-tooltip" id="graphTooltip"></div>
+        <div class="graph-legend">
+          <div class="graph-legend-title">图例</div>
+          <div class="graph-legend-item"><div class="graph-legend-dot" style="background: #0891b2;"></div>根节点</div>
+          <div class="graph-legend-item"><div class="graph-legend-dot" style="background: #06b6d4;"></div>人物</div>
+          <div class="graph-legend-item"><div class="graph-legend-dot" style="background: #67e8f9;"></div>遗址点位</div>
+        </div>
+        <div class="graph-hint-text" id="graphHintText">点击节点查看详情</div>
+      </div>
+      <div class="graph-info-panel" id="graphInfoPanel">
+        <div class="g-info-header">
+          <div class="g-info-title" id="gInfoTitle">选择一个节点</div>
+          <div class="g-info-subtitle" id="gInfoSubtitle">点击查看详细信息</div>
+          <div class="g-info-tag" id="gInfoTag" style="display: none;"></div>
+        </div>
+        <div class="g-info-content" id="gInfoContent"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 丝路文化图谱弹窗 -->
+<div class="graph-modal-overlay" id="silkRoadModal">
+  <div class="graph-modal silk-road-theme" onclick="event.stopPropagation()">
+    <div class="graph-modal-header silk-road-header">
+      <button class="graph-back-btn silk-road-btn" id="silkRoadBackBtn" onclick="goBackSilkRoad()">← 返回上一级</button>
+      <div class="graph-modal-title silk-road-title">南方丝绸之路</div>
+      <button class="graph-modal-close silk-road-close" onclick="closeSilkRoadModal()">&times;</button>
+    </div>
+    <div class="graph-breadcrumb silk-road-breadcrumb" id="silkRoadBreadcrumb">
+      <span class="graph-breadcrumb-item active" data-level="0" onclick="navigateSilkRoadTo(0)">南方丝绸之路</span>
+    </div>
+    <div class="graph-modal-body">
+      <div class="graph-area" id="silkRoadArea">
+        <svg class="graph-svg" id="silkRoadSvg"></svg>
+        <div class="graph-tooltip" id="silkRoadTooltip"></div>
+        <div class="graph-legend silk-road-legend">
+          <div class="graph-legend-title">图例</div>
+          <div class="graph-legend-item"><div class="graph-legend-dot" style="background: #d97706;"></div>根节点</div>
+          <div class="graph-legend-item"><div class="graph-legend-dot" style="background: #f59e0b;"></div>地点</div>
+          <div class="graph-legend-item"><div class="graph-legend-dot" style="background: #fbbf24;"></div>故事</div>
+        </div>
+        <div class="graph-hint-text silk-road-hint" id="silkRoadHintText">点击节点查看详情</div>
+      </div>
+      <div class="graph-info-panel silk-road-panel" id="silkRoadInfoPanel">
+        <div class="g-info-header">
+          <div class="g-info-title silk-road-info-title" id="silkRoadInfoTitle">选择一个节点</div>
+          <div class="g-info-subtitle" id="silkRoadInfoSubtitle">点击查看详细信息</div>
+          <div class="g-info-tag silk-road-tag" id="silkRoadInfoTag" style="display: none;"></div>
+        </div>
+        <div class="g-info-content" id="silkRoadInfoContent"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+// 生成星星背景
+const starsContainer = document.getElementById('stars');
+for(let i = 0; i < 200; i++) {
+const star = document.createElement('div');
+star.className = 'star';
+star.style.left = Math.random() * 100 + '%';
+star.style.top = Math.random() * 100 + '%';
+star.style.width = star.style.height = (Math.random() * 2 + 0.5) + 'px';
+star.style.setProperty('--d', (Math.random() * 3 + 2) + 's');
+star.style.setProperty('--dl', Math.random() * 3 + 's');
+starsContainer.appendChild(star);
+}
+
+// 三国文化数据
+const sanguoCultureData = {
+  "name": "三国文化圣地",
+  "description": "以成都武侯区为核心的三国蜀汉文化圣地图谱，围绕与四川密切相关的三国人物，展示其生平事迹、相关遗迹与文化传承，展现三国文化的深厚底蕴与当代价值。",
+  "type": "root",
+  "children": [
+    {
+      "name": "诸葛亮",
+      "type": "person",
+      "title": "蜀汉丞相",
+      "birth_death": "181年—234年",
+      "intro": "字孔明，号卧龙，琅琊阳都人。三国时期蜀汉丞相，杰出的政治家、军事家、文学家、发明家。辅佐刘备建立蜀汉政权，鞠躬尽瘁，死而后已，被后世尊为忠臣与智者的典范。",
+      "order": 1,
+      "children": [
+        {
+          "name": "成都武侯祠",
+          "type": "point",
+          "category": "核心祠庙",
+          "city": "成都市武侯区",
+          "address": "武侯祠大街231号",
+          "intro": "全国唯一一座君臣合祀祠庙，始建于公元223年。由惠陵、汉昭烈庙、武侯祠三部分组成，享有三国圣地之美誉。祠内供奉诸葛亮塑像，有刘备殿、诸葛亮殿等主要建筑，是纪念诸葛亮最重要的场所。",
+          "order": 1
+        },
+        {
+          "name": "诸葛庐",
+          "type": "point",
+          "category": "纪念建筑",
+          "city": "成都市武侯区",
+          "address": "武侯祠大街231号（武侯祠内）",
+          "intro": "位于武侯祠西侧，是诸葛亮读书、居住之所的复原建筑。建筑为典型的川西民居风格，展现了诸葛亮淡泊明志、宁静致远的精神境界。",
+          "order": 2
+        },
+        {
+          "name": "万里桥",
+          "type": "point",
+          "category": "历史遗迹",
+          "city": "成都市武侯区",
+          "address": "原位于武侯祠大街与一环路南四段交汇处附近",
+          "intro": "始建于先秦时期，是成都历史上著名的古桥。相传诸葛亮在此送费祎出使东吴，曰：万里之行，始于此桥，故名万里桥。是三国时期蜀汉对外交往的重要通道。",
+          "order": 3
+        },
+        {
+          "name": "营门口",
+          "type": "point",
+          "category": "历史地名",
+          "city": "成都市金牛区/武侯区交界",
+          "address": "营门口路",
+          "intro": "相传为诸葛亮北伐时驻军扎营之地，是蜀汉军队出师北伐的重要集结地。地名沿用至今，见证了诸葛亮鞠躬尽瘁，死而后已的北伐历程。",
+          "order": 4
+        },
+        {
+          "name": "诸葛亮点将台遗址",
+          "type": "point",
+          "category": "历史遗迹",
+          "city": "成都市武侯区",
+          "address": "原位于武侯祠附近（现已不存，有纪念标识）",
+          "intro": "相传为诸葛亮操练兵将、点将出征之地。虽原建筑已不存，但作为诸葛亮军事活动的重要见证，是三国蜀汉军事文化的重要遗存。",
+          "order": 5
+        },
+        {
+          "name": "《出师表》碑刻",
+          "type": "point",
+          "category": "文物碑刻",
+          "city": "成都市武侯区",
+          "address": "武侯祠内",
+          "intro": "武侯祠内珍藏有岳飞手书《前后出师表》碑刻，是书法与文学的珍贵结合，也是诸葛亮忠诚与智慧的永恒见证。",
+          "order": 6
+        }
+      ]
+    },
+    {
+      "name": "刘备",
+      "type": "person",
+      "title": "蜀汉昭烈帝",
+      "birth_death": "161年—223年",
+      "intro": "字玄德，涿郡涿县人，西汉中山靖王刘胜之后。三国时期蜀汉开国皇帝，公元221年称帝，国号汉，史称蜀汉。以仁德著称，三顾茅庐请诸葛亮出山，建立蜀汉政权。",
+      "order": 2,
+      "children": [
+        {
+          "name": "惠陵",
+          "type": "point",
+          "category": "帝王陵墓",
+          "city": "成都市武侯区",
+          "address": "武侯祠大街231号（武侯祠内）",
+          "intro": "蜀汉昭烈帝刘备的陵墓，始建于章武三年（223年）。陵冢高12米，周长180米，为夯土堆成。惠陵与武侯祠、汉昭烈庙共同构成前庙后墓的独特格局，是中国现存唯一的君臣合祀祠庙陵寝组合。",
+          "order": 1
+        },
+        {
+          "name": "汉昭烈庙",
+          "type": "point",
+          "category": "帝王祠庙",
+          "city": "成都市武侯区",
+          "address": "武侯祠大街231号（武侯祠内）",
+          "intro": "供奉蜀汉昭烈帝刘备的专殿，位于武侯祠建筑群的中轴线上。殿内有刘备贴金塑像，两侧侍立刘禅、刘谌及文臣武将塑像，展现了蜀汉政权的君臣格局。",
+          "order": 2
+        },
+        {
+          "name": "三义庙",
+          "type": "point",
+          "category": "纪念建筑",
+          "city": "成都市武侯区",
+          "address": "武侯祠大街231号（武侯祠内）",
+          "intro": "原为纪念刘备、关羽、张飞桃园三结义的庙宇，现存建筑为清康熙年间重建。庙内供奉刘关张三人塑像，体现了义薄云天的三国精神。",
+          "order": 3
+        }
+      ]
+    },
+    {
+      "name": "关羽",
+      "type": "person",
+      "title": "汉寿亭侯、前将军",
+      "birth_death": "？—220年",
+      "intro": "字云长，河东解人。三国时期蜀汉名将，与刘备、张飞情同兄弟。以忠义著称，被后世尊为武圣，与文圣孔子齐名。民间信仰中将其奉为财神、保护神。",
+      "order": 3,
+      "children": [
+        {
+          "name": "衣冠庙",
+          "type": "point",
+          "category": "纪念祠庙",
+          "city": "成都市武侯区",
+          "address": "衣冠庙街与一环路南三段交汇处",
+          "intro": "相传为祭祀关羽的庙宇。关羽败走麦城后，孙权将其首级送予曹操，身躯留于东吴。刘备为关羽设衣冠冢于此，建庙祭祀，故称衣冠庙。是成都现存与关羽相关的重要遗迹。",
+          "order": 1
+        },
+        {
+          "name": "关羽殿",
+          "type": "point",
+          "category": "殿宇建筑",
+          "city": "成都市武侯区",
+          "address": "武侯祠大街231号（武侯祠内）",
+          "intro": "位于武侯祠内，原供奉关羽塑像。关羽以忠义闻名，其形象与诸葛亮共同构成武侯祠的核心祭祀对象，体现了蜀汉忠义文化的精神内核。",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "name": "张飞",
+      "type": "person",
+      "title": "西乡侯、车骑将军",
+      "birth_death": "？—221年",
+      "intro": "字益德，涿郡人。三国时期蜀汉名将，与刘备、关羽情同兄弟。以勇猛著称，长坂坡一声喝退曹军。官至车骑将军，领司隶校尉，封西乡侯。谥号桓侯。",
+      "order": 4,
+      "children": [
+        {
+          "name": "桓侯巷",
+          "type": "point",
+          "category": "历史地名",
+          "city": "成都市武侯区",
+          "address": "桓侯巷（华西医院附近）",
+          "intro": "相传为三国时期张飞（谥号桓侯）驻兵之地。街巷因此得名，是成都老城区中保存的三国地名之一，见证了蜀汉时期成都的城市格局与军事部署。",
+          "order": 1
+        },
+        {
+          "name": "张飞殿",
+          "type": "point",
+          "category": "殿宇建筑",
+          "city": "成都市武侯区",
+          "address": "武侯祠大街231号（武侯祠内）",
+          "intro": "位于武侯祠内，与关羽殿相对，原供奉张飞塑像。张飞以勇猛闻名，是蜀汉五虎上将之一，其形象体现了三国时期武将的英勇气概。",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "name": "赵云",
+      "type": "person",
+      "title": "永昌亭侯、翊军将军",
+      "birth_death": "？—229年",
+      "intro": "字子龙，常山真定人。三国时期蜀汉名将，身长八尺，姿颜雄伟。以勇敢善战著称，长坂坡单骑救主，被刘备赞为一身是胆。是蜀汉五虎上将之一。",
+      "order": 5,
+      "children": [
+        {
+          "name": "赵云墓",
+          "type": "point",
+          "category": "将军陵墓",
+          "city": "成都市大邑县",
+          "address": "大邑县城东1公里银屏山麓",
+          "intro": "蜀汉名将赵云（赵子龙）的陵墓，是成都周边重要的三国人物墓葬。赵云以一身是胆著称，其墓与大邑子龙庙共同构成纪念赵云的重要文化景观。",
+          "order": 1
+        },
+        {
+          "name": "子龙庙",
+          "type": "point",
+          "category": "祭祀庙宇",
+          "city": "成都市大邑县",
+          "address": "大邑县城东银屏山",
+          "intro": "位于赵云墓旁，是祭祀赵云的专祠。庙内有赵云塑像及相关碑刻，展现赵云生平事迹。是大邑县重要的三国文化景点。",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "name": "蒋琬",
+      "type": "person",
+      "title": "蜀汉大司马、录尚书事",
+      "birth_death": "？—246年",
+      "intro": "字公琰，零陵湘乡人。三国时期蜀汉重臣，是继诸葛亮之后蜀汉的执政者。诸葛亮称其为社稷之器，临终前推荐蒋琬继任。为人宽和，政尚宽恕，是蜀汉后期重要的政治家。",
+      "order": 6,
+      "children": [
+        {
+          "name": "蒋琬墓",
+          "type": "point",
+          "category": "重臣陵墓",
+          "city": "成都市新都区",
+          "address": "新都城区",
+          "intro": "蜀汉重臣蒋琬的陵墓。蒋琬是继诸葛亮之后蜀汉的执政者，其墓是新都重要的三国文化遗存，见证了蜀汉后期政权的延续与稳定。",
+          "order": 1
+        }
+      ]
+    },
+    {
+      "name": "马超",
+      "type": "person",
+      "title": "骠骑将军、斄乡侯",
+      "birth_death": "176年—222年",
+      "intro": "字孟起，扶风茂陵人。三国时期蜀汉名将，汉伏波将军马援之后。以勇武著称，曾杀得曹操割须弃袍，后归降刘备，成为蜀汉五虎上将之一。",
+      "order": 7,
+      "children": [
+        {
+          "name": "马超墓",
+          "type": "point",
+          "category": "将军陵墓",
+          "city": "成都市新都区",
+          "address": "新都城区",
+          "intro": "蜀汉五虎上将之一马超的陵墓。马超是蜀汉重要的军事将领，其墓是新都重要的三国文化资源，与蒋琬墓等共同构成新都三国文化旅游线路。",
+          "order": 1
+        }
+      ]
+    },
+    {
+      "name": "黄忠",
+      "type": "person",
+      "title": "后将军、关内侯",
+      "birth_death": "？—220年",
+      "intro": "字汉升，南阳人。三国时期蜀汉名将，以老当益壮著称。定军山之战中斩杀曹魏名将夏侯渊，为刘备夺取汉中立下大功，被封为后将军，蜀汉五虎上将之一。",
+      "order": 8,
+      "children": [
+        {
+          "name": "黄忠祠遗址",
+          "type": "point",
+          "category": "历史遗址",
+          "city": "成都市",
+          "address": "原位于成都老城区（现已不存）",
+          "intro": "原为纪念蜀汉五虎上将之一黄忠的祠堂。黄忠以定军山斩杀夏侯渊闻名，是蜀汉重要的老将代表。祠堂虽已不存，但其精神通过地名、传说等形式流传至今。",
+          "order": 1
+        }
+      ]
+    }
+  ]
+};
+
+// 图谱状态管理
+let graphLevel = 0;
+let graphNavigationStack = [sanguoCultureData];
+let graphSimulation = null;
+
+const colorMap = {
+  'root': '#0891b2',
+  'person': '#06b6d4',
+  'point': '#67e8f9'
+};
+
+const sizeMap = {
+  'root': 32,
+  'person': 26,
+  'point': 20
+};
+
+// 打开三国文化弹窗
+function openSanguoCulture() {
+  document.getElementById('graphModal').classList.add('active');
+  initGraph();
+}
+
+// 关闭图谱弹窗
+function closeGraphModal() {
+  document.getElementById('graphModal').classList.remove('active');
+  document.getElementById('graphInfoPanel').classList.remove('active');
+  if (graphSimulation) {
+    graphSimulation.stop();
+  }
+}
+
+// 初始化图谱
+function initGraph() {
+  graphLevel = 0;
+  graphNavigationStack = [sanguoCultureData];
+  renderGraphD3(sanguoCultureData, 'root');
+  updateGraphBreadcrumb();
+  updateGraphBackButton();
+}
+
+// 使用D3渲染力导向图
+function renderGraphD3(data, parentType) {
+  const svg = d3.select('#graphSvg');
+  svg.selectAll('*').remove();
+
+  const container = document.getElementById('graphArea');
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+
+  svg.attr('width', width).attr('height', height);
+
+  const g = svg.append('g');
+
+  // 准备节点和边数据
+  const nodes = [];
+  const links = [];
+
+  // 根节点
+  nodes.push({ id: data.name, ...data, level: 0 });
+
+  // 只展示第一层子节点，不展示孙节点
+  if (data.children) {
+    data.children.forEach((child, i) => {
+      nodes.push({ id: child.name, ...child, level: 1 });
+      links.push({ source: data.name, target: child.name });
+    });
+  }
+
+  // 力导向模拟
+  graphSimulation = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(d => d.id).distance(d => {
+      if (d.source.level === 0) return 200;
+      return 120;
+    }))
+    .force('charge', d3.forceManyBody().strength(-600))
+    .force('center', d3.forceCenter(width / 2, height / 2))
+    .force('collision', d3.forceCollide().radius(d => sizeMap[d.type] + 15));
+
+  // 绘制连线
+  const link = g.append('g')
+    .selectAll('line')
+    .data(links)
+    .enter().append('line')
+    .attr('stroke', 'rgba(42,245,255,0.25)')
+    .attr('stroke-width', 1.5);
+
+  // 绘制节点
+  const node = g.append('g')
+    .selectAll('g')
+    .data(nodes)
+    .enter().append('g')
+    .attr('cursor', 'pointer')
+    .call(d3.drag()
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended))
+    .on('click', (event, d) => {
+      event.stopPropagation();
+      showNodeInfo(d);
+      if (d.children && d.children.length > 0) {
+        navigateToNode(d);
+      }
+    })
+    .on('mouseover', (event, d) => {
+      const tooltip = document.getElementById('graphTooltip');
+      tooltip.textContent = d.name;
+      tooltip.style.left = event.pageX + 10 + 'px';
+      tooltip.style.top = event.pageY + 10 + 'px';
+      tooltip.style.opacity = '1';
+    })
+    .on('mouseout', () => {
+      document.getElementById('graphTooltip').style.opacity = '0';
+    });
+
+  // 节点圆圈
+  node.append('circle')
+    .attr('r', d => sizeMap[d.type] || 20)
+    .attr('fill', d => colorMap[d.type] || '#67e8f9')
+    .attr('stroke', d => colorMap[d.type] || '#67e8f9')
+    .attr('stroke-width', 2)
+    .attr('opacity', 0.8)
+    .style('filter', d => 'drop-shadow(0 0 8px ' + (colorMap[d.type] || '#67e8f9') + ')');
+
+  // 节点文字
+  node.append('text')
+    .text(d => d.name.length > 6 ? d.name.substring(0, 6) : d.name)
+    .attr('text-anchor', 'middle')
+    .attr('dy', '.35em')
+    .attr('fill', '#fff')
+    .attr('font-size', d => d.type === 'root' ? '14px' : d.type === 'person' ? '12px' : '10px')
+    .attr('font-weight', 'bold')
+    .attr('pointer-events', 'none');
+
+  // 为有子节点的节点添加展开指示器
+  node.filter(d => d.children && d.children.length > 0)
+    .append('circle')
+    .attr('r', 8)
+    .attr('cx', 0)
+    .attr('cy', d => (sizeMap[d.type] || 20) + 12)
+    .attr('fill', 'rgba(42,245,255,0.2)')
+    .attr('stroke', '#2af5ff')
+    .attr('stroke-width', 1.5);
+
+  node.filter(d => d.children && d.children.length > 0)
+    .append('text')
+    .text('+')
+    .attr('text-anchor', 'middle')
+    .attr('x', 0)
+    .attr('y', d => (sizeMap[d.type] || 20) + 16)
+    .attr('fill', '#2af5ff')
+    .attr('font-size', '12px')
+    .attr('font-weight', 'bold')
+    .attr('pointer-events', 'none');
+
+  // 模拟更新
+  graphSimulation.on('tick', () => {
+    link
+      .attr('x1', d => d.source.x)
+      .attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x)
+      .attr('y2', d => d.target.y);
+
+    node.attr('transform', d => `translate(${d.x},${d.y})`);
+  });
+
+  // 缩放功能
+  const zoom = d3.zoom()
+    .scaleExtent([0.3, 3])
+    .on('zoom', (event) => {
+      g.attr('transform', event.transform);
+    });
+
+  svg.call(zoom);
+
+  // 拖拽函数
+  function dragstarted(event, d) {
+    if (!event.active) graphSimulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+
+  function dragged(event, d) {
+    d.fx = event.x;
+    d.fy = event.y;
+  }
+
+  function dragended(event, d) {
+    if (!event.active) graphSimulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+  }
+}
+
+// 显示节点信息
+function showNodeInfo(node) {
+  const panel = document.getElementById('graphInfoPanel');
+  panel.classList.add('active');
+
+  document.getElementById('gInfoTitle').textContent = node.name;
+
+  let subtitle = '';
+  if (node.type === 'root') subtitle = '三国文化核心';
+  else if (node.type === 'person' && node.title) subtitle = node.title;
+  else if (node.type === 'point' && node.category) subtitle = node.category;
+  document.getElementById('gInfoSubtitle').textContent = subtitle;
+
+  const tag = document.getElementById('gInfoTag');
+  if (node.birth_death || node.city) {
+    tag.style.display = 'inline-block';
+    tag.textContent = node.birth_death || node.city;
+  } else {
+    tag.style.display = 'none';
+  }
+
+  let content = '';
+
+  if (node.description) {
+    content += `<div class="g-info-section">
+      <div class="g-info-section-title">简介</div>
+      <div class="g-info-section-text">${node.description}</div>
+    </div>`;
+  }
+
+  if (node.intro) {
+    content += `<div class="g-info-section">
+      <div class="g-info-section-title">详细介绍</div>
+      <div class="g-info-section-text">${node.intro}</div>
+    </div>`;
+  }
+
+  if (node.address) {
+    content += `<div class="g-info-section">
+      <div class="g-info-section-title">地址</div>
+      <div class="g-info-section-text">${node.address}</div>
+    </div>`;
+  }
+
+  if (node.children && node.children.length > 0) {
+    const childType = node.type === 'person' ? '相关遗址' : '子节点';
+    content += `<div class="g-info-section">
+      <div class="g-info-section-title">${childType} (${node.children.length})</div>
+      <div class="g-info-section-text">${node.children.map(c => c.name).join('、')}</div>
+    </div>`;
+  }
+
+  document.getElementById('gInfoContent').innerHTML = content || '<div class="g-info-section-text">暂无详细信息</div>';
+}
+
+// 导航到节点
+function navigateToNode(node) {
+  if (!node.children || node.children.length === 0) return;
+
+  graphLevel++;
+  graphNavigationStack[graphLevel] = node;
+  renderGraphD3(node, node.type);
+  updateGraphBreadcrumb();
+  updateGraphBackButton();
+}
+
+// 返回上一级
+function goBackGraph() {
+  if (graphLevel > 0) {
+    navigateGraphToLevel(graphLevel - 1, graphNavigationStack[graphLevel - 1]);
+  }
+}
+
+// 导航到指定级别
+function navigateGraphTo(level) {
+  if (level <= graphLevel) {
+    navigateGraphToLevel(level, graphNavigationStack[level]);
+  }
+}
+
+function navigateGraphToLevel(level, data) {
+  graphLevel = level;
+  graphNavigationStack = graphNavigationStack.slice(0, level + 1);
+  renderGraphD3(data, level === 0 ? 'root' : data.type);
+  updateGraphBreadcrumb();
+  updateGraphBackButton();
+}
+
+// 更新面包屑
+function updateGraphBreadcrumb() {
+  const breadcrumb = document.getElementById('graphBreadcrumb');
+  const items = ['三国文化圣地'];
+
+  if (graphLevel >= 1 && graphNavigationStack[1]) {
+    items.push(graphNavigationStack[1].name);
+  }
+  if (graphLevel >= 2 && graphNavigationStack[2]) {
+    items.push(graphNavigationStack[2].name);
+  }
+
+  let html = '';
+  items.forEach((item, i) => {
+    const isActive = i === graphLevel;
+    if (i > 0) {
+      html += '<span class="graph-breadcrumb-sep">&gt;</span>';
+    }
+    html += `<span class="graph-breadcrumb-item ${isActive ? 'active' : ''}" data-level="${i}" onclick="navigateGraphTo(${i})">${item}</span>`;
+  });
+
+  breadcrumb.innerHTML = html;
+}
+
+// 更新返回按钮
+function updateGraphBackButton() {
+  const backBtn = document.getElementById('graphBackBtn');
+  if (graphLevel === 0) {
+    backBtn.classList.add('hidden');
+  } else {
+    backBtn.classList.remove('hidden');
+  }
+}
+
+// 点击overlay关闭弹窗
+document.getElementById('graphModal').addEventListener('click', function(e) {
+  if (e.target.id === 'graphModal') {
+    closeGraphModal();
+  }
+});
+
+// ==================== 南方丝绸之路弹窗 ====================
+
+// 南方丝绸之路数据
+const silkRoadData = {
+  "name": "南方丝绸之路",
+  "description": "南方丝绸之路，又称蜀身毒道，是起于成都、经云南到达印度的古代国际商道，比北方丝绸之路早约200-300年。以蜀锦、蜀布为主要贸易商品，连接中国西南与南亚、东南亚，是中国最古老的国际通道之一，也是早期佛教传入中国的重要通道。",
+  "type": "root",
+  "children": [
+    {
+      "name": "成都（锦官城）",
+      "type": "location",
+      "province": "四川省",
+      "role": "南丝路起点、蜀锦贸易中心",
+      "intro": "南方丝绸之路的起点，汉代丝织业空前繁盛，朝廷专设锦官管理，在成都南门夷里桥南岸筑锦官城，故成都又称锦城、锦官城。是当时蜀地最大的丝绸、铁器、盐业贸易市场。",
+      "order": 1,
+      "children": [
+        {
+          "name": "锦官城的建立",
+          "type": "story",
+          "time": "汉代",
+          "intro": "汉代成都丝织业繁荣，朝廷在成都南门夷里桥南岸设立专门管理蜀锦生产的官署——锦官，并筑城保护，称为锦官城。锦江之水清澈，适合濯锦，工匠们在江边漂洗蜀锦，江水都被映成五彩斑斓，故锦江又名濯锦江。成都因此得名锦城，延续至今。",
+          "order": 1
+        },
+        {
+          "name": "张骞发现蜀布邛竹杖",
+          "type": "story",
+          "time": "公元前122年（汉武帝元狩元年）",
+          "intro": "博望侯张骞出使大夏（今阿富汗）归来，向汉武帝报告说在大夏见到蜀布和邛竹杖，询问从何而来，得知是从身毒（古印度）贩运过来的。这一发现证明了在张骞凿空西域之前，从巴蜀经云南到印度的商道早已存在，史称蜀身毒道。这是南方丝绸之路存在的重要历史证据。",
+          "order": 2
+        },
+        {
+          "name": "费祎万里桥送别",
+          "type": "story",
+          "time": "三国蜀汉时期",
+          "intro": "三国时期，蜀汉丞相诸葛亮派使者费祎出使东吴。送别时，诸葛亮在成都南门的一座桥上对费祎说：'万里之行，始于此桥。'此桥因此得名万里桥。这座桥不仅是三国外交的见证，也是南方丝绸之路从成都出发的象征性起点，连接着通往云南、缅甸、印度的万里征程。",
+          "order": 3
+        },
+        {
+          "name": "蜀锦织造技艺传承",
+          "type": "story",
+          "time": "汉代至今",
+          "intro": "蜀锦是成都特产，与南京云锦、苏州宋锦、广西壮锦并称中国四大名锦，已有2000多年历史。汉代蜀锦以其精美工艺驰名中外，是南方丝绸之路最重要的贸易商品。蜀锦织造技艺世代相传，2006年被列入首批国家级非物质文化遗产名录。今天的成都蜀锦织绣博物馆仍在传承和展示这一古老技艺。",
+          "order": 4
+        },
+        {
+          "name": "武侯祠锦里古街",
+          "type": "story",
+          "time": "2004年正式开街",
+          "intro": "锦里古街位于成都市武侯区武侯祠旁，是成都知名的步行商业街。锦里之名取自《三国志》'先主置酒锦里'，相传为西蜀历史上最古老、最具商业气息的街道之一。街区再现了清末民初时期的川西民居风貌，集中展示了蜀锦、蜀绣等非遗技艺，是体验南方丝绸之路文化的重要窗口。",
+          "order": 5
+        },
+        {
+          "name": "成都蜀锦织绣博物馆",
+          "type": "story",
+          "time": "2009年建成",
+          "intro": "位于成都市武侯区草金东路，是国内首家以蜀锦为主题的专业博物馆。馆内珍藏有汉代至近代的蜀锦精品，展示了蜀锦两千年的发展历程。游客可以现场观看蜀锦传统织造技艺表演，体验从缫丝、染色到织造的完整工艺流程，是了解南方丝绸之路文化的重要场所。",
+          "order": 6
+        },
+        {
+          "name": "汉代蜀锦织机复原",
+          "type": "story",
+          "time": "20世纪考古发现",
+          "intro": "20世纪考古发掘中，在成都老官山汉墓出土了4台汉代织机模型，为研究蜀锦织造技艺提供了珍贵实物资料。专家根据这些织机模型，成功复原了汉代提花织机，证明了汉代蜀锦已经掌握了复杂的提花技术。这些织机是南方丝绸之路贸易繁荣的重要见证，也是中国古代纺织科技的杰出代表。",
+          "order": 7
+        },
+        {
+          "name": "蜀锦五星出东方利中国",
+          "type": "story",
+          "time": "汉代（1995年新疆出土）",
+          "intro": "1995年，在新疆尼雅遗址出土了一件汉代蜀锦护膊，上织有'五星出东方利中国'八个汉隶文字，被定为国家一级文物。这件蜀锦证明了汉代成都的丝织品通过丝绸之路远销西域，工艺精湛、色彩华丽。蜀锦不仅是贸易商品，更是中华文明传播的载体，见证了南方丝绸之路与北方丝绸之路的交汇。",
+          "order": 8
+        },
+        {
+          "name": "濯锦江与锦江风光",
+          "type": "story",
+          "time": "汉代至今",
+          "intro": "锦江发源于成都平原西部，流经武侯区等地。汉代时，成都的蜀锦工匠在江边漂洗刚织好的锦缎，江水被染成五彩斑斓，故名濯锦江，简称锦江。唐代诗人杜甫的'锦江春色来天地'描绘了锦江的美景。今天的锦江绿道已成为成都的生态名片，延续着千年锦江的文化传承。",
+          "order": 9
+        }
+      ]
+    },
+    {
+      "name": "临邛（邛崃）",
+      "type": "location",
+      "province": "四川省成都市邛崃市",
+      "role": "南丝路重要节点、冶铁中心",
+      "intro": "古称临邛，是南方丝绸之路出成都后的第一个重要驿站。汉代以冶铁业闻名，与铁器贸易紧密相关。邛崃的邛竹杖是南丝路上的著名商品，张骞在大夏发现的邛竹杖即产于此地。",
+      "order": 2,
+      "children": [
+        {
+          "name": "卓文君与司马相如",
+          "type": "story",
+          "time": "汉武帝时期",
+          "intro": "西汉辞赋家司马相如路过临邛，被当地富商卓王孙邀请做客。司马相如在宴会上弹奏《凤求凰》，卓王孙之女卓文君倾慕其才华，当夜与司马相如私奔成都。二人因家贫，回临邛开酒肆谋生，卓文君当垆卖酒，传为千古佳话。临邛作为南方丝绸之路的重要节点，是文化交流与商业繁荣的象征。",
+          "order": 1
+        },
+        {
+          "name": "邛竹杖的贸易传奇",
+          "type": "story",
+          "time": "战国至汉代",
+          "intro": "邛竹杖产自邛崃山区，是一种精制的竹制手杖，以其坚韧轻便著称。通过南方丝绸之路，邛竹杖远销至印度、阿富汗等地。张骞在大夏（阿富汗）见到邛竹杖，惊讶于其贸易范围之广。邛竹杖与蜀布一起，成为证明南方丝绸之路早于北方丝绸之路的重要物证。",
+          "order": 2
+        },
+        {
+          "name": "临邛铁器贸易",
+          "type": "story",
+          "time": "汉代",
+          "intro": "汉代临邛以冶铁业著称，卓王孙、程郑等富商通过冶铁致富，家中奴仆数百人。临邛出产的铁器通过南方丝绸之路销往云南、缅甸等地，与蜀锦、邛竹杖一起，构成了南丝路贸易的重要商品。临邛的冶铁技术也随着商道传播到西南各地。",
+          "order": 3
+        }
+      ]
+    },
+    {
+      "name": "严道（荥经）",
+      "type": "location",
+      "province": "四川省雅安市荥经县",
+      "role": "南丝路茶马古道枢纽",
+      "intro": "古称严道，是南方丝绸之路从成都平原进入山区的关键节点。地处青衣江畔，是蜀地通往西昌、大理的必经之地。唐宋时期茶马古道兴起后，荥经成为茶马贸易的重要中转站。",
+      "order": 3,
+      "children": [
+        {
+          "name": "严道古城的兴衰",
+          "type": "story",
+          "time": "秦汉至明清",
+          "intro": "秦灭蜀后，在严道设县，成为连接成都与西南边疆的重要军事、商业据点。汉代严道是南方丝绸之路的重要驿站，商旅云集。唐宋时期，随着茶马贸易兴盛，严道成为茶马古道的关键节点。明清时期改称荥经县。古城遗址见证了南丝路两千年的兴衰变迁。",
+          "order": 1
+        },
+        {
+          "name": "黑砂制作技艺",
+          "type": "story",
+          "time": "秦汉至今",
+          "intro": "荥经黑砂陶器制作始于秦汉，因其独特的黑色质地和实用性，成为南方丝绸之路上的重要商品。黑砂茶具、酒具通过商道销往西南各地。荥经黑砂烧制技艺2008年被列入国家级非物质文化遗产名录，至今仍有工匠传承这门古老技艺。",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "name": "旄牛（汉源）",
+      "type": "location",
+      "province": "四川省雅安市汉源县",
+      "role": "南丝路入滇前哨",
+      "intro": "古称旄牛道，因当地产旄牛（牦牛）而得名。是南方丝绸之路从四川进入云南的重要关口，地势险要。汉代在此设置旄牛县，成为汉朝经略西南的前哨基地。",
+      "order": 4,
+      "children": [
+        {
+          "name": "旄牛道的开通",
+          "type": "story",
+          "time": "秦汉时期",
+          "intro": "秦灭蜀后，为加强对西南地区的控制，开辟了从成都经严道到旄牛、再通往西昌（邛都）的道路，称为旄牛道。这条道路穿越大渡河峡谷，地势险峻，工程艰巨。汉武帝时，唐蒙奉命修筑五尺道，进一步完善了这条通道。旄牛道成为南方丝绸之路的重要组成部分。",
+          "order": 1
+        },
+        {
+          "name": "牦牛贸易",
+          "type": "story",
+          "time": "汉代至今",
+          "intro": "汉源地区盛产牦牛，这种高原特有的牛种体格强壮，耐寒耐劳，是高原运输的重要工具。牦牛及其制品（牛肉干、牛皮、牛毛织物）通过南方丝绸之路销往内地和印度。同时，牦牛也是商队穿越高原山地的重要运输工具，在南丝路贸易中发挥了关键作用。",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "name": "邛都（西昌）",
+      "type": "location",
+      "province": "四川省凉山彝族自治州西昌市",
+      "role": "南丝路川滇交界枢纽",
+      "intro": "古称邛都，是南方丝绸之路在四川境内的最后一个重要节点，也是进入云南前的集散地。汉武帝在此设置越巂郡，成为汉朝经略西南夷的重要据点。地处安宁河谷，物产丰富，是川滇贸易的中转站。",
+      "order": 5,
+      "children": [
+        {
+          "name": "司马相如开邛都",
+          "type": "story",
+          "time": "汉武帝元光六年（公元前129年）",
+          "intro": "汉武帝派遣司马相如出使西南夷，安抚邛、笮等部族。司马相如凭借其文才和外交手腕，说服当地部族归附汉朝，开通了通往邛都的道路。他在邛都设置官府，推广汉文化，促进了汉朝与西南地区的文化交流与商业往来。司马相如的外交活动为南方丝绸之路的畅通奠定了基础。",
+          "order": 1
+        },
+        {
+          "name": "唐蒙通僰道",
+          "type": "story",
+          "time": "汉武帝建元六年（公元前135年）",
+          "intro": "汉武帝派中郎将唐蒙出使夜郎国（今贵州），并开辟从蜀地到牂牁（贵州）的僰道。唐蒙征调巴蜀民夫，修筑宽五尺的道路（称五尺道），从僰道（今宜宾）经朱提（昭通）到牂牁。这条道路与经邛都的西线道路共同构成了南方丝绸之路网络，大大促进了西南地区与中原的联系。",
+          "order": 2
+        },
+        {
+          "name": "邛都古城的繁荣",
+          "type": "story",
+          "time": "汉代至唐宋",
+          "intro": "汉武帝在邛都设越巂郡，邛都成为汉朝统治西南的军事、政治、经济中心。作为南方丝绸之路的重要节点，邛都商贾云集，蜀锦、铁器、盐等商品在此集散，再运往云南、缅甸。同时，来自印度的宝石、香料也在邛都中转运往内地。唐宋时期，邛都继续保持着商业繁荣，是西南地区的重要城市。",
+          "order": 3
+        }
+      ]
+    },
+    {
+      "name": "叶榆（大理）",
+      "type": "location",
+      "province": "云南省大理白族自治州",
+      "role": "南丝路云南核心枢纽",
+      "intro": "古称叶榆，位于洱海之滨，是南方丝绸之路在云南境内的核心枢纽。汉代设叶榆县，唐代南诏国、宋代大理国均建都于此。是连接四川、缅甸、印度的重要中转站，商业繁荣，文化多元。",
+      "order": 6,
+      "children": [
+        {
+          "name": "杨升庵谪居大理",
+          "type": "story",
+          "time": "明代嘉靖年间",
+          "intro": "明代状元杨慎（号升庵），四川新都人，因议大礼案得罪嘉靖皇帝，被贬谪云南永昌卫（保山），途经大理。杨升庵在滇期间，以其渊博学识传播中原文化，教授当地学子，编撰《滇载记》等著作，记录云南风土人情。他将古蜀文化与中原文化带到云南，极大地影响了云南文化的发展，成为南方丝绸之路上文化交流的佳话。",
+          "order": 1
+        },
+        {
+          "name": "南诏国的丝路贸易",
+          "type": "story",
+          "time": "唐代（738-902年）",
+          "intro": "唐代时，白族建立的南诏国定都大理（羊苴咩城）。南诏国充分利用南方丝绸之路的地理优势，发展对外贸易。从四川运来的蜀锦、茶叶，从内地运来的丝绸、瓷器，在大理集散后运往缅甸、印度；而来自印度的宝石、香料、象牙也通过大理运往内地。南诏国的繁荣，见证了南方丝绸之路在唐代的辉煌。",
+          "order": 2
+        },
+        {
+          "name": "大理佛教的传入",
+          "type": "story",
+          "time": "汉唐时期",
+          "intro": "佛教沿南方丝绸之路从印度经缅甸传入云南大理，再传播到四川。大理成为早期佛教传入中国的重要门户之一。南诏国、大理国时期，佛教盛行，建造了众多佛寺佛塔，如崇圣寺三塔。大理的佛教文化融合了印度、藏传、汉传佛教的特点，形成独特的大理佛教文化，是南方丝绸之路文化交流的典范。",
+          "order": 3
+        }
+      ]
+    },
+    {
+      "name": "永昌（保山）",
+      "type": "location",
+      "province": "云南省保山市",
+      "role": "南丝路出境前最后重镇",
+      "intro": "古称永昌，是南方丝绸之路在中国境内的最后一个重要城市。汉代设永昌郡，是汉朝经略西南边疆的前哨。从永昌出发，经腾冲，跨越高黎贡山，即可进入缅甸，连接印度。永昌是中缅贸易的重要口岸。",
+      "order": 7,
+      "children": [
+        {
+          "name": "博南道的开辟",
+          "type": "story",
+          "time": "汉代",
+          "intro": "从永昌到缅甸的道路称为博南道，因要翻越博南山（今高黎贡山）而得名。高黎贡山山高谷深，气候恶劣，古人称之为'绝人之域'。汉代时，为打通南方丝绸之路，在博南山上凿石架桥，修筑栈道，历经艰辛开通了这条通往印度的国际通道。博南道的开辟，标志着南方丝绸之路的全线贯通。",
+          "order": 1
+        },
+        {
+          "name": "永昌马帮传奇",
+          "type": "story",
+          "time": "明清至民国",
+          "intro": "明清时期至民国，永昌（保山）马帮承担着中缅贸易运输的重任。马帮翻越高黎贡山，将茶叶、丝绸、瓷器运往缅甸、印度，再将玉石、宝石、香料运回内地。永昌马帮以其吃苦耐劳、诚信经营著称，马锅头（马帮首领）的传奇故事在滇西广为流传。马帮文化是南方丝绸之路在近代的延续和传承。",
+          "order": 2
+        },
+        {
+          "name": "滇缅玉石贸易",
+          "type": "story",
+          "time": "明清至今",
+          "intro": "缅甸出产的翡翠玉石通过南方丝绸之路运抵永昌、腾冲，再转运到内地。清代以来，永昌、腾冲成为中国翡翠玉石加工贸易的中心。玉石商人往返于中缅之间，形成了独特的玉石贸易网络。这一传统延续至今，保山、腾冲仍是中国重要的翡翠玉石集散地，是南方丝绸之路贸易的当代延续。",
+          "order": 3
+        }
+      ]
+    },
+    {
+      "name": "身毒（古印度）",
+      "type": "location",
+      "province": "南亚次大陆",
+      "role": "南丝路终点、文化交流彼岸",
+      "intro": "身毒，汉代对古印度的称呼，是南方丝绸之路的终点。中国的丝绸、茶叶经此道运往印度，印度的宝石、香料、佛教文化经此道传入中国。南方丝绸之路是中印文化交流的重要纽带。",
+      "order": 8,
+      "children": [
+        {
+          "name": "蜀布震惊印度",
+          "type": "story",
+          "time": "战国至汉代",
+          "intro": "早在战国时期，蜀地的丝织品就通过南方丝绸之路远销印度。印度人惊叹于蜀布（蜀锦）的精美工艺和华丽色彩，将其视为珍贵的奢侈品。印度贵族以拥有蜀布为荣，蜀布在印度市场价格不菲。张骞在大夏见到的蜀布，就是先运到印度，再由印度商人转销到中亚的。蜀布是中国古代丝织工艺的骄傲，也是南方丝绸之路贸易的核心商品。",
+          "order": 1
+        },
+        {
+          "name": "佛教东传中国",
+          "type": "story",
+          "time": "汉代至唐代",
+          "intro": "佛教起源于印度，在公元前后开始向外传播。除了通过西域传入中国内地，佛教也沿着南方丝绸之路，从印度经缅甸、云南传入四川。汉代时，佛教已在四川传播，成都出土的汉代摇钱树上就有佛像。南方丝绸之路是佛教传入中国的重要通道之一，促进了中印文化的深度交流，影响了中国文化的发展。",
+          "order": 2
+        },
+        {
+          "name": "中印宝石贸易",
+          "type": "story",
+          "time": "汉代至明清",
+          "intro": "印度及周边地区盛产宝石、珍珠、琥珀、香料等珍贵商品。这些商品通过南方丝绸之路运往中国，深受中国贵族喜爱。汉代成都出土的文物中就有来自印度的海贝、琥珀等。相应地，中国的丝绸、茶叶、瓷器也大量销往印度。这种双向贸易持续数千年，促进了中印两国的经济文化交流，见证了南方丝绸之路作为文明交流之路的伟大意义。",
+          "order": 3
+        }
+      ]
+    }
+  ]
+};
+
+// 丝路图谱状态管理
+let silkRoadLevel = 0;
+let silkRoadNavigationStack = [silkRoadData];
+let silkRoadSimulation = null;
+
+const silkRoadColorMap = {
+  'root': '#d97706',
+  'location': '#f59e0b',
+  'story': '#fbbf24'
+};
+
+const silkRoadSizeMap = {
+  'root': 32,
+  'location': 26,
+  'story': 20
+};
+
+// 打开丝路文化弹窗
+function openSilkRoad() {
+  document.getElementById('silkRoadModal').classList.add('active');
+  initSilkRoadGraph();
+}
+
+// 关闭丝路图谱弹窗
+function closeSilkRoadModal() {
+  document.getElementById('silkRoadModal').classList.remove('active');
+  document.getElementById('silkRoadInfoPanel').classList.remove('active');
+  if (silkRoadSimulation) {
+    silkRoadSimulation.stop();
+  }
+}
+
+// 初始化丝路图谱
+function initSilkRoadGraph() {
+  silkRoadLevel = 0;
+  silkRoadNavigationStack = [silkRoadData];
+  renderSilkRoadGraph(silkRoadData, 'root');
+  updateSilkRoadBreadcrumb();
+  updateSilkRoadBackButton();
+}
+
+// 使用D3渲染丝路力导向图
+function renderSilkRoadGraph(data, parentType) {
+  const svg = d3.select('#silkRoadSvg');
+  svg.selectAll('*').remove();
+
+  const container = document.getElementById('silkRoadArea');
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+
+  svg.attr('width', width).attr('height', height);
+
+  const g = svg.append('g');
+
+  const nodes = [];
+  const links = [];
+
+  nodes.push({ id: data.name, ...data, level: 0 });
+
+  if (data.children) {
+    data.children.forEach((child, i) => {
+      nodes.push({ id: child.name, ...child, level: 1 });
+      links.push({ source: data.name, target: child.name });
+    });
+  }
+
+  silkRoadSimulation = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(d => d.id).distance(d => {
+      if (d.source.level === 0) return 200;
+      return 120;
+    }))
+    .force('charge', d3.forceManyBody().strength(-600))
+    .force('center', d3.forceCenter(width / 2, height / 2))
+    .force('collision', d3.forceCollide().radius(d => silkRoadSizeMap[d.type] + 15));
+
+  const link = g.append('g')
+    .selectAll('line')
+    .data(links)
+    .enter().append('line')
+    .attr('stroke', 'rgba(255,167,38,0.25)')
+    .attr('stroke-width', 1.5);
+
+  const node = g.append('g')
+    .selectAll('g')
+    .data(nodes)
+    .enter().append('g')
+    .attr('cursor', 'pointer')
+    .call(d3.drag()
+      .on('start', dragSilkRoadStarted)
+      .on('drag', dragSilkRoadDragged)
+      .on('end', dragSilkRoadEnded))
+    .on('click', (event, d) => {
+      event.stopPropagation();
+      showSilkRoadNodeInfo(d);
+      if (d.children && d.children.length > 0) {
+        navigateToSilkRoadNode(d);
+      }
+    })
+    .on('mouseover', (event, d) => {
+      const tooltip = document.getElementById('silkRoadTooltip');
+      tooltip.textContent = d.name;
+      tooltip.style.left = event.pageX + 10 + 'px';
+      tooltip.style.top = event.pageY + 10 + 'px';
+      tooltip.style.opacity = '1';
+    })
+    .on('mouseout', () => {
+      document.getElementById('silkRoadTooltip').style.opacity = '0';
+    });
+
+  node.append('circle')
+    .attr('r', d => silkRoadSizeMap[d.type] || 20)
+    .attr('fill', d => silkRoadColorMap[d.type] || '#fbbf24')
+    .attr('stroke', d => silkRoadColorMap[d.type] || '#fbbf24')
+    .attr('stroke-width', 2)
+    .attr('opacity', 0.8)
+    .style('filter', d => 'drop-shadow(0 0 8px ' + (silkRoadColorMap[d.type] || '#fbbf24') + ')');
+
+  node.append('text')
+    .text(d => d.name.length > 6 ? d.name.substring(0, 6) : d.name)
+    .attr('text-anchor', 'middle')
+    .attr('dy', '.35em')
+    .attr('fill', '#fff')
+    .attr('font-size', d => d.type === 'root' ? '14px' : d.type === 'location' ? '12px' : '10px')
+    .attr('font-weight', 'bold')
+    .attr('pointer-events', 'none');
+
+  node.filter(d => d.children && d.children.length > 0)
+    .append('circle')
+    .attr('r', 8)
+    .attr('cx', 0)
+    .attr('cy', d => (silkRoadSizeMap[d.type] || 20) + 12)
+    .attr('fill', 'rgba(255,167,38,0.2)')
+    .attr('stroke', '#ffa726')
+    .attr('stroke-width', 1.5);
+
+  node.filter(d => d.children && d.children.length > 0)
+    .append('text')
+    .text('+')
+    .attr('text-anchor', 'middle')
+    .attr('x', 0)
+    .attr('y', d => (silkRoadSizeMap[d.type] || 20) + 16)
+    .attr('fill', '#ffa726')
+    .attr('font-size', '12px')
+    .attr('font-weight', 'bold')
+    .attr('pointer-events', 'none');
+
+  silkRoadSimulation.on('tick', () => {
+    link
+      .attr('x1', d => d.source.x)
+      .attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x)
+      .attr('y2', d => d.target.y);
+
+    node.attr('transform', d => `translate(${d.x},${d.y})`);
+  });
+
+  const zoom = d3.zoom()
+    .scaleExtent([0.3, 3])
+    .on('zoom', (event) => {
+      g.attr('transform', event.transform);
+    });
+
+  svg.call(zoom);
+
+  function dragSilkRoadStarted(event, d) {
+    if (!event.active) silkRoadSimulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+
+  function dragSilkRoadDragged(event, d) {
+    d.fx = event.x;
+    d.fy = event.y;
+  }
+
+  function dragSilkRoadEnded(event, d) {
+    if (!event.active) silkRoadSimulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+  }
+}
+
+// 显示丝路节点信息
+function showSilkRoadNodeInfo(node) {
+  const panel = document.getElementById('silkRoadInfoPanel');
+  panel.classList.add('active');
+
+  document.getElementById('silkRoadInfoTitle').textContent = node.name;
+
+  let subtitle = '';
+  if (node.type === 'root') subtitle = '古代国际商道';
+  else if (node.type === 'location' && node.role) subtitle = node.role;
+  else if (node.type === 'story' && node.time) subtitle = node.time;
+  document.getElementById('silkRoadInfoSubtitle').textContent = subtitle;
+
+  const tag = document.getElementById('silkRoadInfoTag');
+  if (node.province) {
+    tag.style.display = 'inline-block';
+    tag.textContent = node.province;
+  } else {
+    tag.style.display = 'none';
+  }
+
+  let content = '';
+
+  if (node.description) {
+    content += `<div class="g-info-section">
+      <div class="g-info-section-title">简介</div>
+      <div class="g-info-section-text">${node.description}</div>
+    </div>`;
+  }
+
+  if (node.intro) {
+    content += `<div class="g-info-section">
+      <div class="g-info-section-title">详细介绍</div>
+      <div class="g-info-section-text">${node.intro}</div>
+    </div>`;
+  }
+
+  if (node.children && node.children.length > 0) {
+    const childType = node.type === 'location' ? '相关故事' : '子节点';
+    content += `<div class="g-info-section">
+      <div class="g-info-section-title">${childType} (${node.children.length})</div>
+      <div class="g-info-section-text">${node.children.map(c => c.name).join('、')}</div>
+    </div>`;
+  }
+
+  document.getElementById('silkRoadInfoContent').innerHTML = content || '<div class="g-info-section-text">暂无详细信息</div>';
+}
+
+// 导航到丝路节点
+function navigateToSilkRoadNode(node) {
+  if (!node.children || node.children.length === 0) return;
+
+  silkRoadLevel++;
+  silkRoadNavigationStack[silkRoadLevel] = node;
+  renderSilkRoadGraph(node, node.type);
+  updateSilkRoadBreadcrumb();
+  updateSilkRoadBackButton();
+}
+
+// 返回丝路上一级
+function goBackSilkRoad() {
+  if (silkRoadLevel > 0) {
+    navigateSilkRoadToLevel(silkRoadLevel - 1, silkRoadNavigationStack[silkRoadLevel - 1]);
+  }
+}
+
+// 导航到丝路指定级别
+function navigateSilkRoadTo(level) {
+  if (level <= silkRoadLevel) {
+    navigateSilkRoadToLevel(level, silkRoadNavigationStack[level]);
+  }
+}
+
+function navigateSilkRoadToLevel(level, data) {
+  silkRoadLevel = level;
+  silkRoadNavigationStack = silkRoadNavigationStack.slice(0, level + 1);
+  renderSilkRoadGraph(data, level === 0 ? 'root' : data.type);
+  updateSilkRoadBreadcrumb();
+  updateSilkRoadBackButton();
+}
+
+// 更新丝路面包屑
+function updateSilkRoadBreadcrumb() {
+  const breadcrumb = document.getElementById('silkRoadBreadcrumb');
+  const items = ['南方丝绸之路'];
+
+  if (silkRoadLevel >= 1 && silkRoadNavigationStack[1]) {
+    items.push(silkRoadNavigationStack[1].name);
+  }
+  if (silkRoadLevel >= 2 && silkRoadNavigationStack[2]) {
+    items.push(silkRoadNavigationStack[2].name);
+  }
+
+  let html = '';
+  items.forEach((item, i) => {
+    const isActive = i === silkRoadLevel;
+    if (i > 0) {
+      html += '<span class="graph-breadcrumb-sep">&gt;</span>';
+    }
+    html += `<span class="graph-breadcrumb-item ${isActive ? 'active' : ''}" data-level="${i}" onclick="navigateSilkRoadTo(${i})">${item}</span>`;
+  });
+
+  breadcrumb.innerHTML = html;
+}
+
+// 更新丝路返回按钮
+function updateSilkRoadBackButton() {
+  const backBtn = document.getElementById('silkRoadBackBtn');
+  if (silkRoadLevel === 0) {
+    backBtn.classList.add('hidden');
+  } else {
+    backBtn.classList.remove('hidden');
+  }
+}
+
+// 点击overlay关闭丝路弹窗
+document.getElementById('silkRoadModal').addEventListener('click', function(e) {
+  if (e.target.id === 'silkRoadModal') {
+    closeSilkRoadModal();
+  }
+});
+</script>
+</body>
+</html>
