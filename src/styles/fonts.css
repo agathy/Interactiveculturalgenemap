@@ -1,0 +1,23 @@
+@font-face {
+  font-family: 'KingHwa_OldSong';
+  src: local('KingHwa_OldSong'), local('京华老宋'), local('KingHwaOldSong');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'zihun266hao-shenshihei';
+  src: local('zihun266hao-shenshihei'), local('字魂266号-绅士黑'), local('zihun266');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'zihun266';
+  src: local('zihun266'), local('字魂266号-标智黑体'), local('ZiHun266');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Source Han Sans';
+  src: local('Source Han Sans CN'), local('Source Han Sans SC'), local('思源黑体');
+  font-display: swap;
+}

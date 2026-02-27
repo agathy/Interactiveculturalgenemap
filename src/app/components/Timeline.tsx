@@ -2,9 +2,12 @@
 
 interface TimelineProps {
   fenjiu_colors: any;
+  visible?: boolean;
 }
 
-export function Timeline({ fenjiu_colors }: TimelineProps) {
+export function Timeline({ fenjiu_colors, visible = true }: TimelineProps) {
+  if (!fenjiu_colors) return null;
+
   const timelineEvents = [
     { year: '6000年前', desc: '仰韶文化时期，杏花村先民开始酿酒，小口尖底瓮出土', category: '根祖文化' },
     { year: '前2357年', desc: '陶寺遗址建立，中国最早都城范式，尧帝定都平阳', category: '根祖文化' },
@@ -26,7 +29,7 @@ export function Timeline({ fenjiu_colors }: TimelineProps) {
   ];
 
   return (
-    <div className="absolute left-0 top-32 bottom-6 w-80 overflow-y-auto z-40 timeline-container"
+    <div className={`absolute left-0 top-32 bottom-6 w-80 overflow-y-auto z-40 timeline-container transition-all duration-500 ${visible ? 'translate-x-0 opacity-100' : '-translate-x-[120%] opacity-0'}`}
          style={{
            background: 'linear-gradient(135deg, rgba(10, 11, 16, 0.75) 0%, rgba(15, 20, 30, 0.65) 100%)',
            backdropFilter: 'blur(24px)',

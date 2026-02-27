@@ -5,6 +5,8 @@ interface EnhancedTitleProps {
 }
 
 export function EnhancedTitle({ fenjiu_colors }: EnhancedTitleProps) {
+  if (!fenjiu_colors) return null;
+
   return (
     <div className="absolute top-0 left-0 right-0 z-50 pt-8 pb-6 px-12 pointer-events-none">
       {/* 顶部装饰线 */}

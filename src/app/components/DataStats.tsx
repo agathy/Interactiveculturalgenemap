@@ -2,16 +2,19 @@
 
 interface DataStatsProps {
   fenjiu_colors: any;
+  visible?: boolean;
 }
 
-export function DataStats({ fenjiu_colors }: DataStatsProps) {
+export function DataStats({ fenjiu_colors, visible = true }: DataStatsProps) {
+  if (!fenjiu_colors || !visible) return null;
+
   const stats = [
     {
       label: '古建遗存',
       value: '70%',
       unit: '以上',
       desc: '全国元代以前木构建筑',
-      color: fenjiu_colors.ice_blue
+      color: fenjiu_colors?.ice_blue || '#87CEFA'
     },
     {
       label: '非遗项目',

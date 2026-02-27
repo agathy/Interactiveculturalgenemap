@@ -1,5 +1,17 @@
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+  font-family: 'KingHwa_OldSong';
+  src: local('KingHwa_OldSong'), url('/fonts/KingHwa_OldSong.ttf') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'zihun266hao-shenshihei';
+  src: local('zihun266hao-shenshihei'), url('/fonts/zihun266hao-shenshihei.ttf') format('truetype');
+  font-display: swap;
+}
+
 :root {
   --font-size: 16px;
   --background: #ffffff;
@@ -41,8 +53,8 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
+  .dark {
+  --background: #050508;
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.145 0 0);
   --card-foreground: oklch(0.985 0 0);

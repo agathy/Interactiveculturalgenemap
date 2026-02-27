@@ -84,8 +84,8 @@ export function StarField({ fenjiu_colors }: StarFieldProps) {
       draw() {
         if (!ctx) return;
         
-        // 计算当前透明度（基于闪烁）
-        const alpha = this.brightness * 0.8 + 0.2;
+        // 计算当前透明度（基于闪烁）- 降低整体透明度
+        const alpha = (this.brightness * 0.5 + 0.1) * 0.7; 
         
         // 绘制光晕
         const glowSize = this.size * 3;
@@ -122,7 +122,7 @@ export function StarField({ fenjiu_colors }: StarFieldProps) {
     
     // 创建星星
     const stars: Star[] = [];
-    const starCount = 400; // 增加星星数量：200 → 400
+    const starCount = 250; // 减少星星数量，从 400 降回 250，保持沉静感
     
     for (let i = 0; i < starCount; i++) {
       stars.push(new Star());
