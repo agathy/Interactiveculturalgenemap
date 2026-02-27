@@ -120,6 +120,7 @@ export function getOptimizedNodes(
       x: l1Positions['genzhu'].x,
       y: l1Positions['genzhu'].y,
       fixed: true,
+      draggable: false,
       symbol: customSymbols['genzhu'] || (useCircles ? 'circle' : 'diamond'),
       symbolSize: nodeSizes.l1,
       itemStyle: {
@@ -160,6 +161,7 @@ export function getOptimizedNodes(
       x: l1Positions['zhongyi'].x,
       y: l1Positions['zhongyi'].y,
       fixed: true,
+      draggable: false,
       symbol: customSymbols['zhongyi'] || (useCircles ? 'circle' : 'triangle'),
       symbolSize: nodeSizes.l1,
       itemStyle: {
@@ -192,6 +194,7 @@ export function getOptimizedNodes(
       x: l1Positions['shanhe'].x,
       y: l1Positions['shanhe'].y,
       fixed: true,
+      draggable: false,
       symbol: customSymbols['shanhe'] || (useCircles ? 'circle' : 'roundRect'),
       symbolSize: nodeSizes.l1,
       itemStyle: {
@@ -224,6 +227,7 @@ export function getOptimizedNodes(
       x: l1Positions['gujian'].x,
       y: l1Positions['gujian'].y,
       fixed: true,
+      draggable: false,
       symbol: customSymbols['gujian'] || (useCircles ? 'circle' : 'rect'),
       symbolSize: nodeSizes.l1,
       itemStyle: {
@@ -256,6 +260,7 @@ export function getOptimizedNodes(
       x: l1Positions['jiuhun'].x,
       y: l1Positions['jiuhun'].y,
       fixed: true,
+      draggable: false,
       symbol: customSymbols['jiuhun'] || (useCircles ? 'circle' : 'pin'),
       symbolSize: nodeSizes.l1,
       itemStyle: {
