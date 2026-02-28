@@ -124,6 +124,9 @@ export default function ShanxiCultureGraph() {
   const [rotationSpeed, setRotationSpeed] = useState(_saved?.rotationSpeed ?? 0.34);
   const [breathFrequency, setBreathFrequency] = useState(_saved?.breathFrequency ?? 0.160);
 
+  // 装饰圆盘半径偏移量
+  const [decorRadius, setDecorRadius] = useState(_saved?.decorRadius ?? 4);
+
   // 节点形状模式：true 为圆形，false 为自定义形状
   const [useCircles, setUseCircles] = useState(_saved?.useCircles ?? false);
 
@@ -294,6 +297,7 @@ export default function ShanxiCultureGraph() {
     setTimelineRadius(275);
     setRotationSpeed(0.34);
     setBreathFrequency(0.160);
+    setDecorRadius(4);
     setNodeSizes({
       root: 550,
       l1: 145,
@@ -322,7 +326,8 @@ export default function ShanxiCultureGraph() {
       showRootLabels,
       useCircles,
       rotationSpeed,
-      breathFrequency
+      breathFrequency,
+      decorRadius
     };
     localStorage.setItem('shanxi_culture_graph_config', JSON.stringify(config));
     toast.success('配置已保存为默认', {
@@ -339,12 +344,12 @@ export default function ShanxiCultureGraph() {
         bgColor, cultureColors, nodeSizes, nodeBorders,
         l1Radius, timelineRadius, rootColor, rootTitleFontSize,
         rootGlowIntensity, rootShadowColor, showRootLabels,
-        useCircles, rotationSpeed, breathFrequency
+        useCircles, rotationSpeed, breathFrequency, decorRadius
       };
       localStorage.setItem('shanxi_culture_graph_config', JSON.stringify(config));
     }, 300);
     return () => clearTimeout(autoSaveTimerRef.current);
-  }, [bgColor, cultureColors, nodeSizes, nodeBorders, l1Radius, timelineRadius, rootColor, rootTitleFontSize, rootGlowIntensity, rootShadowColor, showRootLabels, useCircles, rotationSpeed, breathFrequency]);
+  }, [bgColor, cultureColors, nodeSizes, nodeBorders, l1Radius, timelineRadius, rootColor, rootTitleFontSize, rootGlowIntensity, rootShadowColor, showRootLabels, useCircles, rotationSpeed, breathFrequency, decorRadius]);
 
   // 加载山西省地图数据
   useEffect(() => {
@@ -471,7 +476,7 @@ export default function ShanxiCultureGraph() {
     { source: 'zhongyi', target: 'zhongyi-3', lineStyle: { color: cultureColors['忠义文化'], opacity: 0.2, width: 0.5, curveness: 0.2 } },
     { source: 'zhongyi', target: 'zhongyi-4', lineStyle: { color: cultureColors['忠义文化'], opacity: 0.2, width: 0.5, curveness: 0.2 } },
 
-    { source: 'shanhe', target: 'shanhe-1', lineStyle: { color: cultureColors['山河文化'], opacity: 0.2, width: 0.5, curveness: 0.2 } },
+    { source: 'shanhe', target: 'shanhe-1', lineStyle: { color: cultureColors['��河文化'], opacity: 0.2, width: 0.5, curveness: 0.2 } },
     { source: 'shanhe', target: 'shanhe-2', lineStyle: { color: cultureColors['山河文化'], opacity: 0.2, width: 0.5, curveness: 0.2 } },
     { source: 'shanhe', target: 'shanhe-3', lineStyle: { color: cultureColors['山河文化'], opacity: 0.2, width: 0.5, curveness: 0.2 } },
     { source: 'shanhe', target: 'shanhe-4', lineStyle: { color: cultureColors['山河文化'], opacity: 0.2, width: 0.5, curveness: 0.2 } },
@@ -1010,6 +1015,23 @@ export default function ShanxiCultureGraph() {
                   <span>快速脉动</span>
                 </div>
               </div>
+              <div className="space-y-2">
+                <div className="flex justify-between text-[10px] text-white/50">
+                  <span>装饰圆盘半径</span>
+                  <span className="font-mono">{decorRadius}px</span>
+                </div>
+                <input
+                  type="range" min="0" max="20" step="1"
+                  value={decorRadius}
+                  onChange={(e) => setDecorRadius(parseInt(e.target.value))}
+                  className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                />
+                <div className="flex justify-between text-[9px] text-white/25">
+                  <span>紧贴节点</span>
+                  <span>虚线环/光晕扩散距离</span>
+                  <span>远离</span>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -1127,7 +1149,7 @@ export default function ShanxiCultureGraph() {
         <LatticeGrid />
         <BrickPattern />
         <OrbitRings fenjiu_colors={fenjiu_colors} chartInstance={chartInstance} l1Radius={l1Radius} timelineRadius={timelineRadius} />
-        <BreathingNodes fenjiu_colors={fenjiu_colors} colors={cultureColors} chartInstance={chartInstance} l1Radius={l1Radius} decorSpinSpeed={rotationSpeed} breathFrequency={breathFrequency} l1NodeSize={nodeSizes.l1} />
+        <BreathingNodes fenjiu_colors={fenjiu_colors} colors={cultureColors} chartInstance={chartInstance} l1Radius={l1Radius} decorSpinSpeed={rotationSpeed} breathFrequency={breathFrequency} l1NodeSize={nodeSizes.l1} decorRadius={decorRadius} />
         <Timeline fenjiu_colors={fenjiu_colors} visible={showPanels} />
       </div>
 
