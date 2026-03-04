@@ -1,17 +1,22 @@
 // 同心圆轨道组件
 
 import { motion } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface OrbitRingsProps {
   fenjiu_colors: any;
   chartInstance?: any;
   l1Radius: number;
   timelineRadius: number;
+  focusedTimeRange?: [number, number] | null;
 }
 
-export function OrbitRings({ fenjiu_colors, chartInstance, l1Radius, timelineRadius }: OrbitRingsProps) {
+export function OrbitRings({ fenjiu_colors, chartInstance, l1Radius, timelineRadius, focusedTimeRange }: OrbitRingsProps) {
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
+  // Orbit particle: angle in degrees, animated via rAF to avoid Motion deprecated offsetDistance
+  const orbitAngleRef = useRef(0);
+  const orbitDotRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number>();
 
   useEffect(() => {
     if (!chartInstance) return;
@@ -20,29 +25,16 @@ export function OrbitRings({ fenjiu_colors, chartInstance, l1Radius, timelineRad
       if (!chartInstance || chartInstance.isDisposed()) return;
 
       try {
-        // 获取中心节点 (root) 在屏幕上的像素坐标
         const pos = chartInstance.convertToPixel({ seriesIndex: 0 }, [500, 375]);
-        
-        // 获取当前的缩放比例
         const option = chartInstance.getOption();
         const zoom = (option && option.series && option.series[0] && option.series[0].zoom) || 1;
-        
         if (pos) {
-          setTransform({
-            x: pos[0],
-            y: pos[1],
-            scale: zoom
-          });
+          setTransform({ x: pos[0], y: pos[1], scale: zoom });
         }
-      } catch (e) {
-        // 忽略初始化期间的坐标转换错误
-      }
+      } catch (e) { /* ignore */ }
     };
 
-    // 初始计算
     updatePosition();
-
-    // 监听缩放和拖拽
     chartInstance.on('graphroam', updatePosition);
     chartInstance.on('finished', updatePosition);
 
@@ -54,10 +46,32 @@ export function OrbitRings({ fenjiu_colors, chartInstance, l1Radius, timelineRad
     };
   }, [chartInstance]);
 
+  // Animate the orbit particle using rAF instead of Motion offsetDistance
+  useEffect(() => {
+    const r = timelineRadius;
+    let last = performance.now();
+
+    const tick = (now: number) => {
+      const dt = now - last;
+      last = now;
+      orbitAngleRef.current = (orbitAngleRef.current + (dt / 20000) * 360) % 360;
+      const rad = ((orbitAngleRef.current - 90) * Math.PI) / 180;
+      const cx = r + r * Math.cos(rad);
+      const cy = r + r * Math.sin(rad);
+      if (orbitDotRef.current) {
+        orbitDotRef.current.style.transform = `translate(${cx - 4}px, ${cy - 4}px)`;
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [timelineRadius]);
+
   if (!fenjiu_colors) return null;
 
   const rings = [
-    { size: l1Radius * 2, opacity: 0.15, style: 'solid', color: fenjiu_colors.ice_blue }, // 主轨道
+    { size: l1Radius * 2, opacity: 0.15, style: 'solid', color: fenjiu_colors.ice_blue },
     { size: l1Radius * 2 + 60, opacity: 0.08, style: 'solid' },
     { size: l1Radius * 2 + 150, opacity: 0.05, style: 'dashed' },
     { size: l1Radius * 2 + 280, opacity: 0.03, style: 'solid' }
@@ -71,12 +85,38 @@ export function OrbitRings({ fenjiu_colors, chartInstance, l1Radius, timelineRad
     { name: '现代', angle: 288 }
   ];
 
+  const getYearAngle = (year: number) => {
+    const minYear = -6000;
+    const maxYear = 2026;
+    const clamped = Math.max(minYear, Math.min(maxYear, year));
+    return ((clamped - minYear) / (maxYear - minYear)) * 360;
+  };
+
+  const polarToCartesian = (cx: number, cy: number, r: number, deg: number) => {
+    const rad = (deg * Math.PI) / 180.0;
+    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+  };
+
+  const arcPath = focusedTimeRange ? (() => {
+    const startAngle = getYearAngle(focusedTimeRange[0]) - 90;
+    const endAngle   = getYearAngle(focusedTimeRange[1]) - 90;
+    const diff = Math.max(5, endAngle - startAngle);
+    const start = polarToCartesian(timelineRadius, timelineRadius, timelineRadius, startAngle);
+    const end   = polarToCartesian(timelineRadius, timelineRadius, timelineRadius, startAngle + diff);
+    const largeArcFlag = diff <= 180 ? '0' : '1';
+    return `M ${start.x} ${start.y} A ${timelineRadius} ${timelineRadius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
+  })() : null;
+
+  const endDot = focusedTimeRange
+    ? polarToCartesian(timelineRadius, timelineRadius, timelineRadius, getYearAngle(focusedTimeRange[1]) - 90)
+    : null;
+
   return (
-    <div 
+    <div
       className="absolute inset-0 pointer-events-none overflow-hidden"
       style={{ zIndex: 3 }}
     >
-      <div 
+      <div
         className="absolute top-0 left-0"
         style={{
           transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})`,
@@ -94,7 +134,7 @@ export function OrbitRings({ fenjiu_colors, chartInstance, l1Radius, timelineRad
                 height: `${ring.size}px`,
                 border: `1px ${ring.style} ${fenjiu_colors.ice_blue}`,
                 opacity: ring.opacity,
-                boxShadow: ring.style === 'solid' 
+                boxShadow: ring.style === 'solid'
                   ? `0 0 20px ${fenjiu_colors.ice_blue}${Math.floor(ring.opacity * 100).toString(16).padStart(2, '0')}`
                   : 'none'
               }}
@@ -102,10 +142,10 @@ export function OrbitRings({ fenjiu_colors, chartInstance, l1Radius, timelineRad
           ))}
 
           {/* 时间轮回圆环 */}
-          <motion.div 
+          <motion.div
             className="absolute rounded-full border border-cyan-400/20"
             animate={{ rotate: 360 }}
-            transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 120, repeat: Infinity, ease: 'linear' }}
             style={{
               width: `${timelineRadius * 2}px`,
               height: `${timelineRadius * 2}px`,
@@ -113,20 +153,20 @@ export function OrbitRings({ fenjiu_colors, chartInstance, l1Radius, timelineRad
             }}
           >
             {timeMarkers.map((marker, idx) => (
-              <div 
+              <div
                 key={idx}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                className="absolute top-1/2 left-1/2"
                 style={{
                   transform: `translate(-50%, -50%) rotate(${marker.angle}deg) translateY(-${timelineRadius}px)`
                 }}
               >
                 <div className="flex flex-col items-center gap-1">
                   <div className="w-1 h-3 bg-cyan-400/60 rounded-full shadow-[0_0_8px_rgba(34,211,238,0.8)]"></div>
-                  <span 
+                  <span
                     className="text-[10px] text-cyan-200/60 font-medium tracking-tighter"
-                    style={{ 
+                    style={{
                       textShadow: '0 0 10px rgba(135, 206, 250, 0.5)',
-                      transform: `rotate(-${marker.angle}deg)` // 文字保持水平可读
+                      transform: `rotate(-${marker.angle}deg)`
                     }}
                   >
                     {marker.name}
@@ -134,18 +174,69 @@ export function OrbitRings({ fenjiu_colors, chartInstance, l1Radius, timelineRad
                 </div>
               </div>
             ))}
-            
-            <motion.div
-              className="absolute w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_15px_#22d3ee]"
-              animate={{ offsetDistance: ["0%", "100%"] }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              style={{
-                offsetPath: `path('M ${timelineRadius}, ${timelineRadius} m -${timelineRadius}, 0 a ${timelineRadius},${timelineRadius} 0 1,0 ${timelineRadius * 2},0 a ${timelineRadius},${timelineRadius} 0 1,0 -${timelineRadius * 2},0')`,
-              }}
-            />
+
+            {/* 高亮聚焦时间段的弧形 */}
+            {focusedTimeRange && arcPath && (
+              <svg
+                className="absolute top-0 left-0"
+                width={timelineRadius * 2}
+                height={timelineRadius * 2}
+                viewBox={`0 0 ${timelineRadius * 2} ${timelineRadius * 2}`}
+                style={{ overflow: 'visible' }}
+              >
+                {/* 弧线 */}
+                <motion.path
+                  key={focusedTimeRange.join(',')}
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: 1, opacity: 1 }}
+                  transition={{ duration: 0.6, ease: 'easeOut' }}
+                  d={arcPath}
+                  fill="none"
+                  stroke="#22d3ee"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  style={{ filter: 'drop-shadow(0 0 10px #22d3ee)' }}
+                />
+                {/* 端点光点 - 用 opacity 动画替代 scale */}
+                {endDot && (
+                  <motion.circle
+                    key={`dot-${focusedTimeRange.join(',')}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, delay: 0.4 }}
+                    cx={endDot.x}
+                    cy={endDot.y}
+                    r="5"
+                    fill="#22d3ee"
+                    style={{ filter: 'drop-shadow(0 0 12px #22d3ee)' }}
+                  />
+                )}
+              </svg>
+            )}
           </motion.div>
 
-          <div 
+          {/* 轨道粒子 - 使用 rAF 驱动，避免 Motion offsetDistance 警告 */}
+          <div
+            className="absolute"
+            style={{
+              width: `${timelineRadius * 2}px`,
+              height: `${timelineRadius * 2}px`,
+              pointerEvents: 'none'
+            }}
+          >
+            <div
+              ref={orbitDotRef}
+              className="absolute w-2 h-2 rounded-full bg-cyan-400"
+              style={{
+                top: 0,
+                left: 0,
+                boxShadow: '0 0 15px #22d3ee, 0 0 4px #22d3ee',
+                willChange: 'transform'
+              }}
+            />
+          </div>
+
+          <div
             className="absolute rounded-full opacity-10"
             style={{
               width: `${timelineRadius * 2 + 30}px`,

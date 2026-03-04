@@ -1,11 +1,12 @@
 import { useRef, useState, useEffect, useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts';
-import { ChevronLeft, ChevronRight, Save, RotateCcw, LayoutGrid, FolderOpen } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Save, RotateCcw, LayoutGrid, FolderOpen, Download, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { RippleEffect } from './CulturalSymbols';
 import { getOptimizedNodes } from './OptimizedNodes';
-import { EnhancedTitle } from './EnhancedTitle';
+import { DEFAULT_GRAPH_DATA, generateLinksFromData, generateCategoriesFromData, validateGraphData, buildTimeRangeMap, type GraphData } from './graphData';
+
 import { Timeline } from './Timeline';
 import { DataStats } from './DataStats';
 import { OrbitRings } from './OrbitRings';
@@ -37,6 +38,8 @@ export default function ShanxiCultureGraph() {
   const [chartInstance, setChartInstance] = useState<any>(null);
   const viewStateRef = useRef({ zoom: 1, center: [500, 375] as [number, number] });
 
+  const [focusedTimeRange, setFocusedTimeRange] = useState<[number, number] | null>(null);
+
   // 监听缩放和平移，实时记录视图状态
   useEffect(() => {
     if (!chartInstance) return;
@@ -58,9 +61,10 @@ export default function ShanxiCultureGraph() {
   }, [chartInstance]);
 
   // 汾酒主题配色板（The Fenjiu Palette）
-  const fenjiu_colors = {
+  // useMemo 保证对象引用稳定，防止每次渲染产生新引用 → 级联 useMemo 全部失效 → ECharts 反复调用 setOption → 重复节点错误
+  const fenjiu_colors = useMemo(() => ({
     // 主视觉基调
-    background: bgColor, // 回归深邃的靛青黑，增加一点色相深度
+    background: bgColor,
     
     // 清香灵魂色（琉璃冰蓝/汾河清波）
     ice_blue_light: '#E0FFFF',
@@ -73,7 +77,7 @@ export default function ShanxiCultureGraph() {
     
     // 文化点缀色
     apricot_pink: '#FFC0CB'  // 杏花微雨粉
-  };
+  }), [bgColor]);
 
   // 定义五大文化基因的初始配色
   const initialCultureColors = {
@@ -126,6 +130,10 @@ export default function ShanxiCultureGraph() {
 
   // 装饰圆盘半径偏移量
   const [decorRadius, setDecorRadius] = useState(_saved?.decorRadius ?? 4);
+
+  // 图谱节点数据（支持上传替换）
+  const [graphData, setGraphData] = useState<GraphData>(DEFAULT_GRAPH_DATA);
+  const graphDataFileRef = useRef<HTMLInputElement>(null);
 
   // 节点形状模式：true 为圆形，false 为自定义形状
   const [useCircles, setUseCircles] = useState(_saved?.useCircles ?? false);
@@ -310,6 +318,139 @@ export default function ShanxiCultureGraph() {
     });
   };
 
+  // 隐藏的配置文件上传 input
+  const configFileRef = useRef<HTMLInputElement>(null);
+
+  // 导出配置为 JSON 文件
+  const exportConfig = () => {
+    const config = {
+      _version: 1,
+      _exportedAt: new Date().toISOString(),
+      bgColor,
+      cultureColors,
+      nodeSizes,
+      nodeBorders,
+      l1Radius,
+      timelineRadius,
+      rootColor,
+      rootTitleFontSize,
+      rootGlowIntensity,
+      rootShadowColor,
+      showRootLabels,
+      useCircles,
+      rotationSpeed,
+      breathFrequency,
+      decorRadius
+    };
+    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `shanxi-culture-config-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('配置已导出', {
+      style: { background: 'rgba(0, 0, 0, 0.8)', color: '#00EAFF', border: '1px solid rgba(0, 234, 255, 0.2)' }
+    });
+  };
+
+  // 导入配置 JSON 文件
+  const importConfig = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const config = JSON.parse(ev.target?.result as string);
+        if (config.bgColor) setBgColor(config.bgColor);
+        if (config.cultureColors) setCultureColors(config.cultureColors);
+        if (config.nodeSizes) setNodeSizes(config.nodeSizes);
+        if (config.nodeBorders) setNodeBorders(config.nodeBorders);
+        if (config.l1Radius !== undefined) setL1Radius(config.l1Radius);
+        if (config.timelineRadius !== undefined) setTimelineRadius(config.timelineRadius);
+        if (config.rootColor) setRootColor(config.rootColor);
+        if (config.rootTitleFontSize !== undefined) setRootTitleFontSize(config.rootTitleFontSize);
+        if (config.rootGlowIntensity !== undefined) setRootGlowIntensity(config.rootGlowIntensity);
+        if (config.rootShadowColor) setRootShadowColor(config.rootShadowColor);
+        if (config.showRootLabels !== undefined) setShowRootLabels(config.showRootLabels);
+        if (config.useCircles !== undefined) setUseCircles(config.useCircles);
+        if (config.rotationSpeed !== undefined) setRotationSpeed(config.rotationSpeed);
+        if (config.breathFrequency !== undefined) setBreathFrequency(config.breathFrequency);
+        if (config.decorRadius !== undefined) setDecorRadius(config.decorRadius);
+        toast.success('配置已导入并应用', {
+          style: { background: 'rgba(0, 0, 0, 0.8)', color: '#00EAFF', border: '1px solid rgba(0, 234, 255, 0.2)' }
+        });
+      } catch {
+        toast.error('配置文件格式无效，请检查 JSON 格式', {
+          style: { background: 'rgba(0, 0, 0, 0.8)', color: '#ff6b6b', border: '1px solid rgba(255, 107, 107, 0.2)' }
+        });
+      }
+    };
+    reader.readAsText(file);
+    // 重置 input 值，允许重复上传同一文件
+    e.target.value = '';
+  };
+
+  // 导出图谱节点数据为 JSON 文件
+  const exportGraphData = () => {
+    const blob = new Blob([JSON.stringify(graphData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `shanxi-graph-data-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('图谱节点数据已导出', {
+      style: { background: 'rgba(0, 0, 0, 0.8)', color: '#00EAFF', border: '1px solid rgba(0, 234, 255, 0.2)' }
+    });
+  };
+
+  // 导入图谱节点数据 JSON 文件
+  const importGraphData = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target?.result as string);
+        const result = validateGraphData(data);
+        if (!result.valid) {
+          toast.error(`图谱数据校验失败：${result.error}`, {
+            style: { background: 'rgba(0, 0, 0, 0.8)', color: '#ff6b6b', border: '1px solid rgba(255, 107, 107, 0.2)' }
+          });
+          return;
+        }
+        setGraphData(data as GraphData);
+        // 统计节点数
+        let totalNodes = 1; // root
+        data.categories.forEach((cat: any) => {
+          totalNodes += 1; // L1
+          totalNodes += cat.children.length; // L2
+          cat.children.forEach((l2: any) => {
+            totalNodes += (l2.children?.length || 0); // L3
+          });
+        });
+        toast.success(`图谱数据已导入：${data.categories.length} 个分类，${totalNodes} 个节点`, {
+          style: { background: 'rgba(0, 0, 0, 0.8)', color: '#00EAFF', border: '1px solid rgba(0, 234, 255, 0.2)' }
+        });
+      } catch {
+        toast.error('图谱数据文件格式无效，请检查 JSON 格式', {
+          style: { background: 'rgba(0, 0, 0, 0.8)', color: '#ff6b6b', border: '1px solid rgba(255, 107, 107, 0.2)' }
+        });
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
+  // 重置图谱数据为默认
+  const resetGraphData = () => {
+    setGraphData(DEFAULT_GRAPH_DATA);
+    toast.info('图谱节点数据已重置为默认', {
+      style: { background: 'rgba(0, 0, 0, 0.8)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.1)' }
+    });
+  };
+
   // 保存当前配置为默认
   const saveAsDefault = () => {
     const config = {
@@ -406,8 +547,9 @@ export default function ShanxiCultureGraph() {
       rootGlowIntensity,
       rootShadowColor,
       nodeBorders
-    }
-  ), [fenjiu_colors, cultureColors, nodeSizes, customSymbols, useCircles, l1Radius, showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, nodeBorders]);
+    },
+    graphData
+  ), [fenjiu_colors, cultureColors, nodeSizes, customSymbols, useCircles, l1Radius, showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, nodeBorders, graphData]);
 
   // 呼吸动画已完全移至 BreathingNodes Canvas 叠加层
   // 不再调用 chartInstance.setOption()，力导向布局零干扰
@@ -458,8 +600,16 @@ export default function ShanxiCultureGraph() {
 
     processAll();
   }, [rawImages, nodeBorders, cultureColors, rootColor, rootShadowColor]);
-  // 使用 useMemo 缓存链接数据
-  const links = useMemo(() => [
+  // 使用 useMemo 缓存链接数据（从 graphData 动态生成）
+  const links = useMemo(() => generateLinksFromData(graphData, cultureColors, fenjiu_colors), [cultureColors, fenjiu_colors, graphData]);
+  const categories = useMemo(() => generateCategoriesFromData(graphData), [graphData]);
+  // 时间范围查找表：节点 ID → [startYear, endYear]
+  const timeRangeMap = useMemo(() => buildTimeRangeMap(graphData), [graphData]);
+  // 使用 ref 确保 handleClick 闭包内始终读取最新的查找表
+  const timeRangeMapRef = useRef(timeRangeMap);
+  useEffect(() => { timeRangeMapRef.current = timeRangeMap; }, [timeRangeMap]);
+  /* eslint-disable */
+  const _DEAD = false && [
     { source: 'root', target: 'genzhu', lineStyle: { color: fenjiu_colors.ice_blue, opacity: 0.3, width: 1, curveness: 0 } },
     { source: 'root', target: 'zhongyi', lineStyle: { color: fenjiu_colors.ice_blue, opacity: 0.3, width: 1, curveness: 0 } },
     { source: 'root', target: 'shanhe', lineStyle: { color: fenjiu_colors.ice_blue, opacity: 0.3, width: 1, curveness: 0 } },
@@ -544,9 +694,8 @@ export default function ShanxiCultureGraph() {
     { source: 'jiuhun-4', target: 'jh-4-1', lineStyle: { color: cultureColors['酒魂文化'], opacity: 0.12, width: 0.4, type: 'dashed' } },
     { source: 'jiuhun-4', target: 'jh-4-2', lineStyle: { color: cultureColors['酒魂文化'], opacity: 0.12, width: 0.4, type: 'dashed' } },
     { source: 'jiuhun-4', target: 'jh-4-3', lineStyle: { color: cultureColors['酒魂文化'], opacity: 0.12, width: 0.4, type: 'dashed' } }
-  ], [cultureColors, fenjiu_colors]);
-
-  const categories = [{ name: 'root' }, { name: 'genzhu' }, { name: 'zhongyi' }, { name: 'shanhe' }, { name: 'gujian' }, { name: 'jiuhun' }];
+  ];
+  /* eslint-enable @typescript-eslint/no-unused-vars */
 
   const getOption = useMemo(() => {
     return {
@@ -743,15 +892,69 @@ export default function ShanxiCultureGraph() {
 
     const handleClick = (params: any) => {
       if (params.componentType === 'series' && params.dataType === 'node') {
+        const nodeData = params.data;
+        const color = nodeData.itemStyle?.borderColor || fenjiu_colors.ice_blue;
+
+        // 1. 触发涟漪效果
         if (params.event && params.event.event) {
           const mouseEvent = params.event.event;
-          const color = params.data.itemStyle?.borderColor || fenjiu_colors.ice_blue;
           rippleEffect.addRipple(mouseEvent.clientX, mouseEvent.clientY, color);
+        }
+
+        // 3. 设置时间轴聚焦范围（从独立 ref 查找表获取，不污染 ECharts 节点数据）
+        const tr = timeRangeMapRef.current[nodeData.id];
+        setFocusedTimeRange(tr ?? null);
+
+        // 2. 将点击的节点平滑移动到画面中央
+        // 获取节点实时位置（针对力导向布局下的动态节点）
+        let targetX = nodeData.x;
+        let targetY = nodeData.y;
+        
+        try {
+          const seriesModel = chartInstance.getModel().getSeriesByIndex(0);
+          const seriesData = seriesModel.getData();
+          const layout = seriesData.getItemLayout(params.dataIndex);
+          if (layout) {
+            targetX = layout[0];
+            targetY = layout[1];
+          }
+        } catch (e) { /* fallback to nodeData.x/y */ }
+
+        if (targetX !== undefined && targetY !== undefined) {
+          // 更新视图状态记录
+          viewStateRef.current.center = [targetX, targetY];
+          
+          // 执行 ECharts 中心点切换（先确认实例未被销毁）
+          if (!chartInstance.isDisposed()) {
+            chartInstance.setOption({
+              series: [{
+                center: [targetX, targetY],
+                zoom: viewStateRef.current.zoom
+              }]
+            });
+          }
+          
+          toast.info(`已聚焦至：${nodeData.name}`, {
+            duration: 1500,
+            style: { 
+              background: 'rgba(0, 0, 0, 0.8)', 
+              color: color, 
+              border: `1px solid ${color}40`,
+              fontSize: '10px'
+            }
+          });
         }
       }
     };
 
+    const handleZrClick = (params: any) => {
+      if (!params.target) {
+        setFocusedTimeRange(null);
+      }
+    };
+
     chartInstance.on('click', handleClick);
+    chartInstance.getZr().on('click', handleZrClick);
 
     const handleResize = () => {
       canvas.width = window.innerWidth;
@@ -764,6 +967,7 @@ export default function ShanxiCultureGraph() {
       window.removeEventListener('resize', handleResize);
       if (chartInstance && !chartInstance.isDisposed()) {
         chartInstance.off('click', handleClick);
+        chartInstance.getZr().off('click', handleZrClick);
       }
       document.body.removeChild(canvas);
     };
@@ -780,10 +984,10 @@ export default function ShanxiCultureGraph() {
             <div className="w-1 h-4 bg-cyan-400"></div>
             图谱视觉参数调节
           </h3>
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 flex-wrap justify-end">
             <button 
               onClick={saveAsDefault}
-              className="text-[10px] text-white/40 hover:text-cyan-400 transition-colors flex items-center gap-1 border border-white/10 px-2 py-1 rounded-md bg-white/5"
+              className="text-[10px] text-white/40 hover:text-cyan-400 transition-colors flex items-center gap-1 border border-white/10 px-1.5 py-1 rounded-md bg-white/5"
               title="保存当前配置为默认"
             >
               <Save size={10} />
@@ -791,12 +995,35 @@ export default function ShanxiCultureGraph() {
             </button>
             <button 
               onClick={resetAdjustments}
-              className="text-[10px] text-white/40 hover:text-cyan-400 transition-colors flex items-center gap-1 border border-white/10 px-2 py-1 rounded-md bg-white/5"
+              className="text-[10px] text-white/40 hover:text-cyan-400 transition-colors flex items-center gap-1 border border-white/10 px-1.5 py-1 rounded-md bg-white/5"
               title="重置全部配置"
             >
               <RotateCcw size={10} />
               重置
             </button>
+            <button 
+              onClick={exportConfig}
+              className="text-[10px] text-white/40 hover:text-emerald-400 transition-colors flex items-center gap-1 border border-white/10 px-1.5 py-1 rounded-md bg-white/5"
+              title="导出配置为 JSON 文件"
+            >
+              <Download size={10} />
+              导出
+            </button>
+            <button 
+              onClick={() => configFileRef.current?.click()}
+              className="text-[10px] text-white/40 hover:text-amber-400 transition-colors flex items-center gap-1 border border-white/10 px-1.5 py-1 rounded-md bg-white/5"
+              title="导入配置 JSON 文件"
+            >
+              <Upload size={10} />
+              导入
+            </button>
+            <input
+              ref={configFileRef}
+              type="file"
+              accept=".json"
+              onChange={importConfig}
+              className="hidden"
+            />
           </div>
         </div>
         
@@ -1140,6 +1367,54 @@ export default function ShanxiCultureGraph() {
               </div>
             </div>
           </section>
+
+          <section className="space-y-4">
+            <h4 className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white/5 pb-1">图谱节点数据</h4>
+            <div className="space-y-3">
+              <div className="p-3 rounded-lg bg-white/5 border border-white/10 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-white/50">
+                    当前：{graphData.categories.length} 分类 / {graphData.categories.reduce((acc, c) => acc + c.children.length, 0)} 二级 / {graphData.categories.reduce((acc, c) => acc + c.children.reduce((a2, l2) => a2 + (l2.children?.length || 0), 0), 0)} 三级
+                  </span>
+                  {graphData !== DEFAULT_GRAPH_DATA && (
+                    <span className="text-[9px] text-amber-400/70 bg-amber-400/10 px-1.5 py-0.5 rounded">自定义</span>
+                  )}
+                </div>
+                <p className="text-[9px] text-white/30 leading-relaxed">
+                  上传 JSON 文件替换图谱节点内容。可先导出当前数据作为模板，修改后重新导入。
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={exportGraphData}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-dashed border-white/20 rounded-md hover:border-emerald-400/50 hover:bg-emerald-400/5 transition-all cursor-pointer group"
+                >
+                  <Download className="w-3 h-3 text-white/30 group-hover:text-emerald-400 shrink-0" />
+                  <span className="text-[10px] text-white/50 group-hover:text-emerald-400">导出节点数据</span>
+                </button>
+                <label className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-dashed border-white/20 rounded-md hover:border-amber-400/50 hover:bg-amber-400/5 transition-all cursor-pointer group">
+                  <Upload className="w-3 h-3 text-white/30 group-hover:text-amber-400 shrink-0" />
+                  <span className="text-[10px] text-white/50 group-hover:text-amber-400">导入节点数据</span>
+                  <input
+                    ref={graphDataFileRef}
+                    type="file"
+                    accept=".json"
+                    onChange={importGraphData}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+              {graphData !== DEFAULT_GRAPH_DATA && (
+                <button
+                  onClick={resetGraphData}
+                  className="w-full text-[10px] text-white/40 hover:text-cyan-400 transition-colors flex items-center justify-center gap-1 border border-white/10 px-2 py-1.5 rounded-md bg-white/5"
+                >
+                  <RotateCcw size={10} />
+                  恢复默认节点数据
+                </button>
+              )}
+            </div>
+          </section>
         </div>
       </div>
 
@@ -1148,16 +1423,11 @@ export default function ShanxiCultureGraph() {
         <StarField fenjiu_colors={fenjiu_colors} />
         <LatticeGrid />
         <BrickPattern />
-        <OrbitRings fenjiu_colors={fenjiu_colors} chartInstance={chartInstance} l1Radius={l1Radius} timelineRadius={timelineRadius} />
+        <OrbitRings fenjiu_colors={fenjiu_colors} chartInstance={chartInstance} l1Radius={l1Radius} timelineRadius={timelineRadius} focusedTimeRange={focusedTimeRange} />
         <BreathingNodes fenjiu_colors={fenjiu_colors} colors={cultureColors} chartInstance={chartInstance} l1Radius={l1Radius} decorSpinSpeed={rotationSpeed} breathFrequency={breathFrequency} l1NodeSize={nodeSizes.l1} decorRadius={decorRadius} />
         <Timeline fenjiu_colors={fenjiu_colors} visible={showPanels} />
       </div>
 
-      <EnhancedTitle 
-        fenjiu_colors={fenjiu_colors}
-        title="山西五大文化基因体系交互图谱" 
-        subtitle="SHANXI CULTURAL GENE SYSTEM INTERACTIVE GRAPH" 
-      />
       
       <div className={`absolute top-0 right-0 h-screen w-96 pointer-events-none z-40 overflow-hidden transition-all duration-500 ${showPanels ? 'translate-x-0 opacity-100' : 'translate-x-[100%] opacity-0'}`}>
         <DataStats fenjiu_colors={fenjiu_colors} visible={showPanels} />
@@ -1168,8 +1438,8 @@ export default function ShanxiCultureGraph() {
           <ReactECharts
             ref={chartRef}
             option={getOption}
-            notMerge={false} // 改为 false 以启用增量更新，大幅减少更新时的渲染压力和潜在报错
-            lazyUpdate={true}
+            notMerge={true} // true：每次完整替换，防止 graph 系列 mergeOption 时重复追加节点导致"duplicate name or id"错误
+            lazyUpdate={false}
             style={{ width: '100%', height: '100%' }}
             onEvents={{
               'rendered': () => {
@@ -1196,7 +1466,7 @@ export default function ShanxiCultureGraph() {
                 viewStateRef.current = { zoom: 1, center: [500, 375] };
               }
             }}>视图重置</button>
-            <button className="text-[10px] text-white/40 hover:text-cyan-400 transition-colors uppercase tracking-wider font-bold">数据导出</button>
+            <button className="text-[10px] text-white/40 hover:text-cyan-400 transition-colors uppercase tracking-wider font-bold" onClick={exportGraphData}>数据导出</button>
           </div>
         </div>
       </div>

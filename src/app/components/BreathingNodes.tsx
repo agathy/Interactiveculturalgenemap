@@ -131,18 +131,18 @@ export function BreathingNodes({
           const el = seriesData.getItemGraphicEl(nodeIndex);
           if (el) {
             // 获取元素的全局变换矩阵，提取平移分量
-            // graph 节点的 graphic element 是一个 Group，其 position 就是节点在 chart 容器中的像素位置
-            // 但需要考虑父级 Group 的变换（zoom/pan）
+            // 使用新版 zrender API：x/y 替代 position，scaleX/scaleY 替代 scale
             let globalX = 0;
             let globalY = 0;
             let current = el;
             while (current) {
-              const pos = current.position || [0, 0];
-              const origin = current.origin || [0, 0];
-              const scale = current.scale || [1, 1];
-              // 如果有缩放，position 中已经包含了偏移
-              globalX = globalX * (scale[0] ?? 1) + (pos[0] ?? 0);
-              globalY = globalY * (scale[1] ?? 1) + (pos[1] ?? 0);
+              // zrender ≥5 使用 x/y 替代 position[]，scaleX/scaleY 替代 scale[]
+              const posX = (current as any).x ?? 0;
+              const posY = (current as any).y ?? 0;
+              const scaleX = (current as any).scaleX ?? 1;
+              const scaleY = (current as any).scaleY ?? 1;
+              globalX = globalX * scaleX + posX;
+              globalY = globalY * scaleY + posY;
               current = current.parent;
             }
             x = globalX + offsetX;
