@@ -271,8 +271,15 @@ export function geoJsonToSVGPath(geoJson: any, size: number = 200): string {
 
   const rangeX = maxLng - minLng || 1;
   const rangeY = maxLat - minLat || 1;
-  const scale = size / Math.max(rangeX, rangeY);
-  const padX = (size - rangeX * scale) / 2;
+
+  // 等距圆柱投影修正：1° 经度的物理长度 = cos(纬度) × 1° 纬度的物理长度
+  // 不修正会导致地图 X 方向被拉宽（越高纬误差越大，山西约 37°N 需修正 ~20%）
+  const avgLat = (minLat + maxLat) / 2;
+  const cosLat = Math.cos((avgLat * Math.PI) / 180);
+  const adjustedRangeX = rangeX * cosLat; // 投影后实际宽度（纬度等价单位）
+
+  const scale = size / Math.max(adjustedRangeX, rangeY);
+  const padX = (size - adjustedRangeX * scale) / 2;
   const padY = (size - rangeY * scale) / 2;
 
   // 按总点数动态决定采样步长，控制路径总点数 ≤ 800
@@ -285,7 +292,8 @@ export function geoJsonToSVGPath(geoJson: any, size: number = 200): string {
     for (let i = 0; i < ring.length; i++) {
       if (i !== 0 && i !== ring.length - 1 && i % step !== 0) continue;
       const [lng, lat] = ring[i];
-      const x = ((lng - minLng) * scale + padX).toFixed(1);
+      // X 坐标乘以 cosLat 修正经度→距离压缩比
+      const x = ((lng - minLng) * cosLat * scale + padX).toFixed(1);
       const y = (size - ((lat - minLat) * scale + padY)).toFixed(1); // 翻转 Y 轴
       cmds.push(i === 0 ? `M${x},${y}` : `L${x},${y}`);
     }
