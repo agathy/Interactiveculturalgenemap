@@ -1215,6 +1215,90 @@ export default function ShanxiCultureGraph() {
         
         <div className="space-y-8">
           <section className="space-y-4">
+            <h4 className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white/5 pb-1">数据管理</h4>
+            <div className="space-y-3">
+
+              {/* ── 图谱节点 ── */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-white/40 font-medium">图谱节点</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] text-white/40">
+                      {graphData.categories.length} 分 / {graphData.categories.reduce((acc, c) => acc + c.children.length, 0)} 二 / {graphData.categories.reduce((acc, c) => acc + c.children.reduce((a2, l2) => a2 + (l2.children?.length || 0), 0), 0)} 三
+                    </span>
+                    {graphData !== DEFAULT_GRAPH_DATA && (
+                      <span className="text-[9px] text-amber-400/70 bg-amber-400/10 px-1.5 py-0.5 rounded">自定义</span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={exportGraphData}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-dashed border-white/20 rounded-md hover:border-emerald-400/50 hover:bg-emerald-400/5 transition-all cursor-pointer group"
+                  >
+                    <Download className="w-3 h-3 text-white/30 group-hover:text-emerald-400 shrink-0" />
+                    <span className="text-[10px] text-white/50 group-hover:text-emerald-400">导出节点</span>
+                  </button>
+                  <label className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-dashed border-white/20 rounded-md hover:border-amber-400/50 hover:bg-amber-400/5 transition-all cursor-pointer group">
+                    <Upload className="w-3 h-3 text-white/30 group-hover:text-amber-400 shrink-0" />
+                    <span className="text-[10px] text-white/50 group-hover:text-amber-400">导入节点</span>
+                    <input ref={graphDataFileRef} type="file" accept=".json" onChange={importGraphData} className="hidden" />
+                  </label>
+                </div>
+                {graphData !== DEFAULT_GRAPH_DATA && (
+                  <button
+                    onClick={resetGraphData}
+                    className="w-full text-[10px] text-white/40 hover:text-cyan-400 transition-colors flex items-center justify-center gap-1 border border-white/10 px-2 py-1.5 rounded-md bg-white/5"
+                  >
+                    <RotateCcw size={10} />
+                    恢复默认节点数据
+                  </button>
+                )}
+              </div>
+
+              {/* ── 分隔线 ── */}
+              <div className="border-t border-white/5" />
+
+              {/* ── 地图光点 ── */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-white/40 font-medium">地图光点</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-white/40">
+                      {lightPointsData ? `${lightPointsData.points.length} 个` : '暂无'}
+                    </span>
+                    <button
+                      onClick={() => setShowLightPoints(v => !v)}
+                      className={`text-[10px] px-2 py-0.5 rounded border transition-all ${
+                        showLightPoints
+                          ? 'border-red-500/40 bg-red-500/10 text-red-400'
+                          : 'border-white/10 bg-white/5 text-white/30 hover:text-white/50'
+                      }`}
+                    >
+                      {showLightPoints ? '显示' : '隐藏'}
+                    </button>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={exportLightPoints}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-dashed border-white/20 rounded-md hover:border-emerald-400/50 hover:bg-emerald-400/5 transition-all cursor-pointer group"
+                  >
+                    <Download className="w-3 h-3 text-white/30 group-hover:text-emerald-400 shrink-0" />
+                    <span className="text-[10px] text-white/50 group-hover:text-emerald-400">导出光点</span>
+                  </button>
+                  <label className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-dashed border-white/20 rounded-md hover:border-red-400/50 hover:bg-red-400/5 transition-all cursor-pointer group">
+                    <Upload className="w-3 h-3 text-white/30 group-hover:text-red-400 shrink-0" />
+                    <span className="text-[10px] text-white/50 group-hover:text-red-400">导入光点</span>
+                    <input ref={lightPointsFileRef} type="file" accept=".json" onChange={importLightPoints} className="hidden" />
+                  </label>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <section className="space-y-4">
             <h4 className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white/5 pb-1">核心标题自定义</h4>
             <div className="space-y-4">
               <div className="space-y-2">
@@ -1582,101 +1666,6 @@ export default function ShanxiCultureGraph() {
             </div>
           </section>
 
-          <section className="space-y-4">
-            <h4 className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white/5 pb-1">图谱节点数据</h4>
-            <div className="space-y-3">
-              <div className="p-3 rounded-lg bg-white/5 border border-white/10 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-white/50">
-                    当前：{graphData.categories.length} 分类 / {graphData.categories.reduce((acc, c) => acc + c.children.length, 0)} 二级 / {graphData.categories.reduce((acc, c) => acc + c.children.reduce((a2, l2) => a2 + (l2.children?.length || 0), 0), 0)} 三级
-                  </span>
-                  {graphData !== DEFAULT_GRAPH_DATA && (
-                    <span className="text-[9px] text-amber-400/70 bg-amber-400/10 px-1.5 py-0.5 rounded">自定义</span>
-                  )}
-                </div>
-                <p className="text-[9px] text-white/30 leading-relaxed">
-                  上传 JSON 文件替换图谱节点内容。可先导出当前数据作为模板，修改后重新导入。
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={exportGraphData}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-dashed border-white/20 rounded-md hover:border-emerald-400/50 hover:bg-emerald-400/5 transition-all cursor-pointer group"
-                >
-                  <Download className="w-3 h-3 text-white/30 group-hover:text-emerald-400 shrink-0" />
-                  <span className="text-[10px] text-white/50 group-hover:text-emerald-400">导出节点数据</span>
-                </button>
-                <label className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-dashed border-white/20 rounded-md hover:border-amber-400/50 hover:bg-amber-400/5 transition-all cursor-pointer group">
-                  <Upload className="w-3 h-3 text-white/30 group-hover:text-amber-400 shrink-0" />
-                  <span className="text-[10px] text-white/50 group-hover:text-amber-400">导入节点数据</span>
-                  <input
-                    ref={graphDataFileRef}
-                    type="file"
-                    accept=".json"
-                    onChange={importGraphData}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-              {graphData !== DEFAULT_GRAPH_DATA && (
-                <button
-                  onClick={resetGraphData}
-                  className="w-full text-[10px] text-white/40 hover:text-cyan-400 transition-colors flex items-center justify-center gap-1 border border-white/10 px-2 py-1.5 rounded-md bg-white/5"
-                >
-                  <RotateCcw size={10} />
-                  恢复默认节点数据
-                </button>
-              )}
-            </div>
-          </section>
-
-          <section className="space-y-4">
-            <h4 className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white/5 pb-1">地图光点</h4>
-            <div className="space-y-3">
-              {/* 显示开关 + 数量信息 */}
-              <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10">
-                <div>
-                  <span className="text-[10px] text-white/50">
-                    {lightPointsData ? `${lightPointsData.points.length} 个光点` : '暂无光点数据'}
-                  </span>
-                  {lightPointsData?.regionName && (
-                    <p className="text-[9px] text-white/30 mt-0.5">{lightPointsData.regionName}</p>
-                  )}
-                </div>
-                <button
-                  onClick={() => setShowLightPoints(v => !v)}
-                  className={`text-[10px] px-2 py-1 rounded border transition-all ${
-                    showLightPoints
-                      ? 'border-red-500/40 bg-red-500/10 text-red-400'
-                      : 'border-white/10 bg-white/5 text-white/30 hover:text-white/50'
-                  }`}
-                >
-                  {showLightPoints ? '显示中' : '已隐藏'}
-                </button>
-              </div>
-              {/* 导出 / 导入 */}
-              <div className="flex gap-2">
-                <button
-                  onClick={exportLightPoints}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-dashed border-white/20 rounded-md hover:border-emerald-400/50 hover:bg-emerald-400/5 transition-all cursor-pointer group"
-                >
-                  <Download className="w-3 h-3 text-white/30 group-hover:text-emerald-400 shrink-0" />
-                  <span className="text-[10px] text-white/50 group-hover:text-emerald-400">导出光点</span>
-                </button>
-                <label className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-dashed border-white/20 rounded-md hover:border-red-400/50 hover:bg-red-400/5 transition-all cursor-pointer group">
-                  <Upload className="w-3 h-3 text-white/30 group-hover:text-red-400 shrink-0" />
-                  <span className="text-[10px] text-white/50 group-hover:text-red-400">导入光点</span>
-                  <input
-                    ref={lightPointsFileRef}
-                    type="file"
-                    accept=".json"
-                    onChange={importLightPoints}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-            </div>
-          </section>
         </div>
       </div>
 
