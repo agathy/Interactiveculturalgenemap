@@ -20,7 +20,6 @@ export interface L2Node {
 export interface L1Category {
   id: string;
   name: string;
-  angle?: number;        // 在轨道上的角度（度），可选，系统会自动计算
   symbol?: string;      // ECharts symbol: 'diamond' | 'triangle' | 'roundRect' | 'rect' | 'pin' | 'circle'
   tooltip?: string;     // HTML 格式的提示文本
   children: L2Node[];
@@ -52,7 +51,6 @@ export const DEFAULT_GRAPH_DATA: GraphData = {
     {
       id: 'genzhu',
       name: '根祖文化',
-      angle: -90,
       symbol: 'diamond',
       timeRange: [-6000, -2100], // 仰韶文化到夏商
       tooltip: '<b>根祖文化</b><br/>临汾：尧都、丁村遗址<br/>运城：舜都、后土祠',
@@ -89,7 +87,6 @@ export const DEFAULT_GRAPH_DATA: GraphData = {
     {
       id: 'zhongyi',
       name: '忠义文化',
-      angle: -18,
       symbol: 'triangle',
       timeRange: [-636, 1912], // 春秋到清末
       tooltip: '<b>忠义文化</b><br/>关公故里：忠肝义胆<br/>晋商精神：诚实守信',
@@ -127,7 +124,6 @@ export const DEFAULT_GRAPH_DATA: GraphData = {
     {
       id: 'shanhe',
       name: '山河文化',
-      angle: 54,
       symbol: 'roundRect',
       timeRange: [-10000, 2026], // 亿万年到现代
       tooltip: '<b>山河文化</b><br/>表里山河：黄河、太行、汾河',
@@ -166,7 +162,6 @@ export const DEFAULT_GRAPH_DATA: GraphData = {
     {
       id: 'gujian',
       name: '古建文化',
-      angle: 126,
       symbol: 'rect',
       timeRange: [386, 1912], // 北魏到清
       tooltip: '<b>古建文化</b><br/>地上文物博物馆：应县木塔、佛光寺',
@@ -203,7 +198,6 @@ export const DEFAULT_GRAPH_DATA: GraphData = {
     {
       id: 'jiuhun',
       name: '酒魂文化',
-      angle: 198,
       symbol: 'pin',
       timeRange: [-6000, 2026],
       tooltip: '<b>酒魂文化</b><br/>杏花村汾酒：6000年酿造史',
@@ -307,7 +301,6 @@ export function validateGraphData(data: any): { valid: boolean; error?: string }
   for (let i = 0; i < data.categories.length; i++) {
     const cat = data.categories[i];
     if (!cat.id || !cat.name) return { valid: false, error: `categories[${i}] 缺少 id 或 name` };
-    if (cat.angle !== undefined && typeof cat.angle !== 'number') return { valid: false, error: `categories[${i}] (${cat.id}) 的 angle 必须是数字（可选，系统会自动计算）` };
     if (!Array.isArray(cat.children)) return { valid: false, error: `categories[${i}] (${cat.id}) 缺少 children 数组` };
     if (data.categories.length > 12) return { valid: false, error: `分类数量不能超过 12 个，当前有 ${data.categories.length} 个` };
     for (let j = 0; j < cat.children.length; j++) {
