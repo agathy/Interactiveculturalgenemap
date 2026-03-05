@@ -5,8 +5,9 @@ import { ChevronLeft, ChevronRight, Save, RotateCcw, LayoutGrid, FolderOpen, Dow
 import { toast } from 'sonner';
 import { RippleEffect } from './CulturalSymbols';
 import { getOptimizedNodes } from './OptimizedNodes';
-import { DEFAULT_GRAPH_DATA, generateLinksFromData, generateCategoriesFromData, validateGraphData, buildTimeRangeMap, type GraphData } from './graphData';
+import { DEFAULT_GRAPH_DATA, generateLinksFromData, generateCategoriesFromData, validateGraphData, buildTimeRangeMap, type GraphData, type MapLightPointsData } from './graphData';
 import { loadRegionMap, getSupportedRegions, isRegionSupported } from '../../services/mapService';
+import { MapLightPoints } from './MapLightPoints';
 
 // Helper: convert hex color to rgba string
 function hexToRgba(hex: string, alpha: number): string {
@@ -165,6 +166,9 @@ export default function ShanxiCultureGraph() {
   // 图谱节点数据（支持上传替换）
   const [graphData, setGraphData] = useState<GraphData>(DEFAULT_GRAPH_DATA);
   const graphDataFileRef = useRef<HTMLInputElement>(null);
+
+  // 地图光点数据
+  const [lightPointsData, setLightPointsData] = useState<MapLightPointsData | null>(null);
 
   // 显示中心文字开关
   const [showCenterText, setShowCenterText] = useState(_saved?.showCenterText ?? true);
@@ -590,6 +594,27 @@ export default function ShanxiCultureGraph() {
       }
     };
     loadMap();
+  }, [graphData.root.region]);
+
+  // 加载地图光点数据
+  useEffect(() => {
+    const loadLightPoints = async () => {
+      try {
+        const regionCode = graphData.root.region || 'shanxi';
+        const response = await fetch(`/data/${regionCode}-light-points.json`);
+        if (response.ok) {
+          const data: MapLightPointsData = await response.json();
+          setLightPointsData(data);
+        } else {
+          // 如果没有对应地区的光点数据，清空
+          setLightPointsData(null);
+        }
+      } catch (error) {
+        console.log('No light points data for region:', graphData.root.region);
+        setLightPointsData(null);
+      }
+    };
+    loadLightPoints();
   }, [graphData.root.region]);
 
   // 获取当前地区的地图 symbol（优先 path://，次选 map://，兜底圆形）
@@ -1561,6 +1586,13 @@ export default function ShanxiCultureGraph() {
         <OrbitRings fenjiu_colors={fenjiu_colors} chartInstance={chartInstance} l1Radius={l1Radius} timelineRadius={timelineRadius} focusedTimeRange={focusedTimeRange} timelineColor={timelineColor} />
         <Timeline fenjiu_colors={fenjiu_colors} visible={showPanels} />
       </div>
+
+      {/* 地图光点 - 在根节点地图上显示闪烁光点 */}
+      <MapLightPoints 
+        lightPointsData={lightPointsData}
+        chartInstance={chartInstance}
+        rootNodeSize={nodeSizes.root}
+      />
 
       {/* BreathingNodes 单独放在 z-20，确保在 ECharts (z-10) 之上 */}
       <div className="absolute inset-0 z-20 pointer-events-none">

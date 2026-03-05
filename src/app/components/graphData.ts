@@ -1,6 +1,24 @@
 // 图谱节点数据模型 & 默认数据
 // 用户可导出此结构的 JSON 文件，修改后重新导入以替换图谱内容
 
+/** 地图光点数据 */
+export interface MapLightPoint {
+  id: string;
+  name: string;
+  lng: number;          // 经度
+  lat: number;          // 纬度
+  color?: string;       // 光点颜色
+  size?: number;        // 光点大小
+  category?: string;    // 所属分类
+}
+
+/** 地图光点数据集 */
+export interface MapLightPointsData {
+  region: string;
+  regionName: string;
+  points: MapLightPoint[];
+}
+
 /** 三级节点 */
 export interface L3Node {
   id: string;
