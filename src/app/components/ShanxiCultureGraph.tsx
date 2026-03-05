@@ -128,37 +128,37 @@ export default function ShanxiCultureGraph() {
 
   // 节点大小状态
   const [nodeSizes, setNodeSizes] = useState(_saved?.nodeSizes ?? {
-    root: 550,
-    l1: 145,
+    root: 360,
+    l1: 130,
     l2: 40,
     l3: 20
   });
 
   // 描边显隐状态
   const [nodeBorders, setNodeBorders] = useState(_saved?.nodeBorders ?? {
-    root: false,
+    root: true,
     l1: true,
-    l2: false,
+    l2: true,
     l3: true
   });
 
   // 一级节点轨道半径状态
-  const [l1Radius, setL1Radius] = useState(_saved?.l1Radius ?? 345);
+  const [l1Radius, setL1Radius] = useState(_saved?.l1Radius ?? 495);
 
   // 环形时间轴半径状态
-  const [timelineRadius, setTimelineRadius] = useState(_saved?.timelineRadius ?? 275);
+  const [timelineRadius, setTimelineRadius] = useState(_saved?.timelineRadius ?? 190);
 
   // 新增：中心节点视觉参数
-  const [rootColor, setRootColor] = useState(_saved?.rootColor ?? '#00EAFF');
-  const [rootTitleFontSize, setRootTitleFontSize] = useState(_saved?.rootTitleFontSize ?? 32);
-  const [rootGlowIntensity, setRootGlowIntensity] = useState(_saved?.rootGlowIntensity ?? 3);
-  const [showRootLabels, setShowRootLabels] = useState(_saved?.showRootLabels ?? false);
-  const [rootShadowColor, setRootShadowColor] = useState(_saved?.rootShadowColor ?? '#082f6d');
+  const [rootColor, setRootColor] = useState(_saved?.rootColor ?? '#FFFFFF');
+  const [rootTitleFontSize, setRootTitleFontSize] = useState(_saved?.rootTitleFontSize ?? 38);
+  const [rootGlowIntensity, setRootGlowIntensity] = useState(_saved?.rootGlowIntensity ?? 11);
+  const [showRootLabels, setShowRootLabels] = useState(_saved?.showRootLabels ?? true);
+  const [rootShadowColor, setRootShadowColor] = useState(_saved?.rootShadowColor ?? '#6aa2b6');
   const [rootTitleShadowColor, setRootTitleShadowColor] = useState(_saved?.rootTitleShadowColor ?? '#94e3fe');
 
   // 装饰环自转速度（面板"旋转速度"滑杆控制），呼吸频率系数（控制节点本体缩放+投影闪烁）
   const [rotationSpeed, setRotationSpeed] = useState(_saved?.rotationSpeed ?? 0.34);
-  const [breathFrequency, setBreathFrequency] = useState(_saved?.breathFrequency ?? 0.160);
+  const [breathFrequency, setBreathFrequency] = useState(_saved?.breathFrequency ?? 0.095);
 
   // 装饰圆盘半径偏移量
   const [decorRadius, setDecorRadius] = useState(_saved?.decorRadius ?? 4);
@@ -343,21 +343,28 @@ export default function ShanxiCultureGraph() {
     setCustomSymbols({});
     setRawImages({});
     setShowCenterText(true);
-    setShowRootLabels(false);
-    setRootColor('#00EAFF');
-    setRootTitleFontSize(32);
-    setRootGlowIntensity(15);
-    setRootShadowColor('#082f6d');
-    setL1Radius(345);
-    setTimelineRadius(275);
+    setShowRootLabels(true);
+    setRootColor('#FFFFFF');
+    setRootTitleFontSize(38);
+    setRootGlowIntensity(11);
+    setRootShadowColor('#6aa2b6');
+    setRootTitleShadowColor('#94e3fe');
+    setL1Radius(495);
+    setTimelineRadius(190);
     setRotationSpeed(0.34);
-    setBreathFrequency(0.160);
+    setBreathFrequency(0.095);
     setDecorRadius(4);
     setNodeSizes({
-      root: 550,
-      l1: 145,
+      root: 360,
+      l1: 130,
       l2: 40,
       l3: 20
+    });
+    setNodeBorders({
+      root: true,
+      l1: true,
+      l2: true,
+      l3: true
     });
     localStorage.removeItem('shanxi_culture_graph_config');
     toast.info('配置已重置为初始状态', {

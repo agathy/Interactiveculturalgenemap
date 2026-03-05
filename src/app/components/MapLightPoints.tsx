@@ -42,7 +42,7 @@ function drawBloodPoint(
   time: number,
   index: number
 ) {
-  const color = point.color || '#FF1111';
+  const color = point.color || '#0042aa';
   const phase = (index * 1.618) % (Math.PI * 2); // 黄金角错相，避免同步闪烁
   const pulse = 0.5 + 0.5 * Math.sin(time * 0.002 + phase);
 

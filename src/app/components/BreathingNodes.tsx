@@ -277,22 +277,26 @@ export function BreathingNodes({
           ctx.shadowBlur = 0;
           ctx.globalAlpha = 1;
           
-          // 计算两行文字的垂直偏移
+          // 组合完整文本并分割成多行（识别\n换行符）
+          const fullText = `${centerTextLine1}${centerTextLine2 ? '\n' + centerTextLine2 : ''}`;
+          const lines = fullText.split('\n');
+          
+          // 计算行数和行高
           const lineHeight = fontSize * 1.05;
-          const y1 = y - lineHeight / 2; // 第一行（根祖）
-          const y2 = y + lineHeight / 2; // 第二行（文化）
+          const totalHeight = (lines.length - 1) * lineHeight;
+          
+          // 计算起始 Y 位置（垂直居中）
+          let currentY = y - totalHeight / 2;
           
           // 将节点颜色叠加50%黑色
           const textColor = blendWithBlack(nodeColor, 0.5);
           
-          // 第一行 - 无描边，使用叠加后的颜色
+          // 逐行绘制文字
           ctx.fillStyle = textColor;
-          ctx.fillText(centerTextLine1, x, y1);
-          
-          // 第二行 - 无描边，使用叠加后的颜色
-          if (centerTextLine2) {
-            ctx.fillText(centerTextLine2, x, y2);
-          }
+          lines.forEach(line => {
+            ctx.fillText(line, x, currentY);
+            currentY += lineHeight;
+          });
           ctx.restore();
         }
       });
