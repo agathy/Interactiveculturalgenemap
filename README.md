@@ -3,6 +3,11 @@
 
 一个交互式文化基因图谱可视化系统，支持动态地图展示、节点呼吸效果、时间轴动画和丰富的自定义配置选项。
 
+## 版本信息
+
+- **当前版本**：2026-03-05-v1.0.0
+- **最后更新**：2026-03-05
+
 ## 项目特点
 
 ### 核心功能
@@ -57,11 +62,11 @@ npm run build
 │   │   └── index.css              # 全局样式
 │   └── font/                      # 字体文件
 ├── data/                         # 示例数据
-│   ├── shanxi-graph-data-2026-03-04.json  # 山西文化基因数据
-│   ├── 瑞金市志星谱.json                  # 瑞金市文化基因数据
-│   └── shanxi-light-points.json           # 山西地图光点数据
+│   ├── example_data_shanxi.json           # 山西文化基因数据
+│   ├── example_data_heluo.json           # 河洛文化基因数据
+│   └── exmaple_data_lightoints_shanxi.json # 山西地图光点数据
 ├── config/                       # 配置文件
-│   └── shanxi-culture-config-2026-03-05-2.json  # 默认配置
+│   └── config_default.json               # 默认配置
 └── public/                       # 静态资源
     └── images/                   # 节点图片
 ```
