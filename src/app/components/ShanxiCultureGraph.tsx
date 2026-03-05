@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { RippleEffect } from './CulturalSymbols';
 import { getOptimizedNodes } from './OptimizedNodes';
 import { DEFAULT_GRAPH_DATA, generateLinksFromData, generateCategoriesFromData, validateGraphData, buildTimeRangeMap, type GraphData, type MapLightPointsData } from './graphData';
-import { loadRegionMap, getSupportedRegions, isRegionSupported } from '../../services/mapService';
+import { loadRegionMap, getSupportedRegions, isRegionSupported, type MapBounds } from '../../services/mapService';
 import { MapLightPoints } from './MapLightPoints';
 
 // Helper: convert hex color to rgba string
@@ -169,6 +169,7 @@ export default function ShanxiCultureGraph() {
 
   // 地图光点数据
   const [lightPointsData, setLightPointsData] = useState<MapLightPointsData | null>(null);
+  const [mapBounds, setMapBounds] = useState<MapBounds | null>(null);
 
   // 显示中心文字开关
   const [showCenterText, setShowCenterText] = useState(_saved?.showCenterText ?? true);
@@ -581,6 +582,10 @@ export default function ShanxiCultureGraph() {
           // 存储 SVG 路径，用于中心节点 symbol
           if (mapData.symbolPath) {
             setMapSVGPath(mapData.symbolPath);
+          }
+          // 存储精确边界框，用于光点地理坐标投影（与 geoJsonToSVGPath 完全一致）
+          if (mapData.bounds) {
+            setMapBounds(mapData.bounds);
           }
         }
         setTimeout(() => {
@@ -1587,11 +1592,13 @@ export default function ShanxiCultureGraph() {
         <Timeline fenjiu_colors={fenjiu_colors} visible={showPanels} />
       </div>
 
-      {/* 地图光点 - 在根节点地图上显示闪烁光点 */}
-      <MapLightPoints 
+      {/* 地图光点 - 在根节点地图上显示闪烁光点，坐标与地图形状精确对齐 */}
+      <MapLightPoints
         lightPointsData={lightPointsData}
         chartInstance={chartInstance}
         rootNodeSize={nodeSizes.root}
+        mapBounds={mapBounds}
+        viewStateRef={viewStateRef}
       />
 
       {/* BreathingNodes 单独放在 z-20，确保在 ECharts (z-10) 之上 */}

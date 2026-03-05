@@ -1,6 +1,38 @@
 // 地图服务模块 - 动态加载各地区地图数据
 // 使用阿里云 DataV 地理数据服务
 
+/** 地理边界框（经纬度），与 geoJsonToSVGPath 使用完全相同的坐标系 */
+export interface MapBounds {
+  minLng: number;
+  maxLng: number;
+  minLat: number;
+  maxLat: number;
+}
+
+/** 从 GeoJSON 提取精确边界框 */
+export function extractGeoJsonBounds(geoJson: any): MapBounds | null {
+  let minLng = Infinity, maxLng = -Infinity;
+  let minLat = Infinity, maxLat = -Infinity;
+  const features = geoJson?.features || (geoJson?.type === 'Feature' ? [geoJson] : []);
+  for (const feature of features) {
+    const geom = feature?.geometry;
+    if (!geom) continue;
+    const rings: [number, number][][] =
+      geom.type === 'Polygon' ? [geom.coordinates[0]] :
+      geom.type === 'MultiPolygon' ? geom.coordinates.map((p: any) => p[0]) : [];
+    for (const ring of rings) {
+      for (const [lng, lat] of ring) {
+        if (lng < minLng) minLng = lng;
+        if (lng > maxLng) maxLng = lng;
+        if (lat < minLat) minLat = lat;
+        if (lat > maxLat) maxLat = lat;
+      }
+    }
+  }
+  if (!isFinite(minLng)) return null;
+  return { minLng, maxLng, minLat, maxLat };
+}
+
 // 预定义支持的地区及其地图数据URL
 export const REGION_MAPS: Record<string, {
   name: string;
@@ -205,6 +237,7 @@ export async function loadRegionMap(regionCode: string): Promise<any> {
     // 优先用不含子区划的边界 JSON（URL 去掉 _full 后缀）来生成 symbol 路径，
     // 路径更简洁；若请求失败则退回使用 full 数据。
     let symbolPath = '';
+    let bounds: MapBounds | null = null;
     try {
       const boundaryUrl = region.geoJsonUrl.replace('_full.json', '.json');
       if (boundaryUrl !== region.geoJsonUrl) {
@@ -212,15 +245,18 @@ export async function loadRegionMap(regionCode: string): Promise<any> {
         if (bResp.ok) {
           const boundaryJson = await bResp.json();
           symbolPath = geoJsonToSVGPath(boundaryJson);
+          bounds = extractGeoJsonBounds(boundaryJson);
         }
       }
     } catch (_) { /* ignore */ }
     if (!symbolPath) symbolPath = geoJsonToSVGPath(geoJson);
+    if (!bounds) bounds = extractGeoJsonBounds(geoJson);
 
     return {
       geoJson,
       regionInfo: region,
-      symbolPath
+      symbolPath,
+      bounds
     };
   } catch (e) {
     console.error('Failed to load map:', e);

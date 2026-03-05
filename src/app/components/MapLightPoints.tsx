@@ -1,203 +1,186 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useRef, useEffect } from 'react';
 import type { MapLightPoint, MapLightPointsData } from './graphData';
+import type { MapBounds } from '../../services/mapService';
 
 interface MapLightPointsProps {
   lightPointsData: MapLightPointsData | null;
   chartInstance: any;
   rootNodeSize: number;
-  centerX?: number;
-  centerY?: number;
+  mapBounds: MapBounds | null;
+  viewStateRef: React.RefObject<{ zoom: number; center: [number, number] }>;
 }
 
-// 将经纬度转换为相对于地图中心的像素坐标
-function geoToPixel(
-  lng: number,
-  lat: number,
-  mapBounds: { minLng: number; maxLng: number; minLat: number; maxLat: number },
-  mapSize: number
-): { x: number; y: number } {
-  const { minLng, maxLng, minLat, maxLat } = mapBounds;
-  
-  // 等距圆柱投影修正
-  const avgLat = (minLat + maxLat) / 2;
+const PATH_SIZE = 200; // 必须与 geoJsonToSVGPath 的 size 参数一致
+
+/**
+ * 将经纬度转换为 path:// 路径坐标系内的位置
+ * 使用与 geoJsonToSVGPath 完全相同的投影公式，确保光点与地图形状精确对齐
+ */
+function geoToPathCoord(lng: number, lat: number, b: MapBounds): { x: number; y: number } {
+  const avgLat = (b.minLat + b.maxLat) / 2;
   const cosLat = Math.cos((avgLat * Math.PI) / 180);
-  
-  const rangeX = (maxLng - minLng) * cosLat;
-  const rangeY = maxLat - minLat;
-  
-  const scale = mapSize / Math.max(rangeX, rangeY);
-  
-  const x = ((lng - minLng) * cosLat * scale);
-  const y = mapSize - ((lat - minLat) * scale);
-  
-  return { x, y };
+  const adjustedRangeX = (b.maxLng - b.minLng) * cosLat;
+  const rangeY = b.maxLat - b.minLat || 1;
+  const pathScale = PATH_SIZE / Math.max(adjustedRangeX, rangeY);
+  const padX = (PATH_SIZE - adjustedRangeX * pathScale) / 2;
+  const padY = (PATH_SIZE - rangeY * pathScale) / 2;
+  return {
+    x: (lng - b.minLng) * cosLat * pathScale + padX,
+    y: PATH_SIZE - ((lat - b.minLat) * pathScale + padY), // 翻转 Y 轴
+  };
+}
+
+/**
+ * 将 path 坐标系位置转换为当前屏幕像素坐标
+ *
+ * ECharts graph 坐标系规则：
+ *   screenX = (nodeDataX - center[0]) * zoom + canvasWidth / 2
+ * 根节点在 data 坐标 (500, 375)，中心节点始终位于 canvas 中心。
+ * path:// symbol 以节点位置为中心，以 symbolSize * zoom 为像素尺寸渲染。
+ */
+function pathToScreen(
+  pathX: number,
+  pathY: number,
+  rootNodeSize: number,
+  center: [number, number],
+  zoom: number
+): { x: number; y: number } {
+  // 根节点屏幕位置
+  const rootScreenX = (500 - center[0]) * zoom + window.innerWidth / 2;
+  const rootScreenY = (375 - center[1]) * zoom + window.innerHeight / 2;
+  // path 坐标系中心为 (PATH_SIZE/2, PATH_SIZE/2)
+  // 每个 path 单位对应的像素数 = symbolSize * zoom / PATH_SIZE
+  const pxPerUnit = (rootNodeSize * zoom) / PATH_SIZE;
+  return {
+    x: rootScreenX + (pathX - PATH_SIZE / 2) * pxPerUnit,
+    y: rootScreenY + (pathY - PATH_SIZE / 2) * pxPerUnit,
+  };
+}
+
+/** 绘制单个血光点（核心 + 外发光 + 多圈扩散涟漪） */
+function drawBloodPoint(
+  ctx: CanvasRenderingContext2D,
+  sx: number,
+  sy: number,
+  point: MapLightPoint,
+  baseSize: number,
+  time: number,
+  index: number
+) {
+  const color = point.color || '#FF1111';
+  const phase = (index * 1.618) % (Math.PI * 2); // 黄金角错相，避免同步闪烁
+  const pulse = 0.5 + 0.5 * Math.sin(time * 0.002 + phase);
+
+  // ── 外发光晕 ──────────────────────────────────────────
+  const glowR = baseSize * 3.5;
+  const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, glowR);
+  const a1 = Math.round((0.45 + pulse * 0.3) * 255).toString(16).padStart(2, '0');
+  const a2 = Math.round((0.12 + pulse * 0.1) * 255).toString(16).padStart(2, '0');
+  glow.addColorStop(0, color + a1);
+  glow.addColorStop(0.5, color + a2);
+  glow.addColorStop(1, color + '00');
+  ctx.beginPath();
+  ctx.arc(sx, sy, glowR, 0, Math.PI * 2);
+  ctx.fillStyle = glow;
+  ctx.globalAlpha = 1;
+  ctx.fill();
+
+  // ── 3 圈错相扩散涟漪 ──────────────────────────────────
+  for (let ring = 0; ring < 3; ring++) {
+    const progress = ((time * 0.0007 + index * 0.4 + ring / 3) % 1);
+    const ringR = baseSize * (0.6 + progress * 3.5);
+    const ringAlpha = (1 - progress) * 0.55;
+    ctx.beginPath();
+    ctx.arc(sx, sy, ringR, 0, Math.PI * 2);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = ringAlpha;
+    ctx.stroke();
+  }
+
+  // ── 亮核心点 ──────────────────────────────────────────
+  ctx.beginPath();
+  ctx.arc(sx, sy, baseSize * 0.5, 0, Math.PI * 2);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.globalAlpha = 0.65 + pulse * 0.35;
+  ctx.fill();
+
+  ctx.globalAlpha = 1;
 }
 
 export function MapLightPoints({
   lightPointsData,
   chartInstance,
   rootNodeSize,
-  centerX = 500,
-  centerY = 375
+  mapBounds,
+  viewStateRef,
 }: MapLightPointsProps) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const animationRef = useRef<number>(0);
-  const pointsRef = useRef<MapLightPoint[]>([]);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animRef = useRef<number>(0);
   const timeRef = useRef<number>(0);
 
-  // 山西省地理边界
-  const shanxiBounds = {
-    minLng: 110.0,
-    maxLng: 114.5,
-    minLat: 34.5,
-    maxLat: 40.5
-  };
-
-  const drawLightPoints = useCallback((ctx: CanvasRenderingContext2D, time: number) => {
-    if (!pointsRef.current.length) return;
-
-    const mapSize = rootNodeSize * 0.8; // 地图实际显示大小
-    const offsetX = centerX - mapSize / 2;
-    const offsetY = centerY - mapSize / 2;
-
-    pointsRef.current.forEach((point, index) => {
-      const pos = geoToPixel(point.lng, point.lat, shanxiBounds, mapSize);
-      const x = offsetX + pos.x;
-      const y = offsetY + pos.y;
-      const size = point.size || 4;
-      const color = point.color || '#00EAFF';
-      
-      // 闪烁动画 - 每个点有不同的相位
-      const phase = (index * 0.5) % (Math.PI * 2);
-      const blinkSpeed = 0.003;
-      const opacity = 0.4 + 0.6 * Math.abs(Math.sin(time * blinkSpeed + phase));
-      
-      // 绘制外发光
-      const gradient = ctx.createRadialGradient(x, y, 0, x, y, size * 3);
-      gradient.addColorStop(0, color + Math.floor(opacity * 255).toString(16).padStart(2, '0'));
-      gradient.addColorStop(0.4, color + Math.floor(opacity * 0.5 * 255).toString(16).padStart(2, '0'));
-      gradient.addColorStop(1, color + '00');
-      
-      ctx.beginPath();
-      ctx.arc(x, y, size * 3, 0, Math.PI * 2);
-      ctx.fillStyle = gradient;
-      ctx.fill();
-      
-      // 绘制核心光点
-      ctx.beginPath();
-      ctx.arc(x, y, size * 0.5, 0, Math.PI * 2);
-      ctx.fillStyle = color;
-      ctx.globalAlpha = opacity;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      
-      // 绘制十字光芒
-      const rayLength = size * 2;
-      const rayOpacity = opacity * 0.6;
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1;
-      ctx.globalAlpha = rayOpacity;
-      
-      // 水平光芒
-      ctx.beginPath();
-      ctx.moveTo(x - rayLength, y);
-      ctx.lineTo(x + rayLength, y);
-      ctx.stroke();
-      
-      // 垂直光芒
-      ctx.beginPath();
-      ctx.moveTo(x, y - rayLength);
-      ctx.lineTo(x, y + rayLength);
-      ctx.stroke();
-      
-      ctx.globalAlpha = 1;
-    });
-  }, [rootNodeSize, centerX, centerY]);
-
   useEffect(() => {
-    if (!lightPointsData?.points?.length) return;
-    
-    pointsRef.current = lightPointsData.points;
-    
-    // 创建或获取 canvas
-    let canvas = canvasRef.current;
-    if (!canvas) {
-      canvas = document.createElement('canvas');
-      canvas.style.position = 'absolute';
-      canvas.style.top = '0';
-      canvas.style.left = '0';
-      canvas.style.width = '100%';
-      canvas.style.height = '100%';
-      canvas.style.zIndex = '15'; // 在 ECharts 之上，但在 BreathingNodes 之下
-      canvas.style.pointerEvents = 'none';
-      
-      // 找到图表容器并添加 canvas
-      const chartContainer = document.querySelector('.echarts-container');
-      if (chartContainer) {
-        chartContainer.appendChild(canvas);
-        canvasRef.current = canvas;
-      }
-    }
-
+    const canvas = canvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // 设置 canvas 尺寸
-    const rect = canvas.parentElement?.getBoundingClientRect();
-    if (rect) {
-      canvas.width = rect.width;
-      canvas.height = rect.height;
-    }
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
 
-    // 动画循环
     const animate = () => {
-      if (!ctx || !canvas) return;
-      
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      timeRef.current += 16; // 约 60fps
-      
-      drawLightPoints(ctx, timeRef.current);
-      
-      animationRef.current = requestAnimationFrame(animate);
+      timeRef.current += 16;
+
+      const points = lightPointsData?.points;
+      const bounds = mapBounds;
+      const vs = viewStateRef.current;
+
+      if (points?.length && bounds && vs) {
+        const { zoom, center } = vs;
+        // 点大小随缩放轻微缩放（不完全跟随，保持可读性）
+        const zoomScale = Math.max(0.6, Math.min(2, 0.7 + zoom * 0.5));
+
+        for (let i = 0; i < points.length; i++) {
+          const pt = points[i];
+          const pathCoord = geoToPathCoord(pt.lng, pt.lat, bounds);
+          const screen = pathToScreen(pathCoord.x, pathCoord.y, rootNodeSize, center, zoom);
+          const baseSize = (pt.size || 4) * zoomScale;
+          drawBloodPoint(ctx, screen.x, screen.y, pt, baseSize, timeRef.current, i);
+        }
+      }
+
+      animRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    animRef.current = requestAnimationFrame(animate);
 
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-      if (canvas && canvas.parentElement) {
-        canvas.parentElement.removeChild(canvas);
-        canvasRef.current = null;
-      }
+      cancelAnimationFrame(animRef.current);
+      window.removeEventListener('resize', resize);
     };
-  }, [lightPointsData, drawLightPoints]);
+  }, [lightPointsData, mapBounds, rootNodeSize, viewStateRef]);
 
-  // 监听图表缩放和移动，更新光点位置
-  useEffect(() => {
-    if (!chartInstance || !canvasRef.current) return;
-
-    const handleRoam = () => {
-      const opt = chartInstance.getOption();
-      if (opt.series && opt.series[0]) {
-        const zoom = opt.series[0].zoom || 1;
-        const center = opt.series[0].center || [500, 375];
-        
-        // 可以在这里根据 zoom 和 center 调整光点大小和位置
-        // 目前光点是相对于根节点位置固定的
-      }
-    };
-
-    chartInstance.on('graphroam', handleRoam);
-    return () => {
-      chartInstance.off('graphroam', handleRoam);
-    };
-  }, [chartInstance]);
-
-  return null; // 这个组件不渲染任何 React 元素
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 15,      // ECharts(10) 之上，BreathingNodes(20) 之下
+        pointerEvents: 'none',
+      }}
+    />
+  );
 }
 
 export default MapLightPoints;
