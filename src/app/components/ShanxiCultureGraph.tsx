@@ -41,6 +41,7 @@ export default function ShanxiCultureGraph() {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapSVGPath, setMapSVGPath] = useState<string>('');
   const [showPanels, setShowPanels] = useState(false);
+  const [showLeftPanel, setShowLeftPanel] = useState(true);
   const [bgColor, setBgColor] = useState(_saved?.bgColor ?? '#020b22');
   const [timelineColor, setTimelineColor] = useState(_saved?.timelineColor ?? '#22d3ee');
   const rippleCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -1081,9 +1082,9 @@ export default function ShanxiCultureGraph() {
 
   return (
     <div className="relative w-full h-screen overflow-hidden" style={{ background: fenjiu_colors.background }}>
-      {/* 左侧调节面板 - 常驻显示 */}
-      <div 
-        className="absolute top-32 left-8 z-50 p-5 rounded-2xl border border-white/10 bg-black/60 backdrop-blur-2xl w-80 pointer-events-auto max-h-[75vh] overflow-y-auto custom-scrollbar shadow-2xl"
+      {/* 左侧调节面板 */}
+      <div
+        className={`absolute top-32 left-8 z-50 p-5 rounded-2xl border border-white/10 bg-black/60 backdrop-blur-2xl w-80 pointer-events-auto max-h-[75vh] overflow-y-auto custom-scrollbar shadow-2xl transition-all duration-500 ${showLeftPanel ? 'translate-x-0 opacity-100' : '-translate-x-[120%] opacity-0'}`}
       >
         <div className="flex justify-between items-center mb-6 sticky top-0 bg-black/5 py-1 backdrop-blur-sm z-10">
           <h3 className="text-white/90 text-sm font-bold flex items-center gap-2">
@@ -1618,6 +1619,19 @@ export default function ShanxiCultureGraph() {
         >
           <div className={`transition-all duration-500 ${showPanels ? 'rotate-90 scale-110' : 'rotate-0'}`}>
             <LayoutGrid size={22} />
+          </div>
+        </button>
+      </div>
+
+      {/* 左侧面板收折按钮 */}
+      <div className="absolute top-8 left-8 z-[60] pointer-events-auto">
+        <button
+          onClick={() => setShowLeftPanel(v => !v)}
+          className={`w-12 h-12 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/40 hover:text-cyan-400 hover:border-cyan-500/30 transition-all shadow-2xl ${showLeftPanel ? 'text-cyan-400 border-cyan-500/30 ring-4 ring-cyan-500/10' : ''}`}
+          title={showLeftPanel ? '收起配置面板' : '展开配置面板'}
+        >
+          <div className={`transition-transform duration-500 ${showLeftPanel ? 'rotate-0' : 'rotate-180'}`}>
+            <ChevronLeft size={22} />
           </div>
         </button>
       </div>
