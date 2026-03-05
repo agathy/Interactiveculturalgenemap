@@ -1,0 +1,50 @@
+{
+  "_version": 1,
+  "_exportedAt": "2026-03-05T07:32:40.576Z",
+  "bgColor": "#020b22",
+  "cultureColors": {
+    "根祖文化": "#DAA520",
+    "忠义文化": "#CD5C5C",
+    "山河文化": "#87CEFA",
+    "古建文化": "#A0826D",
+    "酒魂文化": "#20B2AA"
+  },
+  "colorLibrary": [
+    "#DAA520",
+    "#CD5C5C",
+    "#87CEFA",
+    "#A0826D",
+    "#20B2AA",
+    "#C0C0C0",
+    "#4A8FD4",
+    "#68B08C",
+    "#9B7EC8",
+    "#E07840",
+    "#82a0ef",
+    "#7ECECE"
+  ],
+  "nodeSizes": {
+    "root": 360,
+    "l1": 130,
+    "l2": 40,
+    "l3": 20
+  },
+  "nodeBorders": {
+    "root": true,
+    "l1": true,
+    "l2": true,
+    "l3": true
+  },
+  "l1Radius": 285,
+  "timelineRadius": 190,
+  "rootColor": "#FFFFFF",
+  "rootTitleFontSize": 38,
+  "rootGlowIntensity": 11,
+  "rootShadowColor": "#6aa2b6",
+  "rootTitleShadowColor": "#94e3fe",
+  "showRootLabels": true,
+  "showCenterText": true,
+  "rotationSpeed": 0.34,
+  "breathFrequency": 0.095,
+  "decorRadius": 4
+}
