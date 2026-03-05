@@ -87,19 +87,6 @@ function drawBloodPoint(
   ctx.globalAlpha = 1;
   ctx.fill();
 
-  // ── 3 圈错相扩散涟漪 ──────────────────────────────────
-  for (let ring = 0; ring < 3; ring++) {
-    const progress = ((time * 0.0007 + index * 0.4 + ring / 3) % 1);
-    const ringR = baseSize * (0.6 + progress * 3.5);
-    const ringAlpha = (1 - progress) * 0.55;
-    ctx.beginPath();
-    ctx.arc(sx, sy, ringR, 0, Math.PI * 2);
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1;
-    ctx.globalAlpha = ringAlpha;
-    ctx.stroke();
-  }
-
   // ── 亮核心点 ──────────────────────────────────────────
   ctx.beginPath();
   ctx.arc(sx, sy, baseSize * 0.5, 0, Math.PI * 2);
@@ -176,7 +163,7 @@ export function MapLightPoints({
         left: 0,
         width: '100%',
         height: '100%',
-        zIndex: 15,      // ECharts(10) 之上，BreathingNodes(20) 之下
+        zIndex: 5,       // ECharts(10) 之下，光点在节点标题层级下方
         pointerEvents: 'none',
       }}
     />
