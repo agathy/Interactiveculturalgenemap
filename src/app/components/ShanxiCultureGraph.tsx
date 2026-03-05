@@ -552,6 +552,31 @@ export default function ShanxiCultureGraph() {
         // 同时更新 colorLibrary 为最新的默认颜色库
         setColorLibrary(defaultColorLibrary);
         
+        // 保留与新节点匹配的自定义符号和图片
+        const newCustomSymbols: Record<string, string> = {};
+        const newRawImages: Record<string, { file: File, color: string }> = {};
+        
+        // 保留根节点的自定义设置
+        if (customSymbols['root']) {
+          newCustomSymbols['root'] = customSymbols['root'];
+        }
+        if (rawImages['root']) {
+          newRawImages['root'] = rawImages['root'];
+        }
+        
+        // 保留与新分类匹配的自定义设置
+        data.categories.forEach((cat: any) => {
+          if (customSymbols[cat.id]) {
+            newCustomSymbols[cat.id] = customSymbols[cat.id];
+          }
+          if (rawImages[cat.id]) {
+            newRawImages[cat.id] = rawImages[cat.id];
+          }
+        });
+        
+        setCustomSymbols(newCustomSymbols);
+        setRawImages(newRawImages);
+        
         // 统计节点数
         let totalNodes = 1; // root
         data.categories.forEach((cat: any) => {

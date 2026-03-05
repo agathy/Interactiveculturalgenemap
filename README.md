@@ -129,49 +129,14 @@ npm run build
 
 ## 地图支持
 
-### 支持的地区
+系统支持中国所有省级行政区和部分市级行政区的地图展示。
 
-#### 省级行政区
-- 山西省 (shanxi)
-- 北京市 (beijing)
-- 天津市 (tianjin)
-- 河北省 (hebei)
-- 内蒙古自治区 (neimenggu)
-- 辽宁省 (liaoning)
-- 吉林省 (jilin)
-- 黑龙江省 (heilongjiang)
-- 上海市 (shanghai)
-- 江苏省 (jiangsu)
-- 浙江省 (zhejiang)
-- 安徽省 (anhui)
-- 福建省 (fujian)
-- 江西省 (jiangxi)
-- 山东省 (shandong)
-- 河南省 (henan)
-- 湖北省 (hubei)
-- 湖南省 (hunan)
-- 广东省 (guangdong)
-- 广西壮族自治区 (guangxi)
-- 海南省 (hainan)
-- 重庆市 (chongqing)
-- 四川省 (sichuan)
-- 贵州省 (guizhou)
-- 云南省 (yunnan)
-- 西藏自治区 (xizang)
-- 陕西省 (shaanxi)
-- 甘肃省 (gansu)
-- 青海省 (qinghai)
-- 宁夏回族自治区 (ningxia)
-- 新疆维吾尔自治区 (xinjiang)
-- 台湾省 (taiwan)
-- 香港特别行政区 (xianggang)
-- 澳门特别行政区 (aomen)
+### 支持的地区类型
+- **省级行政区**：包括34个省级行政区（省、自治区、直辖市、特别行政区）
+- **市级行政区**：包括瑞金市、杭州市、上海市、北京市等
 
-#### 市级行政区
-- 江西省瑞金市 (ruijin)
-- 浙江省杭州市 (hangzhou)
-- 上海市 (shanghai_city)
-- 北京市 (beijing_city)
+### 如何添加新地区
+在 `src/services/mapService.ts` 文件中添加新的地区配置，使用阿里云 DataV 提供的 GeoJSON 数据。
 
 ## 配置选项
 
@@ -244,3 +209,7 @@ MIT License
 
 - 地图数据来自 [阿里云 DataV](https://datav.aliyun.com/)
 - 设计灵感来自 [Figma 设计稿](https://www.figma.com/design/dwLPLq5NKULHFYEUqZihlt/Interactive-Cultural-Gene-Map)
+
+## 更多说明文档
+
+- [详细使用说明](https://xhzy.yuque.com/gep9gl/gd84gm/iqgeekz3yi13sfda)
