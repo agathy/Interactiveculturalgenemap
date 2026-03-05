@@ -9,9 +9,10 @@ interface OrbitRingsProps {
   l1Radius: number;
   timelineRadius: number;
   focusedTimeRange?: [number, number] | null;
+  timelineColor?: string;
 }
 
-export function OrbitRings({ fenjiu_colors, chartInstance, l1Radius, timelineRadius, focusedTimeRange }: OrbitRingsProps) {
+export function OrbitRings({ fenjiu_colors, chartInstance, l1Radius, timelineRadius, focusedTimeRange, timelineColor = '#22d3ee' }: OrbitRingsProps) {
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
   // Orbit particle: angle in degrees, animated via rAF to avoid Motion deprecated offsetDistance
   const orbitAngleRef = useRef(0);
@@ -97,19 +98,32 @@ export function OrbitRings({ fenjiu_colors, chartInstance, l1Radius, timelineRad
     return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
   };
 
-  const arcPath = focusedTimeRange ? (() => {
-    const startAngle = getYearAngle(focusedTimeRange[0]) - 90;
-    const endAngle   = getYearAngle(focusedTimeRange[1]) - 90;
-    const diff = Math.max(5, endAngle - startAngle);
+  // 默认显示完整时间范围（-6000年到2026年）
+  const defaultTimeRange: [number, number] = [-6000, 2026];
+  const activeTimeRange = focusedTimeRange ?? defaultTimeRange;
+  
+  // 检查是否是完整时间范围（用于绘制完整圆环）
+  const isFullRange = activeTimeRange[0] === -6000 && activeTimeRange[1] === 2026;
+
+  const arcPath = (() => {
+    const startAngle = getYearAngle(activeTimeRange[0]) - 90;
+    const endAngle   = getYearAngle(activeTimeRange[1]) - 90;
+    const diff = endAngle - startAngle;
+    
+    // 如果是完整范围，返回null表示使用圆形而非弧线
+    if (isFullRange) {
+      return null;
+    }
+    
     const start = polarToCartesian(timelineRadius, timelineRadius, timelineRadius, startAngle);
-    const end   = polarToCartesian(timelineRadius, timelineRadius, timelineRadius, startAngle + diff);
+    const end   = polarToCartesian(timelineRadius, timelineRadius, timelineRadius, startAngle + Math.max(5, diff));
     const largeArcFlag = diff <= 180 ? '0' : '1';
     return `M ${start.x} ${start.y} A ${timelineRadius} ${timelineRadius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
-  })() : null;
+  })();
 
-  const endDot = focusedTimeRange
-    ? polarToCartesian(timelineRadius, timelineRadius, timelineRadius, getYearAngle(focusedTimeRange[1]) - 90)
-    : null;
+  const endDot = isFullRange 
+    ? null 
+    : polarToCartesian(timelineRadius, timelineRadius, timelineRadius, getYearAngle(activeTimeRange[1]) - 90);
 
   return (
     <div
@@ -175,8 +189,31 @@ export function OrbitRings({ fenjiu_colors, chartInstance, l1Radius, timelineRad
               </div>
             ))}
 
-            {/* 高亮聚焦时间段的弧形 */}
-            {focusedTimeRange && arcPath && (
+            {/* 高亮聚焦时间段的弧形 - 默认显示完整时间范围 */}
+            {isFullRange ? (
+              /* 完整圆环 - 默认状态显示 */
+              <svg
+                className="absolute top-0 left-0"
+                width={timelineRadius * 2}
+                height={timelineRadius * 2}
+                viewBox={`0 0 ${timelineRadius * 2} ${timelineRadius * 2}`}
+                style={{ overflow: 'visible' }}
+              >
+                <motion.circle
+                  key="full-range"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6, ease: 'easeOut' }}
+                  cx={timelineRadius}
+                  cy={timelineRadius}
+                  r={timelineRadius}
+                  fill="none"
+                  stroke={timelineColor}
+                  strokeWidth="2"
+                  style={{ filter: `drop-shadow(0 0 10px ${timelineColor})` }}
+                />
+              </svg>
+            ) : arcPath ? (
               <svg
                 className="absolute top-0 left-0"
                 width={timelineRadius * 2}
@@ -186,33 +223,33 @@ export function OrbitRings({ fenjiu_colors, chartInstance, l1Radius, timelineRad
               >
                 {/* 弧线 */}
                 <motion.path
-                  key={focusedTimeRange.join(',')}
+                  key={activeTimeRange.join(',')}
                   initial={{ pathLength: 0, opacity: 0 }}
                   animate={{ pathLength: 1, opacity: 1 }}
                   transition={{ duration: 0.6, ease: 'easeOut' }}
                   d={arcPath}
                   fill="none"
-                  stroke="#22d3ee"
+                  stroke={timelineColor}
                   strokeWidth="4"
                   strokeLinecap="round"
-                  style={{ filter: 'drop-shadow(0 0 10px #22d3ee)' }}
+                  style={{ filter: `drop-shadow(0 0 10px ${timelineColor})` }}
                 />
                 {/* 端点光点 - 用 opacity 动画替代 scale */}
                 {endDot && (
                   <motion.circle
-                    key={`dot-${focusedTimeRange.join(',')}`}
+                    key={`dot-${activeTimeRange.join(',')}`}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3, delay: 0.4 }}
                     cx={endDot.x}
                     cy={endDot.y}
                     r="5"
-                    fill="#22d3ee"
-                    style={{ filter: 'drop-shadow(0 0 12px #22d3ee)' }}
+                    fill={timelineColor}
+                    style={{ filter: `drop-shadow(0 0 12px ${timelineColor})` }}
                   />
                 )}
               </svg>
-            )}
+            ) : null}
           </motion.div>
 
           {/* 轨道粒子 - 使用 rAF 驱动，避免 Motion offsetDistance 警告 */}
@@ -226,11 +263,12 @@ export function OrbitRings({ fenjiu_colors, chartInstance, l1Radius, timelineRad
           >
             <div
               ref={orbitDotRef}
-              className="absolute w-2 h-2 rounded-full bg-cyan-400"
+              className="absolute w-2 h-2 rounded-full"
               style={{
                 top: 0,
                 left: 0,
-                boxShadow: '0 0 15px #22d3ee, 0 0 4px #22d3ee',
+                backgroundColor: timelineColor,
+                boxShadow: `0 0 15px ${timelineColor}, 0 0 4px ${timelineColor}`,
                 willChange: 'transform'
               }}
             />

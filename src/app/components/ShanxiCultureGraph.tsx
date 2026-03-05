@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useMemo } from 'react';
+import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts';
 import { ChevronLeft, ChevronRight, Save, RotateCcw, LayoutGrid, FolderOpen, Download, Upload } from 'lucide-react';
@@ -6,6 +6,14 @@ import { toast } from 'sonner';
 import { RippleEffect } from './CulturalSymbols';
 import { getOptimizedNodes } from './OptimizedNodes';
 import { DEFAULT_GRAPH_DATA, generateLinksFromData, generateCategoriesFromData, validateGraphData, buildTimeRangeMap, type GraphData } from './graphData';
+import { loadRegionMap, getSupportedRegions, isRegionSupported } from '../../services/mapService';
+
+// Helper: convert hex color to rgba string
+function hexToRgba(hex: string, alpha: number): string {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return `rgba(0,234,255,${alpha})`;
+  return `rgba(${parseInt(result[1], 16)},${parseInt(result[2], 16)},${parseInt(result[3], 16)},${alpha})`;
+}
 
 import { Timeline } from './Timeline';
 import { DataStats } from './DataStats';
@@ -31,8 +39,10 @@ export default function ShanxiCultureGraph() {
   const chartRef = useRef<any>(null);
   const [chartReady, setChartReady] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapSVGPath, setMapSVGPath] = useState<string>('');
   const [showPanels, setShowPanels] = useState(false);
   const [bgColor, setBgColor] = useState(_saved?.bgColor ?? '#020b22');
+  const [timelineColor, setTimelineColor] = useState(_saved?.timelineColor ?? '#22d3ee');
   const rippleCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const rippleEffectRef = useRef<RippleEffect | null>(null);
   const [chartInstance, setChartInstance] = useState<any>(null);
@@ -79,7 +89,26 @@ export default function ShanxiCultureGraph() {
     apricot_pink: '#FFC0CB'  // 杏花微雨粉
   }), [bgColor]);
 
-  // 定义五大文化基因的初始配色
+  // 定义12色标题颜色库（支持最多12个分类）
+  // 注意：前5个是五大文化基因的固定配色，新增分类从第6个开始使用
+  const defaultColorLibrary = [
+    '#DAA520',      // 1. 高粱琥珀金 (根祖文化)
+    '#CD5C5C',      // 2. 陶土赭 (忠义文化)
+    '#87CEFA',      // 3. 冰蓝 (山河文化)
+    '#A0826D',      // 4. 古木棕 (古建文化)
+    '#20B2AA',      // 5. 汾酒青 (酒魂文化)
+    '#C0C0C0',      // 6. 银灰 (中性色，作为缓冲)
+    '#4A8FD4',      // 7. 靛青 (比 #87CEFA 更深的蓝，增加层次对比)
+    '#68B08C',      // 8. 松石绿 (自然色系，与 #20B2AA 相邻但偏黄绿)
+    '#9B7EC8',      // 9. 紫韵 (填补紫色维度，与 #87CEFA 冷色系呼应)
+    '#E07840',      // 10. 琉璃橙 (暖色过渡，介于金 #DAA520 与红 #CD5C5C 之间)
+    '#E07090',      // 11. 胭脂 (暖粉红，与冷色系形成对比张力)
+    '#7ECECE',      // 12. 碧水
+  ];
+
+  const [colorLibrary, setColorLibrary] = useState(_saved?.colorLibrary ?? defaultColorLibrary);
+
+  // 定义五大文化基因的初始配色（兼容旧数据）
   const initialCultureColors = {
     '根祖文化': fenjiu_colors.amber_gold,      
     '忠义文化': fenjiu_colors.terracotta_red,  
@@ -135,17 +164,25 @@ export default function ShanxiCultureGraph() {
   const [graphData, setGraphData] = useState<GraphData>(DEFAULT_GRAPH_DATA);
   const graphDataFileRef = useRef<HTMLInputElement>(null);
 
-  // 节点形状模式：true 为圆形，false 为自定义形状
-  const [useCircles, setUseCircles] = useState(_saved?.useCircles ?? false);
+  // 显示中心文字开关
+  const [showCenterText, setShowCenterText] = useState(_saved?.showCenterText ?? true);
 
-  // 获取节点对应的配色
-  const getColorForNodeId = (id: string): string => {
+  // 获取节点对应的配色（支持12色自动分配）
+  const getColorForNodeId = (id: string, categoryIndex?: number): string => {
     if (id === 'root') return rootColor;
+    
+    // 如果是已知的五大文化基因，使用传统配色（兼容旧数据）
     if (id.startsWith('genzhu') || id.startsWith('gz-')) return cultureColors['根祖文化'];
     if (id.startsWith('zhongyi') || id.startsWith('zy-')) return cultureColors['忠义文化'];
     if (id.startsWith('shanhe') || id.startsWith('sh-')) return cultureColors['山河文化'];
     if (id.startsWith('gujian') || id.startsWith('gj-')) return cultureColors['古建文化'];
     if (id.startsWith('jiuhun') || id.startsWith('jh-')) return cultureColors['酒魂文化'];
+    
+    // 对于新分类，根据索引从颜色库中分配颜色
+    if (categoryIndex !== undefined && categoryIndex >= 0 && categoryIndex < colorLibrary.length) {
+      return colorLibrary[categoryIndex];
+    }
+    
     return '#00EAFF';
   };
 
@@ -293,9 +330,10 @@ export default function ShanxiCultureGraph() {
   const resetAdjustments = () => {
     setBgColor('#020b22');
     setCultureColors(initialCultureColors);
+    setColorLibrary(defaultColorLibrary);
     setCustomSymbols({});
     setRawImages({});
-    setUseCircles(false);
+    setShowCenterText(true);
     setShowRootLabels(false);
     setRootColor('#00EAFF');
     setRootTitleFontSize(32);
@@ -328,6 +366,7 @@ export default function ShanxiCultureGraph() {
       _exportedAt: new Date().toISOString(),
       bgColor,
       cultureColors,
+      colorLibrary,
       nodeSizes,
       nodeBorders,
       l1Radius,
@@ -337,7 +376,7 @@ export default function ShanxiCultureGraph() {
       rootGlowIntensity,
       rootShadowColor,
       showRootLabels,
-      useCircles,
+      showCenterText,
       rotationSpeed,
       breathFrequency,
       decorRadius
@@ -364,6 +403,7 @@ export default function ShanxiCultureGraph() {
         const config = JSON.parse(ev.target?.result as string);
         if (config.bgColor) setBgColor(config.bgColor);
         if (config.cultureColors) setCultureColors(config.cultureColors);
+        if (config.colorLibrary) setColorLibrary(config.colorLibrary);
         if (config.nodeSizes) setNodeSizes(config.nodeSizes);
         if (config.nodeBorders) setNodeBorders(config.nodeBorders);
         if (config.l1Radius !== undefined) setL1Radius(config.l1Radius);
@@ -373,7 +413,7 @@ export default function ShanxiCultureGraph() {
         if (config.rootGlowIntensity !== undefined) setRootGlowIntensity(config.rootGlowIntensity);
         if (config.rootShadowColor) setRootShadowColor(config.rootShadowColor);
         if (config.showRootLabels !== undefined) setShowRootLabels(config.showRootLabels);
-        if (config.useCircles !== undefined) setUseCircles(config.useCircles);
+        if (config.showCenterText !== undefined) setShowCenterText(config.showCenterText);
         if (config.rotationSpeed !== undefined) setRotationSpeed(config.rotationSpeed);
         if (config.breathFrequency !== undefined) setBreathFrequency(config.breathFrequency);
         if (config.decorRadius !== undefined) setDecorRadius(config.decorRadius);
@@ -421,6 +461,32 @@ export default function ShanxiCultureGraph() {
           return;
         }
         setGraphData(data as GraphData);
+        
+        // 根据新数据更新 cultureColors，为每个分类分配颜色
+        // 使用 defaultColorLibrary 确保使用最新的颜色配置
+        const newCultureColors: Record<string, string> = {};
+        data.categories.forEach((cat: any, index: number) => {
+          // 如果是已知的五大文化基因，使用传统配色
+          if (cat.name === '根祖文化') {
+            newCultureColors[cat.name] = initialCultureColors['根祖文化'];
+          } else if (cat.name === '忠义文化') {
+            newCultureColors[cat.name] = initialCultureColors['忠义文化'];
+          } else if (cat.name === '山河文化') {
+            newCultureColors[cat.name] = initialCultureColors['山河文化'];
+          } else if (cat.name === '古建文化') {
+            newCultureColors[cat.name] = initialCultureColors['古建文化'];
+          } else if (cat.name === '酒魂文化') {
+            newCultureColors[cat.name] = initialCultureColors['酒魂文化'];
+          } else {
+            // 新分类从默认颜色库中分配颜色（使用最新的颜色配置）
+            newCultureColors[cat.name] = defaultColorLibrary[index % defaultColorLibrary.length];
+          }
+        });
+        setCultureColors(newCultureColors);
+        
+        // 同时更新 colorLibrary 为最新的默认颜色库
+        setColorLibrary(defaultColorLibrary);
+        
         // 统计节点数
         let totalNodes = 1; // root
         data.categories.forEach((cat: any) => {
@@ -465,10 +531,11 @@ export default function ShanxiCultureGraph() {
       rootGlowIntensity,
       rootShadowColor,
       showRootLabels,
-      useCircles,
+      showCenterText,
       rotationSpeed,
       breathFrequency,
-      decorRadius
+      decorRadius,
+      timelineColor
     };
     localStorage.setItem('shanxi_culture_graph_config', JSON.stringify(config));
     toast.success('配置已保存为默认', {
@@ -482,63 +549,62 @@ export default function ShanxiCultureGraph() {
     clearTimeout(autoSaveTimerRef.current);
     autoSaveTimerRef.current = setTimeout(() => {
       const config = {
-        bgColor, cultureColors, nodeSizes, nodeBorders,
+        bgColor, cultureColors, colorLibrary, nodeSizes, nodeBorders,
         l1Radius, timelineRadius, rootColor, rootTitleFontSize,
         rootGlowIntensity, rootShadowColor, showRootLabels,
-        useCircles, rotationSpeed, breathFrequency, decorRadius
+        showCenterText, rotationSpeed, breathFrequency, decorRadius,
+        timelineColor
       };
       localStorage.setItem('shanxi_culture_graph_config', JSON.stringify(config));
     }, 300);
     return () => clearTimeout(autoSaveTimerRef.current);
-  }, [bgColor, cultureColors, nodeSizes, nodeBorders, l1Radius, timelineRadius, rootColor, rootTitleFontSize, rootGlowIntensity, rootShadowColor, showRootLabels, useCircles, rotationSpeed, breathFrequency, decorRadius]);
+  }, [bgColor, cultureColors, colorLibrary, nodeSizes, nodeBorders, l1Radius, timelineRadius, rootColor, rootTitleFontSize, rootGlowIntensity, rootShadowColor, showRootLabels, showCenterText, rotationSpeed, breathFrequency, decorRadius, timelineColor]);
 
-  // 加载山西省地图数据
+  // 根据数据中的 region 动态加载地图
   useEffect(() => {
-    const loadShanxiMap = () => {
+    setMapSVGPath(''); // 清除旧地区路径，避免新地区加载期间显示错误形状
+    const loadMap = async () => {
       try {
-        const geoJson = getSimplifiedShanxiMap();
-        echarts.registerMap('shanxi', geoJson);
-        setMapLoaded(true);
+        const regionCode = graphData.root.region || 'shanxi';
+        const mapData = await loadRegionMap(regionCode);
+        if (mapData && mapData.geoJson) {
+          echarts.registerMap(regionCode, mapData.geoJson);
+          setMapLoaded(true);
+          // 存储 SVG 路径，用于中心节点 symbol
+          if (mapData.symbolPath) {
+            setMapSVGPath(mapData.symbolPath);
+          }
+        }
         setTimeout(() => {
           setChartReady(true);
         }, 100);
       } catch (error) {
+        console.error('Failed to load map:', error);
         setTimeout(() => {
           setChartReady(true);
         }, 100);
       }
     };
-    loadShanxiMap();
-  }, []);
+    loadMap();
+  }, [graphData.root.region]);
 
-  const getSimplifiedShanxiMap = () => {
-    return {
-      type: "FeatureCollection",
-      features: [{
-        type: "Feature",
-        properties: { name: "山西省", cp: [112.549248, 37.857014] },
-        geometry: {
-          type: "Polygon",
-          coordinates: [[[110.3, 34.5],[110.5, 34.3],[111.2, 34.2],[112.0, 34.3],[112.8, 34.4],[113.5, 34.6],[114.2, 35.0],[114.5, 35.5],[114.6, 36.2],[114.55, 36.8],[114.5, 37.5],[114.3, 38.2],[113.9, 38.8],[113.6, 39.3],[113.4, 39.7],[113.2, 40.0],[112.8, 40.3],[112.3, 40.5],[111.8, 40.45],[111.3, 40.3],[110.8, 40.0],[110.5, 39.6],[110.4, 39.2],[110.3, 38.7],[110.25, 38.2],[110.2, 37.6],[110.25, 37.0],[110.3, 36.4],[110.32, 35.8],[110.33, 35.2],[110.3, 34.5]]]
-        }
-      }]
-    };
-  };
-
-  const getShanxiMapSVG = () => {
+  // 获取当前地区的地图 symbol（优先 path://，次选 map://，兜底圆形）
+  const getRegionMapSVG = useCallback(() => {
     if (customSymbols['root']) return customSymbols['root'];
-    return `path://${svgPaths.pf4b0c00}`;
-  };
+    if (mapSVGPath) return `path://${mapSVGPath}`;
+    const regionCode = graphData.root.region || 'shanxi';
+    // map:// 仅供兜底参考（ECharts graph 并不真正支持，会回退为圆形）
+    return `map://${regionCode}`;
+  }, [customSymbols, mapSVGPath, graphData.root.region]);
 
   // 构建节点数据（纯静态，不含呼吸动画）
   // 使用 useMemo 缓存节点数据，防止频繁重渲染导致 ECharts 内部状态异常
   const nodes = useMemo(() => getOptimizedNodes(
-    fenjiu_colors, 
-    cultureColors, 
-    getShanxiMapSVG, 
-    nodeSizes, 
-    customSymbols, 
-    useCircles, 
+    fenjiu_colors,
+    cultureColors,
+    getRegionMapSVG,
+    nodeSizes,
+    customSymbols,
     l1Radius,
     {
       showRootLabels,
@@ -548,8 +614,9 @@ export default function ShanxiCultureGraph() {
       rootShadowColor,
       nodeBorders
     },
-    graphData
-  ), [fenjiu_colors, cultureColors, nodeSizes, customSymbols, useCircles, l1Radius, showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, nodeBorders, graphData]);
+    graphData,
+    colorLibrary
+  ), [fenjiu_colors, cultureColors, getRegionMapSVG, nodeSizes, customSymbols, l1Radius, showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, nodeBorders, graphData, colorLibrary]);
 
   // 呼吸动画已完全移至 BreathingNodes Canvas 叠加层
   // 不再调用 chartInstance.setOption()，力导向布局零干扰
@@ -735,12 +802,17 @@ export default function ShanxiCultureGraph() {
           fontFamily: 'KingHwa_OldSong, serif',
           fontSize: 13,
           color: '#fff',
+          // 根节点标签使用特定字体
+          fontWeight: 'normal',
           formatter: (params: any) => {
             if (!params || !params.data) return '';
             const nodeName = params.data.name;
             const symbolSize = params.data.symbolSize;
             if (params.data.id === 'root') {
-              return showRootLabels ? '{rootTitle|山西省\n文化基因库}\n{rootSubtitle|三晋文脉 · 万代共根}' : '';
+              if (!showRootLabels) return '';
+              const title = graphData.root.name || '';
+              const subtitle = graphData.root.subtitle || '';
+              return `{rootTitle|${title}}\n{rootSubtitle|${subtitle}}`;
             }
             if (symbolSize >= 70) {
               const descriptions: Record<string, string> = {
@@ -757,14 +829,14 @@ export default function ShanxiCultureGraph() {
           },
           rich: {
             rootTitle: {
-              fontFamily: 'zihun266hao-shenshihei, sans-serif',
+              fontFamily: 'root-title-font',
               fontSize: rootTitleFontSize,
               fontWeight: 'bold',
               lineHeight: rootTitleFontSize * 1.3,
               align: 'center',
               color: rootColor,
               textShadowBlur: rootGlowIntensity,
-              textShadowColor: rootColor,
+              textShadowColor: hexToRgba(rootColor, 0.5),
               textBorderColor: 'rgba(0,0,0,0.8)',
               textBorderWidth: 1
             },
@@ -788,7 +860,7 @@ export default function ShanxiCultureGraph() {
         }
       }]
     };
-  }, [nodes, links, showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, fenjiu_colors]);
+  }, [nodes, links, categories, showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, fenjiu_colors, graphData]);
 
   useEffect(() => {
     const canvas = document.createElement('canvas');
@@ -1289,6 +1361,18 @@ export default function ShanxiCultureGraph() {
                   />
                 </div>
               </div>
+              <div className="flex items-center justify-between group">
+                <span className="text-[11px] text-white/60 group-hover:text-white transition-colors font-bold text-cyan-400">时间轴颜色</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-[9px] font-mono text-white/30">{timelineColor}</span>
+                  <input 
+                    type="color" 
+                    value={timelineColor}
+                    onChange={(e) => setTimelineColor(e.target.value)}
+                    className="w-5 h-5 rounded-sm bg-transparent border-none cursor-pointer p-0"
+                  />
+                </div>
+              </div>
               <div className="h-px bg-white/5 w-full"></div>
               <div className="grid grid-cols-1 gap-3">
                 {Object.entries(cultureColors).map(([name, color]) => (
@@ -1313,10 +1397,10 @@ export default function ShanxiCultureGraph() {
             <div className="flex justify-between items-center border-b border-white/5 pb-1">
               <h4 className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em]">符号自定义</h4>
               <button 
-                onClick={() => setUseCircles(!useCircles)}
-                className={`text-[9px] px-2 py-0.5 rounded border transition-colors ${useCircles ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400' : 'border-white/10 text-white/40'}`}
+                onClick={() => setShowCenterText(!showCenterText)}
+                className={`text-[9px] px-2 py-0.5 rounded border transition-colors ${showCenterText ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400' : 'border-white/10 text-white/40'}`}
               >
-                {useCircles ? '已强制圆形' : '使用形状库'}
+                {showCenterText ? '显示中心文字' : '隐藏中心文字'}
               </button>
             </div>
             
@@ -1346,21 +1430,25 @@ export default function ShanxiCultureGraph() {
               </div>
 
               <div className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar pr-2">
-                {[
-                  { id: 'root', name: '山西中心' },
-                  { id: 'genzhu', name: '根祖文化' },
-                  { id: 'zhongyi', name: '忠义文化' },
-                  { id: 'shanhe', name: '山河文化' },
-                  { id: 'gujian', name: '古建文化' },
-                  { id: 'jiuhun', name: '酒魂文化' }
-                ].map(node => (
-                  <div key={node.id} className="flex items-center justify-between p-2 rounded bg-white/5 border border-transparent hover:border-white/10 transition-colors">
-                    <span className="text-[10px] text-white/70">{node.name}</span>
+                {/* 根节点 */}
+                <div className="flex items-center justify-between p-2 rounded bg-white/5 border border-transparent hover:border-white/10 transition-colors">
+                  <span className="text-[10px] text-white/70">{graphData.root.name.replace(/\n/g, ' ')}</span>
+                  <label className="cursor-pointer">
+                    <div className={`w-6 h-6 rounded flex items-center justify-center border ${customSymbols['root'] ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400' : 'border-white/10 text-white/20 hover:text-white/40'}`}>
+                      <span className="text-[8px]">{customSymbols['root'] ? '已换' : '替换'}</span>
+                    </div>
+                    <input type="file" className="hidden" onChange={(e) => handleFileUpload(e, 'root')} accept="image/*" />
+                  </label>
+                </div>
+                {/* 动态生成分类节点 */}
+                {graphData.categories.map(cat => (
+                  <div key={cat.id} className="flex items-center justify-between p-2 rounded bg-white/5 border border-transparent hover:border-white/10 transition-colors">
+                    <span className="text-[10px] text-white/70">{cat.name}</span>
                     <label className="cursor-pointer">
-                      <div className={`w-6 h-6 rounded flex items-center justify-center border ${customSymbols[node.id] ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400' : 'border-white/10 text-white/20 hover:text-white/40'}`}>
-                        <span className="text-[8px]">{customSymbols[node.id] ? '已换' : '替换'}</span>
+                      <div className={`w-6 h-6 rounded flex items-center justify-center border ${customSymbols[cat.id] ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400' : 'border-white/10 text-white/20 hover:text-white/40'}`}>
+                        <span className="text-[8px]">{customSymbols[cat.id] ? '已换' : '替换'}</span>
                       </div>
-                      <input type="file" className="hidden" onChange={(e) => handleFileUpload(e, node.id)} accept="image/*" />
+                      <input type="file" className="hidden" onChange={(e) => handleFileUpload(e, cat.id)} accept="image/*" />
                     </label>
                   </div>
                 ))}
@@ -1423,9 +1511,13 @@ export default function ShanxiCultureGraph() {
         <StarField fenjiu_colors={fenjiu_colors} />
         <LatticeGrid />
         <BrickPattern />
-        <OrbitRings fenjiu_colors={fenjiu_colors} chartInstance={chartInstance} l1Radius={l1Radius} timelineRadius={timelineRadius} focusedTimeRange={focusedTimeRange} />
-        <BreathingNodes fenjiu_colors={fenjiu_colors} colors={cultureColors} chartInstance={chartInstance} l1Radius={l1Radius} decorSpinSpeed={rotationSpeed} breathFrequency={breathFrequency} l1NodeSize={nodeSizes.l1} decorRadius={decorRadius} />
+        <OrbitRings fenjiu_colors={fenjiu_colors} chartInstance={chartInstance} l1Radius={l1Radius} timelineRadius={timelineRadius} focusedTimeRange={focusedTimeRange} timelineColor={timelineColor} />
         <Timeline fenjiu_colors={fenjiu_colors} visible={showPanels} />
+      </div>
+
+      {/* BreathingNodes 单独放在 z-20，确保在 ECharts (z-10) 之上 */}
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        <BreathingNodes fenjiu_colors={fenjiu_colors} colors={cultureColors} chartInstance={chartInstance} l1Radius={l1Radius} decorSpinSpeed={rotationSpeed} breathFrequency={breathFrequency} l1NodeSize={nodeSizes.l1} decorRadius={decorRadius} graphData={graphData} showCenterText={showCenterText} />
       </div>
 
       

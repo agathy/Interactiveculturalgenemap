@@ -2,6 +2,7 @@
 // 通过 chartInstance 内部 API 实时跟随一级节点位置
 
 import React, { useRef, useEffect } from 'react';
+import type { GraphData } from './graphData';
 
 interface BreathingNodesProps {
   fenjiu_colors: any;
@@ -12,16 +13,9 @@ interface BreathingNodesProps {
   breathFrequency: number;
   l1NodeSize: number;
   decorRadius: number;
+  graphData: GraphData;
+  showCenterText?: boolean;
 }
-
-// 一级节点 ID → 中文 name（必须与 OptimizedNodes 中的 name 一致）
-const L1_NODES = [
-  { id: 'genzhu', name: '根祖文化', colorKey: '根祖文化' },
-  { id: 'zhongyi', name: '忠义文化', colorKey: '忠义文化' },
-  { id: 'shanhe', name: '山河文化', colorKey: '山河文化' },
-  { id: 'gujian', name: '古建文化', colorKey: '古建文化' },
-  { id: 'jiuhun', name: '酒魂文化', colorKey: '酒魂文化' },
-];
 
 export function BreathingNodes({
   fenjiu_colors,
@@ -32,6 +26,8 @@ export function BreathingNodes({
   breathFrequency,
   l1NodeSize,
   decorRadius,
+  graphData,
+  showCenterText = true,
 }: BreathingNodesProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rotationRef = useRef(0);
@@ -105,7 +101,29 @@ export function BreathingNodes({
       const offsetX = containerRect?.left ?? 0;
       const offsetY = containerRect?.top ?? 0;
 
-      L1_NODES.forEach(({ id, name, colorKey }) => {
+      // 获取图表当前的缩放比例
+      let chartZoom = 1;
+      try {
+        const option = chartInstance.getOption();
+        chartZoom = option?.series?.[0]?.zoom || 1;
+      } catch { /* ignore */ }
+
+      // 动态生成分类列表，提取中心文字（在"文化"前换行）
+      const l1Nodes = graphData.categories.map(cat => {
+        // 在"文化"前分割文本，如"根祖文化" -> ["根祖", "文化"]
+        const parts = cat.name.split('文化');
+        const line1 = parts[0]; // "根祖"
+        const line2 = parts.length > 1 ? '文化' + parts[1] : ''; // "文化"
+        return {
+          id: cat.id,
+          name: cat.name,
+          colorKey: cat.name,
+          centerTextLine1: line1,
+          centerTextLine2: line2
+        };
+      });
+
+      l1Nodes.forEach(({ id, name, colorKey, centerTextLine1, centerTextLine2 }) => {
         // 使用 name（中文名）查找，因为 ECharts indexOfName 按 name 属性搜索
         let nodeIndex = seriesData.indexOfName(name);
         
@@ -241,6 +259,38 @@ export function BreathingNodes({
           ctx.fill();
         }
         ctx.restore();
+
+        // 7. 一级节点中心文字（根据 showCenterText 开关决定是否显示）
+        if (showCenterText) {
+          ctx.save();
+          // 字体大小跟随节点大小和图表缩放比例，保持与节点圆圈同比例（增大比例）
+          const fontSize = Math.round(l1NodeSize * 0.28 * chartZoom);
+          // 使用自定义字体文件（不使用 bold，避免过粗）
+          ctx.font = `${fontSize}px "zihun266hao-shenshihei", "Source Han Sans", sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          // 重置阴影和透明度
+          ctx.shadowBlur = 0;
+          ctx.globalAlpha = 1;
+          
+          // 计算两行文字的垂直偏移
+          const lineHeight = fontSize * 1.05;
+          const y1 = y - lineHeight / 2; // 第一行（根祖）
+          const y2 = y + lineHeight / 2; // 第二行（文化）
+          
+          // 将节点颜色叠加50%黑色
+          const textColor = blendWithBlack(nodeColor, 0.5);
+          
+          // 第一行 - 无描边，使用叠加后的颜色
+          ctx.fillStyle = textColor;
+          ctx.fillText(centerTextLine1, x, y1);
+          
+          // 第二行 - 无描边，使用叠加后的颜色
+          if (centerTextLine2) {
+            ctx.fillText(centerTextLine2, x, y2);
+          }
+          ctx.restore();
+        }
       });
 
       animationFrame = requestAnimationFrame(draw);
@@ -252,13 +302,13 @@ export function BreathingNodes({
       window.removeEventListener('resize', resize);
       cancelAnimationFrame(animationFrame);
     };
-  }, [chartInstance, colors, fenjiu_colors, decorSpinSpeed, breathFrequency, l1NodeSize, decorRadius]);
+  }, [chartInstance, colors, fenjiu_colors, decorSpinSpeed, breathFrequency, l1NodeSize, decorRadius, showCenterText]);
 
   return (
     <canvas
       ref={canvasRef}
       className="absolute inset-0 pointer-events-none"
-      style={{ zIndex: 15 }}
+      style={{ zIndex: 100 }}
     />
   );
 }
@@ -268,4 +318,21 @@ function hexToRgba(hex: string, alpha: number): string {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   if (!result) return `rgba(100,200,255,${alpha})`;
   return `rgba(${parseInt(result[1], 16)},${parseInt(result[2], 16)},${parseInt(result[3], 16)},${alpha})`;
+}
+
+// Helper: blend color with black (ratio: 0-1, where 1 = full black)
+function blendWithBlack(hex: string, ratio: number): string {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return hex;
+  
+  const r = parseInt(result[1], 16);
+  const g = parseInt(result[2], 16);
+  const b = parseInt(result[3], 16);
+  
+  // Blend with black: newColor = color * (1 - ratio) + black * ratio
+  const newR = Math.round(r * (1 - ratio));
+  const newG = Math.round(g * (1 - ratio));
+  const newB = Math.round(b * (1 - ratio));
+  
+  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
 }

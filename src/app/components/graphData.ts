@@ -20,7 +20,7 @@ export interface L2Node {
 export interface L1Category {
   id: string;
   name: string;
-  angle: number;        // 在轨道上的角度（度）
+  angle?: number;        // 在轨道上的角度（度），可选，系统会自动计算
   symbol?: string;      // ECharts symbol: 'diamond' | 'triangle' | 'roundRect' | 'rect' | 'pin' | 'circle'
   tooltip?: string;     // HTML 格式的提示文本
   children: L2Node[];
@@ -33,6 +33,8 @@ export interface GraphData {
     name: string;
     subtitle: string;
     tooltip?: string;
+    region?: string;      // 地区编码，如 "shanxi", "beijing", "sichuan" 等
+    regionName?: string;  // 地区名称，如 "山西省"
   };
   categories: L1Category[];
 }
@@ -42,7 +44,9 @@ export const DEFAULT_GRAPH_DATA: GraphData = {
   root: {
     name: '山西省\n文化基因库',
     subtitle: '三晋文脉 · 万代共根',
-    tooltip: '<b>山西文化体系</b><br/>华夏文明的摇篮，五大文化基因在此交汇'
+    tooltip: '<b>山西文化体系</b><br/>华夏文明的摇篮，五大文化基因在此交汇',
+    region: 'shanxi',
+    regionName: '山西省'
   },
   categories: [
     {
@@ -301,8 +305,9 @@ export function validateGraphData(data: any): { valid: boolean; error?: string }
   for (let i = 0; i < data.categories.length; i++) {
     const cat = data.categories[i];
     if (!cat.id || !cat.name) return { valid: false, error: `categories[${i}] 缺少 id 或 name` };
-    if (cat.angle === undefined || typeof cat.angle !== 'number') return { valid: false, error: `categories[${i}] (${cat.id}) 缺少 angle（数字）` };
+    if (cat.angle !== undefined && typeof cat.angle !== 'number') return { valid: false, error: `categories[${i}] (${cat.id}) 的 angle 必须是数字（可选，系统会自动计算）` };
     if (!Array.isArray(cat.children)) return { valid: false, error: `categories[${i}] (${cat.id}) 缺少 children 数组` };
+    if (data.categories.length > 12) return { valid: false, error: `分类数量不能超过 12 个，当前有 ${data.categories.length} 个` };
     for (let j = 0; j < cat.children.length; j++) {
       const l2 = cat.children[j];
       if (!l2.id || !l2.name) return { valid: false, error: `${cat.id}.children[${j}] 缺少 id 或 name` };
