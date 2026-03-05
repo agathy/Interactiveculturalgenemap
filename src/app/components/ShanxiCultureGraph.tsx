@@ -52,6 +52,11 @@ export default function ShanxiCultureGraph() {
 
   const [focusedTimeRange, setFocusedTimeRange] = useState<[number, number] | null>(null);
 
+  // 初始化加载默认数据
+  useEffect(() => {
+    loadDefaultData();
+  }, []);
+
   // 监听缩放和平移，实时记录视图状态
   useEffect(() => {
     if (!chartInstance) return;
@@ -679,6 +684,7 @@ export default function ShanxiCultureGraph() {
 
   // 根据数据中的 region 动态加载地图
   useEffect(() => {
+    if (!graphData) return;
     setMapSVGPath(''); // 清除旧地区路径，避免新地区加载期间显示错误形状
     const loadMap = async () => {
       try {
@@ -707,10 +713,11 @@ export default function ShanxiCultureGraph() {
       }
     };
     loadMap();
-  }, [graphData.root.region]);
+  }, [graphData]);
 
   // 加载地图光点数据
   useEffect(() => {
+    if (!graphData) return;
     const loadLightPoints = async () => {
       try {
         const regionCode = graphData.root.region || 'shanxi';
@@ -719,7 +726,6 @@ export default function ShanxiCultureGraph() {
           const data: MapLightPointsData = await response.json();
           setLightPointsData(data);
         } else {
-          // 如果没有对应地区的光点数据，清空
           setLightPointsData(null);
         }
       } catch (error) {
@@ -728,16 +734,17 @@ export default function ShanxiCultureGraph() {
       }
     };
     loadLightPoints();
-  }, [graphData.root.region]);
+  }, [graphData]);
 
   // 获取当前地区的地图 symbol（优先 path://，次选 map://，兜底圆形）
   const getRegionMapSVG = useCallback(() => {
     if (customSymbols['root']) return customSymbols['root'];
     if (mapSVGPath) return `path://${mapSVGPath}`;
+    if (!graphData) return 'circle';
     const regionCode = graphData.root.region || 'shanxi';
     // map:// 仅供兜底参考（ECharts graph 并不真正支持，会回退为圆形）
     return `map://${regionCode}`;
-  }, [customSymbols, mapSVGPath, graphData.root.region]);
+  }, [customSymbols, mapSVGPath, graphData]);
 
   // 构建节点数据（纯静态，不含呼吸动画）
   // 使用 useMemo 缓存节点数据，防止频繁重渲染导致 ECharts 内部状态异常
@@ -811,10 +818,10 @@ export default function ShanxiCultureGraph() {
     processAll();
   }, [rawImages, nodeBorders, cultureColors, rootColor, rootShadowColor]);
   // 使用 useMemo 缓存链接数据（从 graphData 动态生成）
-  const links = useMemo(() => generateLinksFromData(graphData, cultureColors, fenjiu_colors, colorLibrary), [cultureColors, fenjiu_colors, graphData, colorLibrary]);
-  const categories = useMemo(() => generateCategoriesFromData(graphData), [graphData]);
+  const links = useMemo(() => graphData ? generateLinksFromData(graphData, cultureColors, fenjiu_colors, colorLibrary) : [], [cultureColors, fenjiu_colors, graphData, colorLibrary]);
+  const categories = useMemo(() => graphData ? generateCategoriesFromData(graphData) : [], [graphData]);
   // 时间范围查找表：节点 ID → [startYear, endYear]
-  const timeRangeMap = useMemo(() => buildTimeRangeMap(graphData), [graphData]);
+  const timeRangeMap = useMemo(() => graphData ? buildTimeRangeMap(graphData) : {}, [graphData]);
   // 使用 ref 确保 handleClick 闭包内始终读取最新的查找表
   const timeRangeMapRef = useRef(timeRangeMap);
   useEffect(() => { timeRangeMapRef.current = timeRangeMap; }, [timeRangeMap]);
@@ -952,7 +959,7 @@ export default function ShanxiCultureGraph() {
             const nodeName = params.data.name;
             const symbolSize = params.data.symbolSize;
             if (params.data.id === 'root') {
-              if (!showRootLabels) return '';
+              if (!showRootLabels || !graphData) return '';
               const title = graphData.root.name || '';
               const subtitle = graphData.root.subtitle || '';
               return `{rootTitle|${title}}\n{rootSubtitle|${subtitle}}`;
@@ -1220,6 +1227,16 @@ export default function ShanxiCultureGraph() {
 
   return (
     <div className="relative w-full h-screen overflow-hidden" style={{ background: fenjiu_colors.background }}>
+      {/* 加载状态 */}
+      {isLoading && graphData === null && (
+        <div className="absolute inset-0 flex items-center justify-center z-50 bg-black/80">
+          <div className="text-center">
+            <div className="text-2xl text-cyan-400 mb-4">加载中...</div>
+            <div className="text-sm text-white/60">正在加载默认数据</div>
+          </div>
+        </div>
+      )}
+
       {/* 左侧调节面板 */}
       <div
         className={`absolute top-32 left-8 z-50 p-5 rounded-2xl border border-white/10 bg-black/60 backdrop-blur-2xl w-80 pointer-events-auto max-h-[75vh] overflow-y-auto custom-scrollbar shadow-2xl transition-all duration-500 ${showLeftPanel ? 'translate-x-0 opacity-100' : '-translate-x-[120%] opacity-0'}`}
@@ -1283,10 +1300,10 @@ export default function ShanxiCultureGraph() {
                   <span className="text-[10px] text-white/40 font-medium">图谱节点</span>
                   <div className="flex items-center gap-1.5">
                     <span className="text-[10px] text-white/40">
-                      {graphData.categories.length} 分 / {graphData.categories.reduce((acc, c) => acc + c.children.length, 0)} 二 / {graphData.categories.reduce((acc, c) => acc + c.children.reduce((a2, l2) => a2 + (l2.children?.length || 0), 0), 0)} 三
+                      {graphData ? `${graphData.categories.length} 分 / ${graphData.categories.reduce((acc, c) => acc + c.children.length, 0)} 二 / ${graphData.categories.reduce((acc, c) => acc + c.children.reduce((a2, l2) => a2 + (l2.children?.length || 0), 0), 0)} 三` : '加载中...'}
                     </span>
-                    {graphData !== DEFAULT_GRAPH_DATA && (
-                      <span className="text-[9px] text-amber-400/70 bg-amber-400/10 px-1.5 py-0.5 rounded">自定义</span>
+                    {graphData && (
+                      <span className="text-[9px] text-amber-400/70 bg-amber-400/10 px-1.5 py-0.5 rounded">已加载</span>
                     )}
                   </div>
                 </div>
@@ -1698,17 +1715,19 @@ export default function ShanxiCultureGraph() {
 
               <div className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar pr-2">
                 {/* 根节点 */}
-                <div className="flex items-center justify-between p-2 rounded bg-white/5 border border-transparent hover:border-white/10 transition-colors">
-                  <span className="text-[10px] text-white/70">{graphData.root.name.replace(/\n/g, ' ')}</span>
-                  <label className="cursor-pointer">
-                    <div className={`w-6 h-6 rounded flex items-center justify-center border ${customSymbols['root'] ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400' : 'border-white/10 text-white/20 hover:text-white/40'}`}>
-                      <span className="text-[8px]">{customSymbols['root'] ? '已换' : '替换'}</span>
-                    </div>
-                    <input type="file" className="hidden" onChange={(e) => handleFileUpload(e, 'root')} accept="image/*" />
-                  </label>
-                </div>
+                {graphData && (
+                  <div className="flex items-center justify-between p-2 rounded bg-white/5 border border-transparent hover:border-white/10 transition-colors">
+                    <span className="text-[10px] text-white/70">{graphData.root.name.replace(/\n/g, ' ')}</span>
+                    <label className="cursor-pointer">
+                      <div className={`w-6 h-6 rounded flex items-center justify-center border ${customSymbols['root'] ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400' : 'border-white/10 text-white/20 hover:text-white/40'}`}>
+                        <span className="text-[8px]">{customSymbols['root'] ? '已换' : '替换'}</span>
+                      </div>
+                      <input type="file" className="hidden" onChange={(e) => handleFileUpload(e, 'root')} accept="image/*" />
+                    </label>
+                  </div>
+                )}
                 {/* 动态生成分类节点 */}
-                {graphData.categories.map(cat => (
+                {graphData && graphData.categories.map(cat => (
                   <div key={cat.id} className="flex items-center justify-between p-2 rounded bg-white/5 border border-transparent hover:border-white/10 transition-colors">
                     <span className="text-[10px] text-white/70">{cat.name}</span>
                     <label className="cursor-pointer">
