@@ -102,7 +102,7 @@ export default function ShanxiCultureGraph() {
     '#68B08C',      // 8. 松石绿 (自然色系，与 #20B2AA 相邻但偏黄绿)
     '#9B7EC8',      // 9. 紫韵 (填补紫色维度，与 #87CEFA 冷色系呼应)
     '#E07840',      // 10. 琉璃橙 (暖色过渡，介于金 #DAA520 与红 #CD5C5C 之间)
-    '#E07090',      // 11. 胭脂 (暖粉红，与冷色系形成对比张力)
+    '#82a0ef',      // 11. 淡紫蓝
     '#7ECECE',      // 12. 碧水
   ];
 
@@ -152,6 +152,7 @@ export default function ShanxiCultureGraph() {
   const [rootGlowIntensity, setRootGlowIntensity] = useState(_saved?.rootGlowIntensity ?? 15);
   const [showRootLabels, setShowRootLabels] = useState(_saved?.showRootLabels ?? false);
   const [rootShadowColor, setRootShadowColor] = useState(_saved?.rootShadowColor ?? '#082f6d');
+  const [rootTitleShadowColor, setRootTitleShadowColor] = useState(_saved?.rootTitleShadowColor ?? '#00EAFF');
 
   // 装饰环自转速度（面板"旋转速度"滑杆控制），呼吸频率系数（控制节点本体缩放+投影闪烁）
   const [rotationSpeed, setRotationSpeed] = useState(_saved?.rotationSpeed ?? 0.34);
@@ -375,6 +376,7 @@ export default function ShanxiCultureGraph() {
       rootTitleFontSize,
       rootGlowIntensity,
       rootShadowColor,
+      rootTitleShadowColor,
       showRootLabels,
       showCenterText,
       rotationSpeed,
@@ -412,6 +414,7 @@ export default function ShanxiCultureGraph() {
         if (config.rootTitleFontSize !== undefined) setRootTitleFontSize(config.rootTitleFontSize);
         if (config.rootGlowIntensity !== undefined) setRootGlowIntensity(config.rootGlowIntensity);
         if (config.rootShadowColor) setRootShadowColor(config.rootShadowColor);
+        if (config.rootTitleShadowColor) setRootTitleShadowColor(config.rootTitleShadowColor);
         if (config.showRootLabels !== undefined) setShowRootLabels(config.showRootLabels);
         if (config.showCenterText !== undefined) setShowCenterText(config.showCenterText);
         if (config.rotationSpeed !== undefined) setRotationSpeed(config.rotationSpeed);
@@ -551,14 +554,14 @@ export default function ShanxiCultureGraph() {
       const config = {
         bgColor, cultureColors, colorLibrary, nodeSizes, nodeBorders,
         l1Radius, timelineRadius, rootColor, rootTitleFontSize,
-        rootGlowIntensity, rootShadowColor, showRootLabels,
+        rootGlowIntensity, rootShadowColor, rootTitleShadowColor, showRootLabels,
         showCenterText, rotationSpeed, breathFrequency, decorRadius,
         timelineColor
       };
       localStorage.setItem('shanxi_culture_graph_config', JSON.stringify(config));
     }, 300);
     return () => clearTimeout(autoSaveTimerRef.current);
-  }, [bgColor, cultureColors, colorLibrary, nodeSizes, nodeBorders, l1Radius, timelineRadius, rootColor, rootTitleFontSize, rootGlowIntensity, rootShadowColor, showRootLabels, showCenterText, rotationSpeed, breathFrequency, decorRadius, timelineColor]);
+  }, [bgColor, cultureColors, colorLibrary, nodeSizes, nodeBorders, l1Radius, timelineRadius, rootColor, rootTitleFontSize, rootGlowIntensity, rootShadowColor, rootTitleShadowColor, showRootLabels, showCenterText, rotationSpeed, breathFrequency, decorRadius, timelineColor]);
 
   // 根据数据中的 region 动态加载地图
   useEffect(() => {
@@ -612,6 +615,7 @@ export default function ShanxiCultureGraph() {
       rootColor,
       rootGlowIntensity,
       rootShadowColor,
+      rootTitleShadowColor,
       nodeBorders
     },
     graphData,
@@ -836,7 +840,7 @@ export default function ShanxiCultureGraph() {
               align: 'center',
               color: rootColor,
               textShadowBlur: rootGlowIntensity,
-              textShadowColor: hexToRgba(rootColor, 0.5),
+              textShadowColor: hexToRgba(rootTitleShadowColor, 0.5),
               textBorderColor: 'rgba(0,0,0,0.8)',
               textBorderWidth: 1
             },
@@ -1157,6 +1161,18 @@ export default function ShanxiCultureGraph() {
                   onChange={(e) => setRootGlowIntensity(parseInt(e.target.value))}
                   className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-cyan-400"
                 />
+              </div>
+              <div className="flex items-center justify-between group">
+                <span className="text-[10px] text-white/50">标题投影色</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-[9px] font-mono text-white/30">{rootTitleShadowColor}</span>
+                  <input 
+                    type="color" 
+                    value={rootTitleShadowColor}
+                    onChange={(e) => setRootTitleShadowColor(e.target.value)}
+                    className="w-5 h-5 rounded-sm bg-transparent border-none cursor-pointer p-0"
+                  />
+                </div>
               </div>
             </div>
           </section>
@@ -1517,7 +1533,7 @@ export default function ShanxiCultureGraph() {
 
       {/* BreathingNodes 单独放在 z-20，确保在 ECharts (z-10) 之上 */}
       <div className="absolute inset-0 z-20 pointer-events-none">
-        <BreathingNodes fenjiu_colors={fenjiu_colors} colors={cultureColors} chartInstance={chartInstance} l1Radius={l1Radius} decorSpinSpeed={rotationSpeed} breathFrequency={breathFrequency} l1NodeSize={nodeSizes.l1} decorRadius={decorRadius} graphData={graphData} showCenterText={showCenterText} />
+        <BreathingNodes fenjiu_colors={fenjiu_colors} colors={cultureColors} chartInstance={chartInstance} l1Radius={l1Radius} decorSpinSpeed={rotationSpeed} breathFrequency={breathFrequency} l1NodeSize={nodeSizes.l1} decorRadius={decorRadius} graphData={graphData} showCenterText={showCenterText} colorLibrary={colorLibrary} />
       </div>
 
       

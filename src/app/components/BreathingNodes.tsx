@@ -15,6 +15,7 @@ interface BreathingNodesProps {
   decorRadius: number;
   graphData: GraphData;
   showCenterText?: boolean;
+  colorLibrary?: string[]; // 颜色库，用于超过5个分类的节点
 }
 
 export function BreathingNodes({
@@ -28,6 +29,7 @@ export function BreathingNodes({
   decorRadius,
   graphData,
   showCenterText = true,
+  colorLibrary = [],
 }: BreathingNodesProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rotationRef = useRef(0);
@@ -123,7 +125,10 @@ export function BreathingNodes({
         };
       });
 
-      l1Nodes.forEach(({ id, name, colorKey, centerTextLine1, centerTextLine2 }) => {
+      l1Nodes.forEach(({ id, name, colorKey, centerTextLine1, centerTextLine2 }, index) => {
+        // 获取节点颜色：优先使用 colors，如果没有则从 colorLibrary 获取
+        const nodeColor = colors[colorKey] || colorLibrary[index % colorLibrary.length] || fenjiu_colors.ice_blue;
+
         // 使用 name（中文名）查找，因为 ECharts indexOfName 按 name 属性搜索
         let nodeIndex = seriesData.indexOfName(name);
         
@@ -185,7 +190,6 @@ export function BreathingNodes({
 
         if (x === null || y === null || isNaN(x) || isNaN(y)) return;
 
-        const nodeColor = colors[colorKey] || fenjiu_colors.ice_blue;
         const radius = (l1NodeSize / 2) * breathScale;
 
         // 1. 外层旋转虚线环

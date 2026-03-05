@@ -303,7 +303,15 @@ export function geoJsonToSVGPath(geoJson: any, size: number = 200): string {
     }
   }
 
-  return paths.join(' ');
+  // 在路径末尾附加两个零长度的不可见锚点，强制边界框恰好为 [0,0]→[size,size]。
+  // 原因：ECharts 渲染 path:// symbol 时用
+  //   scaleX = symbolSize / rect.width
+  //   scaleY = symbolSize / rect.height
+  // 做非均匀拉伸。若地图路径的 rect 不是正方形（山西约为 0.56:1 窄高），
+  // X 方向会被过度放大，导致地图横向被"压扁"变宽。
+  // 强制 rect = size×size 后，scaleX === scaleY，实现等比缩放。
+  const s = size.toFixed(1);
+  return `M0,0L0,0M${s},${s}L${s},${s} ` + paths.join(' ');
 }
 
 // 根据地区名称获取地区编码

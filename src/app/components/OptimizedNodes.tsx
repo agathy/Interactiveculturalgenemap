@@ -14,14 +14,14 @@ export function getOptimizedNodes(
   nodeSizes: any, 
   customSymbols: Record<string, string> = {}, 
   l1Radius: number = 260,
-  rootParams: any = { showRootLabels: false, rootTitleFontSize: 32, rootColor: '#00EAFF', rootGlowIntensity: 15, rootShadowColor: '#082f6d', nodeBorders: { root: false, l1: true, l2: false, l3: true } },
+  rootParams: any = { showRootLabels: false, rootTitleFontSize: 32, rootColor: '#00EAFF', rootGlowIntensity: 15, rootShadowColor: '#082f6d', rootTitleShadowColor: '#00EAFF', nodeBorders: { root: false, l1: true, l2: false, l3: true } },
   graphData?: GraphData,
   colorLibrary?: string[]
 ) {
   const centerX = 500;
   const centerY = 375;
   
-  const { showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, nodeBorders } = rootParams;
+  const { showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, rootTitleShadowColor, nodeBorders } = rootParams;
 
   if (!graphData) return [];
 
@@ -113,7 +113,7 @@ export function getOptimizedNodes(
           padding: [0, 0, 8, 0],
           align: 'center',
           textShadowBlur: rootGlowIntensity,
-          textShadowColor: hexToRgba(rootColor, 0.5),
+          textShadowColor: hexToRgba(rootTitleShadowColor, 0.5),
           textBorderColor: 'rgba(0,0,0,0.8)',
           textBorderWidth: 1
         },
