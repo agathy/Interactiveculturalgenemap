@@ -32,34 +32,7 @@ function geoToPathCoord(lng: number, lat: number, b: MapBounds): { x: number; y:
   };
 }
 
-/**
- * 将 path 坐标系位置转换为当前屏幕像素坐标
- *
- * ECharts graph 坐标系规则：
- *   screenX = (nodeDataX - center[0]) * zoom + canvasWidth / 2
- * 根节点在 data 坐标 (500, 375)，中心节点始终位于 canvas 中心。
- * path:// symbol 以节点位置为中心，以 symbolSize * zoom 为像素尺寸渲染。
- */
-function pathToScreen(
-  pathX: number,
-  pathY: number,
-  rootNodeSize: number,
-  center: [number, number],
-  zoom: number
-): { x: number; y: number } {
-  // 根节点屏幕位置
-  const rootScreenX = (500 - center[0]) * zoom + window.innerWidth / 2;
-  const rootScreenY = (375 - center[1]) * zoom + window.innerHeight / 2;
-  // path 坐标系中心为 (PATH_SIZE/2, PATH_SIZE/2)
-  // 每个 path 单位对应的像素数 = symbolSize * zoom / PATH_SIZE
-  const pxPerUnit = (rootNodeSize * zoom) / PATH_SIZE;
-  return {
-    x: rootScreenX + (pathX - PATH_SIZE / 2) * pxPerUnit,
-    y: rootScreenY + (pathY - PATH_SIZE / 2) * pxPerUnit,
-  };
-}
-
-/** 绘制单个血光点（核心 + 外发光 + 多圈扩散涟漪） */
+/** 绘制单个血光点（外发光 + 亮核心，无涟漪环） */
 function drawBloodPoint(
   ctx: CanvasRenderingContext2D,
   sx: number,
@@ -107,6 +80,9 @@ export function MapLightPoints({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
   const timeRef = useRef<number>(0);
+  // 用 ref 存储 chartInstance，确保动画循环始终拿到最新实例
+  const chartInstanceRef = useRef(chartInstance);
+  chartInstanceRef.current = chartInstance;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -127,19 +103,33 @@ export function MapLightPoints({
 
       const points = lightPointsData?.points;
       const bounds = mapBounds;
-      const vs = viewStateRef.current;
+      const chart = chartInstanceRef.current;
 
-      if (points?.length && bounds && vs) {
-        const { zoom, center } = vs;
-        // 点大小随缩放轻微缩放（不完全跟随，保持可读性）
-        const zoomScale = Math.max(0.6, Math.min(2, 0.7 + zoom * 0.5));
+      if (points?.length && bounds && chart && !chart.isDisposed()) {
+        try {
+          // 与 OrbitRings 相同的方式：直接用 convertToPixel 获取根节点屏幕坐标
+          // 这会自动计入当前的 zoom 和 pan，不需要手动推算变换矩阵
+          const rootPos = chart.convertToPixel({ seriesIndex: 0 }, [500, 375]);
+          if (!rootPos) {
+            animRef.current = requestAnimationFrame(animate);
+            return;
+          }
 
-        for (let i = 0; i < points.length; i++) {
-          const pt = points[i];
-          const pathCoord = geoToPathCoord(pt.lng, pt.lat, bounds);
-          const screen = pathToScreen(pathCoord.x, pathCoord.y, rootNodeSize, center, zoom);
-          const baseSize = (pt.size || 4) * zoomScale;
-          drawBloodPoint(ctx, screen.x, screen.y, pt, baseSize, timeRef.current, i);
+          const zoom = viewStateRef.current?.zoom || 1;
+          // symbolSize 在 ECharts 内部随 zoom 线性缩放
+          const pxPerUnit = (rootNodeSize * zoom) / PATH_SIZE;
+
+          for (let i = 0; i < points.length; i++) {
+            const pt = points[i];
+            const pathCoord = geoToPathCoord(pt.lng, pt.lat, bounds);
+            // rootPos 对应 path 坐标系中心 (PATH_SIZE/2, PATH_SIZE/2)
+            const sx = rootPos[0] + (pathCoord.x - PATH_SIZE / 2) * pxPerUnit;
+            const sy = rootPos[1] + (pathCoord.y - PATH_SIZE / 2) * pxPerUnit;
+            const baseSize = (pt.size || 4) * Math.max(0.5, Math.min(2, zoom * 0.8));
+            drawBloodPoint(ctx, sx, sy, pt, baseSize, timeRef.current, i);
+          }
+        } catch (_) {
+          // 图表切换期间忽略错误
         }
       }
 
