@@ -208,6 +208,27 @@ export const REGION_MAPS: Record<string, {
     name: '澳门特别行政区',
     geoJsonUrl: 'https://geo.datav.aliyun.com/areas_v3/bound/820000_full.json',
     adcode: '820000'
+  },
+  // 市级行政区
+  'ruijin': {
+    name: '江西省瑞金市',
+    geoJsonUrl: 'https://geo.datav.aliyun.com/areas_v3/bound/360781_full.json',
+    adcode: '360781'
+  },
+  'hangzhou': {
+    name: '浙江省杭州市',
+    geoJsonUrl: 'https://geo.datav.aliyun.com/areas_v3/bound/330100_full.json',
+    adcode: '330100'
+  },
+  'shanghai_city': {
+    name: '上海市',
+    geoJsonUrl: 'https://geo.datav.aliyun.com/areas_v3/bound/310100_full.json',
+    adcode: '310100'
+  },
+  'beijing_city': {
+    name: '北京市',
+    geoJsonUrl: 'https://geo.datav.aliyun.com/areas_v3/bound/110100_full.json',
+    adcode: '110100'
   }
 };
 
@@ -220,51 +241,74 @@ export function getSupportedRegions(): Array<{ code: string; name: string }> {
 }
 
 // 动态加载地图数据
+// 支持三种 regionCode：
+//   1. REGION_MAPS 中的具名 key（如 'shanxi'、'ruijin'）
+//   2. 6 位行政区划代码（如 '360781'）——直接调 DataV API，无需提前注册
+//   3. 地区名称（如 '瑞金市'）——通过 getRegionCodeByName 模糊匹配
 export async function loadRegionMap(regionCode: string): Promise<any> {
-  const region = REGION_MAPS[regionCode];
+  // Step1: 尝试具名 key
+  let region = REGION_MAPS[regionCode];
+
+  // Step2: 6 位纯数字 → 当作 adcode 动态构造 URL
+  if (!region && /^\d{6}$/.test(regionCode)) {
+    region = {
+      name: regionCode,
+      geoJsonUrl: `https://geo.datav.aliyun.com/areas_v3/bound/${regionCode}_full.json`,
+      adcode: regionCode,
+    };
+  }
+
+  // Step3: 名称模糊匹配
+  if (!region) {
+    const matched = getRegionCodeByName(regionCode);
+    if (matched) region = REGION_MAPS[matched];
+  }
+
   if (!region) {
     console.warn(`Unsupported region: ${regionCode}, falling back to shanxi`);
     return loadRegionMap('shanxi');
   }
 
-  try {
-    const response = await fetch(region.geoJsonUrl);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const geoJson = await response.json();
+  const adcode = region.adcode;
+  const fullUrl = `https://geo.datav.aliyun.com/areas_v3/bound/${adcode}_full.json`;
+  const boundUrl = `https://geo.datav.aliyun.com/areas_v3/bound/${adcode}.json`;
 
-    // 优先用不含子区划的边界 JSON（URL 去掉 _full 后缀）来生成 symbol 路径，
-    // 路径更简洁；若请求失败则退回使用 full 数据。
+  try {
+    // 优先加载含子区划的 _full.json；县级市/区县可能没有子区划，
+    // 此时 features 为空或请求失败，自动降级到仅边界 .json
+    let geoJson: any = null;
+    try {
+      const fullResp = await fetch(fullUrl);
+      if (fullResp.ok) {
+        const data = await fullResp.json();
+        if (data?.features?.length > 0) geoJson = data;
+      }
+    } catch (_) { /* ignore */ }
+
+    if (!geoJson) {
+      const boundResp = await fetch(boundUrl);
+      if (!boundResp.ok) throw new Error(`HTTP ${boundResp.status} for ${boundUrl}`);
+      geoJson = await boundResp.json();
+    }
+
+    // symbol 路径和边界框优先使用更简洁的 boundUrl（仅外轮廓）
     let symbolPath = '';
     let bounds: MapBounds | null = null;
     try {
-      const boundaryUrl = region.geoJsonUrl.replace('_full.json', '.json');
-      if (boundaryUrl !== region.geoJsonUrl) {
-        const bResp = await fetch(boundaryUrl);
-        if (bResp.ok) {
-          const boundaryJson = await bResp.json();
-          symbolPath = geoJsonToSVGPath(boundaryJson);
-          bounds = extractGeoJsonBounds(boundaryJson);
-        }
+      const bResp = await fetch(boundUrl);
+      if (bResp.ok) {
+        const boundaryJson = await bResp.json();
+        symbolPath = geoJsonToSVGPath(boundaryJson);
+        bounds = extractGeoJsonBounds(boundaryJson);
       }
     } catch (_) { /* ignore */ }
     if (!symbolPath) symbolPath = geoJsonToSVGPath(geoJson);
     if (!bounds) bounds = extractGeoJsonBounds(geoJson);
 
-    return {
-      geoJson,
-      regionInfo: region,
-      symbolPath,
-      bounds
-    };
+    return { geoJson, regionInfo: region, symbolPath, bounds };
   } catch (e) {
     console.error('Failed to load map:', e);
-    // 如果加载失败，尝试加载山西地图作为回退
-    if (regionCode !== 'shanxi') {
-      console.log('Falling back to shanxi map');
-      return loadRegionMap('shanxi');
-    }
+    if (regionCode !== 'shanxi') return loadRegionMap('shanxi');
     return null;
   }
 }
