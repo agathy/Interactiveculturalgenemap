@@ -245,7 +245,8 @@ export const DEFAULT_GRAPH_DATA: GraphData = {
 export function generateLinksFromData(
   graphData: GraphData,
   colors: Record<string, string>,
-  fenjiu_colors: any
+  fenjiu_colors: any,
+  colorLibrary?: string[]
 ) {
   const links: any[] = [];
 
@@ -260,12 +261,13 @@ export function generateLinksFromData(
 
   // L1 -> L2
   for (const cat of graphData.categories) {
-    const color = colors[cat.name] || '#888';
+    const catIndex = graphData.categories.indexOf(cat);
+    const color = colors[cat.name] || colorLibrary?.[catIndex % (colorLibrary?.length || 1)] || '#888';
     for (const l2 of cat.children) {
       links.push({
         source: cat.id,
         target: l2.id,
-        lineStyle: { color, opacity: 0.2, width: 0.5, curveness: 0.2 }
+        lineStyle: { color, opacity: 0.4, width: 0.8, curveness: 0.2 }
       });
 
       // L2 -> L3
@@ -274,7 +276,7 @@ export function generateLinksFromData(
           links.push({
             source: l2.id,
             target: l3.id,
-            lineStyle: { color, opacity: 0.12, width: 0.4, type: 'dashed' as const }
+            lineStyle: { color, opacity: 0.3, width: 0.6, type: 'dashed' as const }
           });
         }
       }

@@ -14,7 +14,7 @@ export function getOptimizedNodes(
   nodeSizes: any, 
   customSymbols: Record<string, string> = {}, 
   l1Radius: number = 260,
-  rootParams: any = { showRootLabels: false, rootTitleFontSize: 32, rootColor: '#00EAFF', rootGlowIntensity: 15, rootShadowColor: '#082f6d', rootTitleShadowColor: '#00EAFF', nodeBorders: { root: false, l1: true, l2: false, l3: true } },
+  rootParams: any = { showRootLabels: false, rootTitleFontSize: 32, rootColor: '#00EAFF', rootGlowIntensity: 3, rootShadowColor: '#082f6d', rootTitleShadowColor: '#94e3fe', nodeBorders: { root: false, l1: true, l2: false, l3: true } },
   graphData?: GraphData,
   colorLibrary?: string[]
 ) {

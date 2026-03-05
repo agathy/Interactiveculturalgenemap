@@ -149,10 +149,10 @@ export default function ShanxiCultureGraph() {
   // 新增：中心节点视觉参数
   const [rootColor, setRootColor] = useState(_saved?.rootColor ?? '#00EAFF');
   const [rootTitleFontSize, setRootTitleFontSize] = useState(_saved?.rootTitleFontSize ?? 32);
-  const [rootGlowIntensity, setRootGlowIntensity] = useState(_saved?.rootGlowIntensity ?? 15);
+  const [rootGlowIntensity, setRootGlowIntensity] = useState(_saved?.rootGlowIntensity ?? 3);
   const [showRootLabels, setShowRootLabels] = useState(_saved?.showRootLabels ?? false);
   const [rootShadowColor, setRootShadowColor] = useState(_saved?.rootShadowColor ?? '#082f6d');
-  const [rootTitleShadowColor, setRootTitleShadowColor] = useState(_saved?.rootTitleShadowColor ?? '#00EAFF');
+  const [rootTitleShadowColor, setRootTitleShadowColor] = useState(_saved?.rootTitleShadowColor ?? '#94e3fe');
 
   // 装饰环自转速度（面板"旋转速度"滑杆控制），呼吸频率系数（控制节点本体缩放+投影闪烁）
   const [rotationSpeed, setRotationSpeed] = useState(_saved?.rotationSpeed ?? 0.34);
@@ -620,7 +620,7 @@ export default function ShanxiCultureGraph() {
     },
     graphData,
     colorLibrary
-  ), [fenjiu_colors, cultureColors, getRegionMapSVG, nodeSizes, customSymbols, l1Radius, showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, nodeBorders, graphData, colorLibrary]);
+  ), [fenjiu_colors, cultureColors, getRegionMapSVG, nodeSizes, customSymbols, l1Radius, showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, rootTitleShadowColor, nodeBorders, graphData, colorLibrary]);
 
   // 呼吸动画已完全移至 BreathingNodes Canvas 叠加层
   // 不再调用 chartInstance.setOption()，力导向布局零干扰
@@ -672,7 +672,7 @@ export default function ShanxiCultureGraph() {
     processAll();
   }, [rawImages, nodeBorders, cultureColors, rootColor, rootShadowColor]);
   // 使用 useMemo 缓存链接数据（从 graphData 动态生成）
-  const links = useMemo(() => generateLinksFromData(graphData, cultureColors, fenjiu_colors), [cultureColors, fenjiu_colors, graphData]);
+  const links = useMemo(() => generateLinksFromData(graphData, cultureColors, fenjiu_colors, colorLibrary), [cultureColors, fenjiu_colors, graphData, colorLibrary]);
   const categories = useMemo(() => generateCategoriesFromData(graphData), [graphData]);
   // 时间范围查找表：节点 ID → [startYear, endYear]
   const timeRangeMap = useMemo(() => buildTimeRangeMap(graphData), [graphData]);
@@ -997,18 +997,48 @@ export default function ShanxiCultureGraph() {
         } catch (e) { /* fallback to nodeData.x/y */ }
 
         if (targetX !== undefined && targetY !== undefined) {
-          // 更新视图状态记录
-          viewStateRef.current.center = [targetX, targetY];
+          // 获取当前中心点
+          const currentCenter = viewStateRef.current.center;
+          const startX = currentCenter[0];
+          const startY = currentCenter[1];
           
-          // 执行 ECharts 中心点切换（先确认实例未被销毁）
-          if (!chartInstance.isDisposed()) {
-            chartInstance.setOption({
-              series: [{
-                center: [targetX, targetY],
-                zoom: viewStateRef.current.zoom
-              }]
-            });
-          }
+          // 动画参数
+          const duration = 800; // 动画持续时间（毫秒）
+          const startTime = Date.now();
+          
+          // 执行平滑动画过渡
+          const animateCenter = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // 使用 easeOutCubic 缓动函数
+            const easeProgress = 1 - Math.pow(1 - progress, 3);
+            
+            // 计算当前插值位置
+            const currentX = startX + (targetX - startX) * easeProgress;
+            const currentY = startY + (targetY - startY) * easeProgress;
+            
+            // 更新视图状态记录
+            viewStateRef.current.center = [currentX, currentY];
+            
+            // 执行 ECharts 中心点切换（先确认实例未被销毁）
+            if (!chartInstance.isDisposed()) {
+              chartInstance.setOption({
+                series: [{
+                  center: [currentX, currentY],
+                  zoom: viewStateRef.current.zoom
+                }]
+              });
+            }
+            
+            // 继续动画或结束
+            if (progress < 1) {
+              requestAnimationFrame(animateCenter);
+            }
+          };
+          
+          // 启动动画
+          requestAnimationFrame(animateCenter);
           
           toast.info(`已聚焦至：${nodeData.name}`, {
             duration: 1500,
