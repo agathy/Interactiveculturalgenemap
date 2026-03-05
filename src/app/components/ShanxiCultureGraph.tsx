@@ -170,6 +170,8 @@ export default function ShanxiCultureGraph() {
   // 地图光点数据
   const [lightPointsData, setLightPointsData] = useState<MapLightPointsData | null>(null);
   const [mapBounds, setMapBounds] = useState<MapBounds | null>(null);
+  const [showLightPoints, setShowLightPoints] = useState(true);
+  const lightPointsFileRef = useRef<HTMLInputElement>(null);
 
   // 显示中心文字开关
   const [showCenterText, setShowCenterText] = useState(_saved?.showCenterText ?? true);
@@ -452,6 +454,53 @@ export default function ShanxiCultureGraph() {
     toast.success('图谱节点数据已导出', {
       style: { background: 'rgba(0, 0, 0, 0.8)', color: '#00EAFF', border: '1px solid rgba(0, 234, 255, 0.2)' }
     });
+  };
+
+  // 导出光点数据为 JSON 文件
+  const exportLightPoints = () => {
+    if (!lightPointsData) {
+      toast.warning('当前没有光点数据可导出');
+      return;
+    }
+    const blob = new Blob([JSON.stringify(lightPointsData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `light-points-${lightPointsData.region || 'custom'}-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('光点数据已导出', {
+      style: { background: 'rgba(0, 0, 0, 0.8)', color: '#FF4444', border: '1px solid rgba(255, 68, 68, 0.2)' }
+    });
+  };
+
+  // 导入光点数据 JSON 文件
+  const importLightPoints = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target?.result as string) as MapLightPointsData;
+        if (!data.points || !Array.isArray(data.points)) {
+          toast.error('文件格式错误：缺少 points 数组', {
+            style: { background: 'rgba(0, 0, 0, 0.8)', color: '#FF4444', border: '1px solid rgba(255, 68, 68, 0.2)' }
+          });
+          return;
+        }
+        setLightPointsData(data);
+        toast.success(`已加载 ${data.points.length} 个光点`, {
+          description: data.regionName || data.region || '',
+          style: { background: 'rgba(0, 0, 0, 0.8)', color: '#FF4444', border: '1px solid rgba(255, 68, 68, 0.2)' }
+        });
+      } catch {
+        toast.error('JSON 解析失败，请检查文件格式', {
+          style: { background: 'rgba(0, 0, 0, 0.8)', color: '#FF4444', border: '1px solid rgba(255, 68, 68, 0.2)' }
+        });
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
   };
 
   // 导入图谱节点数据 JSON 文件
@@ -1580,6 +1629,54 @@ export default function ShanxiCultureGraph() {
               )}
             </div>
           </section>
+
+          <section className="space-y-4">
+            <h4 className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white/5 pb-1">地图光点</h4>
+            <div className="space-y-3">
+              {/* 显示开关 + 数量信息 */}
+              <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10">
+                <div>
+                  <span className="text-[10px] text-white/50">
+                    {lightPointsData ? `${lightPointsData.points.length} 个光点` : '暂无光点数据'}
+                  </span>
+                  {lightPointsData?.regionName && (
+                    <p className="text-[9px] text-white/30 mt-0.5">{lightPointsData.regionName}</p>
+                  )}
+                </div>
+                <button
+                  onClick={() => setShowLightPoints(v => !v)}
+                  className={`text-[10px] px-2 py-1 rounded border transition-all ${
+                    showLightPoints
+                      ? 'border-red-500/40 bg-red-500/10 text-red-400'
+                      : 'border-white/10 bg-white/5 text-white/30 hover:text-white/50'
+                  }`}
+                >
+                  {showLightPoints ? '显示中' : '已隐藏'}
+                </button>
+              </div>
+              {/* 导出 / 导入 */}
+              <div className="flex gap-2">
+                <button
+                  onClick={exportLightPoints}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-dashed border-white/20 rounded-md hover:border-emerald-400/50 hover:bg-emerald-400/5 transition-all cursor-pointer group"
+                >
+                  <Download className="w-3 h-3 text-white/30 group-hover:text-emerald-400 shrink-0" />
+                  <span className="text-[10px] text-white/50 group-hover:text-emerald-400">导出光点</span>
+                </button>
+                <label className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-dashed border-white/20 rounded-md hover:border-red-400/50 hover:bg-red-400/5 transition-all cursor-pointer group">
+                  <Upload className="w-3 h-3 text-white/30 group-hover:text-red-400 shrink-0" />
+                  <span className="text-[10px] text-white/50 group-hover:text-red-400">导入光点</span>
+                  <input
+                    ref={lightPointsFileRef}
+                    type="file"
+                    accept=".json"
+                    onChange={importLightPoints}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
 
@@ -1593,13 +1690,15 @@ export default function ShanxiCultureGraph() {
       </div>
 
       {/* 地图光点 - 在根节点地图上显示闪烁光点，坐标与地图形状精确对齐 */}
-      <MapLightPoints
-        lightPointsData={lightPointsData}
-        chartInstance={chartInstance}
-        rootNodeSize={nodeSizes.root}
-        mapBounds={mapBounds}
-        viewStateRef={viewStateRef}
-      />
+      {showLightPoints && (
+        <MapLightPoints
+          lightPointsData={lightPointsData}
+          chartInstance={chartInstance}
+          rootNodeSize={nodeSizes.root}
+          mapBounds={mapBounds}
+          viewStateRef={viewStateRef}
+        />
+      )}
 
       {/* BreathingNodes 单独放在 z-20，确保在 ECharts (z-10) 之上 */}
       <div className="absolute inset-0 z-20 pointer-events-none">
