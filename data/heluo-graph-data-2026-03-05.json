@@ -1,0 +1,1051 @@
+{
+  "root": {
+    "name": "河洛文化\n文化基因库",
+    "subtitle": "河洛文脉 · 华夏之源",
+    "tooltip": "<b>河洛文化体系</b><br/>中华文明的核心发源地，八大文化基因在此交汇",
+    "region": "henan",
+    "regionName": "河南省"
+  },
+  "categories": [
+    {
+      "id": "zhong",
+      "name": "中字",
+      "angle": -90,
+      "symbol": "diamond",
+      "timeRange": [
+        -5300,
+        2026
+      ],
+      "tooltip": "<b>中字：天地之中</b><br/>最早的'中国'概念源头<br/>从双槐树'河洛古国'到二里头'中国'<br/>从周公测影定'地中'到'天地之中'哲学",
+      "children": [
+        {
+          "id": "zhong-1",
+          "name": "遗址",
+          "timeRange": [
+            -5300,
+            -1500
+          ],
+          "children": [
+            {
+              "id": "zh-1-1",
+              "name": "双槐树遗址",
+              "timeRange": [
+                -5300,
+                -3300
+              ]
+            },
+            {
+              "id": "zh-1-2",
+              "name": "二里头遗址",
+              "timeRange": [
+                -1800,
+                -1500
+              ]
+            },
+            {
+              "id": "zh-1-3",
+              "name": "郑州商城遗址",
+              "timeRange": [
+                -1600,
+                -1300
+              ]
+            }
+          ]
+        },
+        {
+          "id": "zhong-2",
+          "name": "天文",
+          "timeRange": [
+            -1100,
+            2026
+          ],
+          "children": [
+            {
+              "id": "zh-2-1",
+              "name": "周公测影台",
+              "timeRange": [
+                -1100,
+                2026
+              ]
+            },
+            {
+              "id": "zh-2-2",
+              "name": "登封观星台",
+              "timeRange": [
+                1279,
+                1368
+              ]
+            },
+            {
+              "id": "zh-2-3",
+              "name": "嵩山五岳之中",
+              "timeRange": [
+                -1100,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "zhong-3",
+          "name": "人物",
+          "timeRange": [
+            -2700,
+            -1000
+          ],
+          "children": [
+            {
+              "id": "zh-3-1",
+              "name": "黄帝轩辕",
+              "timeRange": [
+                -2700,
+                -2600
+              ]
+            },
+            {
+              "id": "zh-3-2",
+              "name": "周公姬旦",
+              "timeRange": [
+                -1100,
+                -1000
+              ]
+            },
+            {
+              "id": "zh-3-3",
+              "name": "大禹治水",
+              "timeRange": [
+                -2200,
+                -2100
+              ]
+            }
+          ]
+        },
+        {
+          "id": "zhong-4",
+          "name": "概念",
+          "timeRange": [
+            -1600,
+            2026
+          ],
+          "children": [
+            {
+              "id": "zh-4-1",
+              "name": "天地之中",
+              "timeRange": [
+                -1100,
+                2026
+              ]
+            },
+            {
+              "id": "zh-4-2",
+              "name": "华夏之源",
+              "timeRange": [
+                -2700,
+                2026
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "jiagu",
+      "name": "甲骨",
+      "angle": -45,
+      "symbol": "triangle",
+      "timeRange": [
+        -1300,
+        2026
+      ],
+      "tooltip": "<b>甲骨：文字起源</b><br/>中国文字从这里开始<br/>15万片甲骨4500个单字<br/>唯一传承3300年的古文字系统",
+      "children": [
+        {
+          "id": "jiagu-1",
+          "name": "文物",
+          "timeRange": [
+            -1300,
+            2026
+          ],
+          "children": [
+            {
+              "id": "jg-1-1",
+              "name": "甲骨文片",
+              "timeRange": [
+                -1300,
+                2026
+              ]
+            },
+            {
+              "id": "jg-1-2",
+              "name": "司母戊鼎",
+              "timeRange": [
+                -1300,
+                2026
+              ]
+            },
+            {
+              "id": "jg-1-3",
+              "name": "妇好墓文物",
+              "timeRange": [
+                -1300,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "jiagu-2",
+          "name": "遗址",
+          "timeRange": [
+            -1300,
+            2026
+          ],
+          "children": [
+            {
+              "id": "jg-2-1",
+              "name": "殷墟",
+              "timeRange": [
+                -1300,
+                2026
+              ]
+            },
+            {
+              "id": "jg-2-2",
+              "name": "中国文字博物馆",
+              "timeRange": [
+                2009,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "jiagu-3",
+          "name": "发现研究",
+          "timeRange": [
+            1899,
+            2026
+          ],
+          "children": [
+            {
+              "id": "jg-3-1",
+              "name": "甲骨文发现",
+              "timeRange": [
+                1899,
+                1900
+              ]
+            },
+            {
+              "id": "jg-3-2",
+              "name": "殷墟科学发掘",
+              "timeRange": [
+                1928,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "jiagu-4",
+          "name": "人物",
+          "timeRange": [
+            1845,
+            1940
+          ],
+          "children": [
+            {
+              "id": "jg-4-1",
+              "name": "王懿荣",
+              "timeRange": [
+                1845,
+                1900
+              ]
+            },
+            {
+              "id": "jg-4-2",
+              "name": "罗振玉",
+              "timeRange": [
+                1866,
+                1940
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "laojia",
+      "name": "老家",
+      "angle": 0,
+      "symbol": "roundRect",
+      "timeRange": [
+        -2700,
+        2026
+      ],
+      "tooltip": "<b>老家：姓氏之根</b><br/>78/100大姓源自河南<br/>全球10亿华人的精神原点<br/>黄帝故里是全球华人拜祖圣地",
+      "children": [
+        {
+          "id": "laojia-1",
+          "name": "寻根圣地",
+          "timeRange": [
+            -2700,
+            2026
+          ],
+          "children": [
+            {
+              "id": "lj-1-1",
+              "name": "黄帝故里新郑",
+              "timeRange": [
+                -2700,
+                2026
+              ]
+            },
+            {
+              "id": "lj-1-2",
+              "name": "太昊陵淮阳",
+              "timeRange": [
+                -1045,
+                2026
+              ]
+            },
+            {
+              "id": "lj-1-3",
+              "name": "固始客家祖地",
+              "timeRange": [
+                304,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "laojia-2",
+          "name": "祭祀",
+          "timeRange": [
+            -2700,
+            2026
+          ],
+          "children": [
+            {
+              "id": "lj-2-1",
+              "name": "拜祖大典",
+              "timeRange": [
+                1992,
+                2026
+              ]
+            },
+            {
+              "id": "lj-2-2",
+              "name": "农历三月三",
+              "timeRange": [
+                -2700,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "laojia-3",
+          "name": "姓氏",
+          "timeRange": [
+            -2700,
+            2026
+          ],
+          "children": [
+            {
+              "id": "lj-3-1",
+              "name": "78大姓溯源",
+              "timeRange": [
+                -2700,
+                2026
+              ]
+            },
+            {
+              "id": "lj-3-2",
+              "name": "陈姓起源",
+              "timeRange": [
+                -1045,
+                2026
+              ]
+            },
+            {
+              "id": "lj-3-3",
+              "name": "姓氏大迁徙",
+              "timeRange": [
+                304,
+                1368
+              ]
+            }
+          ]
+        },
+        {
+          "id": "laojia-4",
+          "name": "人物",
+          "timeRange": [
+            -2700,
+            -1045
+          ],
+          "children": [
+            {
+              "id": "lj-4-1",
+              "name": "黄帝轩辕",
+              "timeRange": [
+                -2700,
+                -2600
+              ]
+            },
+            {
+              "id": "lj-4-2",
+              "name": "陈胡公",
+              "timeRange": [
+                -1045,
+                -1000
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "heluo",
+      "name": "河洛汇流",
+      "angle": 45,
+      "symbol": "rect",
+      "timeRange": [
+        -571,
+        2026
+      ],
+      "tooltip": "<b>河洛汇流：三教合一</b><br/>儒释道三教在洛阳50公里内和平共处千年<br/>形成独特的文化融合生态",
+      "children": [
+        {
+          "id": "heluo-1",
+          "name": "道教",
+          "timeRange": [
+            -571,
+            2026
+          ],
+          "children": [
+            {
+              "id": "hl-1-1",
+              "name": "老君山道场",
+              "timeRange": [
+                470,
+                2026
+              ]
+            },
+            {
+              "id": "hl-1-2",
+              "name": "鹿邑太清宫",
+              "timeRange": [
+                -571,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "heluo-2",
+          "name": "佛教",
+          "timeRange": [
+            68,
+            2026
+          ],
+          "children": [
+            {
+              "id": "hl-2-1",
+              "name": "白马寺",
+              "timeRange": [
+                68,
+                2026
+              ]
+            },
+            {
+              "id": "hl-2-2",
+              "name": "少林寺",
+              "timeRange": [
+                495,
+                2026
+              ]
+            },
+            {
+              "id": "hl-2-3",
+              "name": "龙门石窟",
+              "timeRange": [
+                493,
+                900
+              ]
+            }
+          ]
+        },
+        {
+          "id": "heluo-3",
+          "name": "儒家",
+          "timeRange": [
+            484,
+            2026
+          ],
+          "children": [
+            {
+              "id": "hl-3-1",
+              "name": "嵩阳书院",
+              "timeRange": [
+                484,
+                2026
+              ]
+            },
+            {
+              "id": "hl-3-2",
+              "name": "理学兴起",
+              "timeRange": [
+                1032,
+                1107
+              ]
+            }
+          ]
+        },
+        {
+          "id": "heluo-4",
+          "name": "人物",
+          "timeRange": [
+            -571,
+            1107
+          ],
+          "children": [
+            {
+              "id": "hl-4-1",
+              "name": "老子李耳",
+              "timeRange": [
+                -571,
+                -471
+              ]
+            },
+            {
+              "id": "hl-4-2",
+              "name": "摄摩腾竺法兰",
+              "timeRange": [
+                67,
+                73
+              ]
+            },
+            {
+              "id": "hl-4-3",
+              "name": "达摩面壁",
+              "timeRange": [
+                495,
+                536
+              ]
+            },
+            {
+              "id": "hl-4-4",
+              "name": "程颢程颐",
+              "timeRange": [
+                1032,
+                1107
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "liji",
+      "name": "立极",
+      "angle": 90,
+      "symbol": "pin",
+      "timeRange": [
+        -1600,
+        907
+      ],
+      "tooltip": "<b>立极：13朝古都</b><br/>洛阳13朝古都1500年建都史<br/>105位帝王定都河南<br/>中国政治中心2000年在河南",
+      "children": [
+        {
+          "id": "liji-1",
+          "name": "都城",
+          "timeRange": [
+            -1600,
+            907
+          ],
+          "children": [
+            {
+              "id": "lj-1-1a",
+              "name": "洛阳13朝",
+              "timeRange": [
+                -1600,
+                907
+              ]
+            },
+            {
+              "id": "lj-1-2a",
+              "name": "开封七朝",
+              "timeRange": [
+                960,
+                2026
+              ]
+            },
+            {
+              "id": "lj-1-3a",
+              "name": "安阳殷都",
+              "timeRange": [
+                -1300,
+                -1046
+              ]
+            }
+          ]
+        },
+        {
+          "id": "liji-2",
+          "name": "宫殿建筑",
+          "timeRange": [
+            -1600,
+            907
+          ],
+          "children": [
+            {
+              "id": "lj-2-1a",
+              "name": "隋唐洛阳城",
+              "timeRange": [
+                581,
+                907
+              ]
+            },
+            {
+              "id": "lj-2-2a",
+              "name": "二里头宫殿",
+              "timeRange": [
+                -1600,
+                -1500
+              ]
+            },
+            {
+              "id": "lj-2-3a",
+              "name": "东周王城",
+              "timeRange": [
+                -770,
+                -256
+              ]
+            }
+          ]
+        },
+        {
+          "id": "liji-3",
+          "name": "帝王",
+          "timeRange": [
+            -1600,
+            907
+          ],
+          "children": [
+            {
+              "id": "lj-3-1a",
+              "name": "武则天神都",
+              "timeRange": [
+                624,
+                705
+              ]
+            },
+            {
+              "id": "lj-3-2a",
+              "name": "隋炀帝营洛",
+              "timeRange": [
+                569,
+                618
+              ]
+            },
+            {
+              "id": "lj-3-3a",
+              "name": "汉光武帝",
+              "timeRange": [
+                -5,
+                57
+              ]
+            }
+          ]
+        },
+        {
+          "id": "liji-4",
+          "name": "遗址",
+          "timeRange": [
+            -1600,
+            2026
+          ],
+          "children": [
+            {
+              "id": "lj-4-1a",
+              "name": "隋唐洛阳城遗址",
+              "timeRange": [
+                581,
+                2026
+              ]
+            },
+            {
+              "id": "lj-4-2a",
+              "name": "汉魏洛阳故城",
+              "timeRange": [
+                -200,
+                534
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yaobian",
+      "name": "窑变",
+      "angle": 135,
+      "symbol": "circle",
+      "timeRange": [
+        618,
+        2026
+      ],
+      "tooltip": "<b>窑变：天人合一</b><br/>汝窑天青色千年未解<br/>钧瓷窑变入窑一色出窑万彩<br/>中国美学哲学的物化",
+      "children": [
+        {
+          "id": "yaobian-1",
+          "name": "汝窑",
+          "timeRange": [
+            960,
+            2026
+          ],
+          "children": [
+            {
+              "id": "yb-1-1",
+              "name": "汝窑天青色",
+              "timeRange": [
+                960,
+                2026
+              ]
+            },
+            {
+              "id": "yb-1-2",
+              "name": "汝窑遗址宝丰",
+              "timeRange": [
+                960,
+                2026
+              ]
+            },
+            {
+              "id": "yb-1-3",
+              "name": "传世67件",
+              "timeRange": [
+                960,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "yaobian-2",
+          "name": "钧窑",
+          "timeRange": [
+            960,
+            2026
+          ],
+          "children": [
+            {
+              "id": "yb-2-1",
+              "name": "钧瓷窑变",
+              "timeRange": [
+                960,
+                2026
+              ]
+            },
+            {
+              "id": "yb-2-2",
+              "name": "神垕古镇禹州",
+              "timeRange": [
+                960,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "yaobian-3",
+          "name": "唐三彩",
+          "timeRange": [
+            618,
+            907
+          ],
+          "children": [
+            {
+              "id": "yb-3-1",
+              "name": "唐三彩艺术",
+              "timeRange": [
+                618,
+                907
+              ]
+            }
+          ]
+        },
+        {
+          "id": "yaobian-4",
+          "name": "人物",
+          "timeRange": [
+            921,
+            1135
+          ],
+          "children": [
+            {
+              "id": "yb-4-1",
+              "name": "柴世宗柴荣",
+              "timeRange": [
+                921,
+                959
+              ]
+            },
+            {
+              "id": "yb-4-2",
+              "name": "宋徽宗",
+              "timeRange": [
+                1082,
+                1135
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "menghua",
+      "name": "梦华",
+      "angle": 180,
+      "symbol": "diamond",
+      "timeRange": [
+        960,
+        1127
+      ],
+      "tooltip": "<b>梦华：商业革命</b><br/>北宋开封人口150万是同期伦敦的75倍<br/>世界第一张纸币交子<br/>中国古代城市文明巅峰",
+      "children": [
+        {
+          "id": "menghua-1",
+          "name": "城市繁荣",
+          "timeRange": [
+            960,
+            1127
+          ],
+          "children": [
+            {
+              "id": "mh-1-1",
+              "name": "北宋开封",
+              "timeRange": [
+                960,
+                1127
+              ]
+            },
+            {
+              "id": "mh-1-2",
+              "name": "人口150万",
+              "timeRange": [
+                960,
+                1127
+              ]
+            }
+          ]
+        },
+        {
+          "id": "menghua-2",
+          "name": "商业创新",
+          "timeRange": [
+            970,
+            1127
+          ],
+          "children": [
+            {
+              "id": "mh-2-1",
+              "name": "交子诞生",
+              "timeRange": [
+                970,
+                1127
+              ]
+            },
+            {
+              "id": "mh-2-2",
+              "name": "夜市瓦舍勾栏",
+              "timeRange": [
+                960,
+                1127
+              ]
+            }
+          ]
+        },
+        {
+          "id": "menghua-3",
+          "name": "文化艺术",
+          "timeRange": [
+            1085,
+            1200
+          ],
+          "children": [
+            {
+              "id": "mh-3-1",
+              "name": "清明上河图",
+              "timeRange": [
+                1085,
+                1145
+              ]
+            },
+            {
+              "id": "mh-3-2",
+              "name": "东京梦华录",
+              "timeRange": [
+                1100,
+                1200
+              ]
+            }
+          ]
+        },
+        {
+          "id": "menghua-4",
+          "name": "建筑遗址",
+          "timeRange": [
+            555,
+            2026
+          ],
+          "children": [
+            {
+              "id": "mh-4-1",
+              "name": "开封府",
+              "timeRange": [
+                960,
+                2026
+              ]
+            },
+            {
+              "id": "mh-4-2",
+              "name": "铁塔",
+              "timeRange": [
+                1049,
+                2026
+              ]
+            },
+            {
+              "id": "mh-4-3",
+              "name": "大相国寺",
+              "timeRange": [
+                555,
+                2026
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shengsheng",
+      "name": "生生",
+      "angle": 225,
+      "symbol": "triangle",
+      "timeRange": [
+        495,
+        2026
+      ],
+      "tooltip": "<b>生生：活态传承</b><br/>太极拳全球3亿习练者<br/>豫剧观众6亿<br/>113项国家级非遗，文化生命力生生不息",
+      "children": [
+        {
+          "id": "shengsheng-1",
+          "name": "武术",
+          "timeRange": [
+            495,
+            2026
+          ],
+          "children": [
+            {
+              "id": "ss-1-1",
+              "name": "太极拳陈家沟",
+              "timeRange": [
+                1600,
+                2026
+              ]
+            },
+            {
+              "id": "ss-1-2",
+              "name": "少林功夫",
+              "timeRange": [
+                495,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "shengsheng-2",
+          "name": "戏曲",
+          "timeRange": [
+            1700,
+            2026
+          ],
+          "children": [
+            {
+              "id": "ss-2-1",
+              "name": "豫剧",
+              "timeRange": [
+                1700,
+                2026
+              ]
+            },
+            {
+              "id": "ss-2-2",
+              "name": "常香玉",
+              "timeRange": [
+                1923,
+                2004
+              ]
+            }
+          ]
+        },
+        {
+          "id": "shengsheng-3",
+          "name": "民俗艺术",
+          "timeRange": [
+            960,
+            2026
+          ],
+          "children": [
+            {
+              "id": "ss-3-1",
+              "name": "朱仙镇木版年画",
+              "timeRange": [
+                960,
+                2026
+              ]
+            },
+            {
+              "id": "ss-3-2",
+              "name": "马街书会",
+              "timeRange": [
+                1300,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "shengsheng-4",
+          "name": "非遗保护",
+          "timeRange": [
+            2006,
+            2026
+          ],
+          "children": [
+            {
+              "id": "ss-4-1",
+              "name": "113项国家级非遗",
+              "timeRange": [
+                2006,
+                2026
+              ]
+            },
+            {
+              "id": "ss-4-2",
+              "name": "太极拳入遗",
+              "timeRange": [
+                2020,
+                2026
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

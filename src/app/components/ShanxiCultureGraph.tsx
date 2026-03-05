@@ -1277,15 +1277,13 @@ export default function ShanxiCultureGraph() {
                     <input ref={graphDataFileRef} type="file" accept=".json" onChange={importGraphData} className="hidden" />
                   </label>
                 </div>
-                {graphData !== DEFAULT_GRAPH_DATA && (
-                  <button
-                    onClick={resetGraphData}
-                    className="w-full text-[10px] text-white/40 hover:text-cyan-400 transition-colors flex items-center justify-center gap-1 border border-white/10 px-2 py-1.5 rounded-md bg-white/5"
-                  >
-                    <RotateCcw size={10} />
-                    恢复默认节点数据
-                  </button>
-                )}
+                <button
+                  onClick={resetGraphData}
+                  className="w-full text-[10px] text-white/40 hover:text-cyan-400 transition-colors flex items-center justify-center gap-1 border border-white/10 px-2 py-1.5 rounded-md bg-white/5"
+                >
+                  <RotateCcw size={10} />
+                  重置数据
+                </button>
               </div>
 
               {/* ── 分隔线 ── */}

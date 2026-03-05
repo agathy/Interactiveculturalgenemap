@@ -1,0 +1,655 @@
+{
+  "root": {
+    "name": "河洛文化\n知识图谱",
+    "subtitle": "中原文明 · 华夏之源",
+    "tooltip": "<b>河洛文化体系</b><br/>八大文化基因构成完整文明演化链",
+    "region": "henan",
+    "regionName": "河南省"
+  },
+  "categories": [
+    {
+      "id": "zhong",
+      "name": "【中】字基因",
+      "angle": -90,
+      "symbol": "diamond",
+      "timeRange": [
+        -5000,
+        2026
+      ],
+      "tooltip": "<b>【中】字基因</b>",
+      "children": [
+        {
+          "id": "zhong-renwu",
+          "name": "人物",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "zhong-renwu-周公",
+              "name": "周公姬旦",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "zhong-renwu-黄帝",
+              "name": "黄帝轩辕",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "zhong-dili",
+          "name": "地理",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "zhong-dili-双槐树遗址",
+              "name": "双槐树遗址",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "zhong-dili-二里头遗址",
+              "name": "二里头遗址",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "zhong-dili-周公测影台",
+              "name": "周公测影台",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "zhong-dili-嵩山",
+              "name": "嵩山",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "jiagu",
+      "name": "【甲骨】基因",
+      "angle": -18,
+      "symbol": "triangle",
+      "timeRange": [
+        -5000,
+        2026
+      ],
+      "tooltip": "<b>【甲骨】基因</b>",
+      "children": [
+        {
+          "id": "jiagu-renwu",
+          "name": "人物",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "jiagu-renwu-王懿荣",
+              "name": "王懿荣",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "jiagu-renwu-罗振玉",
+              "name": "罗振玉",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "jiagu-dili",
+          "name": "地理",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "jiagu-dili-殷墟",
+              "name": "殷墟",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "jiagu-dili-中国文字博物馆",
+              "name": "中国文字博物馆",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "jiagu-wenwu",
+          "name": "文物",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "jiagu-wenwu-甲骨文",
+              "name": "甲骨文",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "laojia",
+      "name": "【老家】基因",
+      "angle": 54,
+      "symbol": "roundRect",
+      "timeRange": [
+        -5000,
+        2026
+      ],
+      "tooltip": "<b>【老家】基因</b>",
+      "children": [
+        {
+          "id": "laojia-renwu",
+          "name": "人物",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "laojia-renwu-黄帝",
+              "name": "黄帝轩辕",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "laojia-renwu-陈胡公",
+              "name": "陈胡公",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "laojia-dili",
+          "name": "地理",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "laojia-dili-黄帝故里",
+              "name": "黄帝故里",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "laojia-dili-太昊陵",
+              "name": "太昊陵",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "laojia-dili-固始县",
+              "name": "固始县",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "heliu",
+      "name": "【河洛汇流】基因",
+      "angle": 126,
+      "symbol": "rect",
+      "timeRange": [
+        -5000,
+        2026
+      ],
+      "tooltip": "<b>【河洛汇流】基因</b>",
+      "children": [
+        {
+          "id": "heliu-renwu",
+          "name": "人物",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "heliu-renwu-老子",
+              "name": "老子李耳",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "heliu-renwu-摄摩腾",
+              "name": "摄摩腾",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "heliu-renwu-竺法兰",
+              "name": "竺法兰",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "heliu-renwu-达摩",
+              "name": "达摩",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "heliu-renwu-程颢",
+              "name": "程颢",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "heliu-renwu-程颐",
+              "name": "程颐",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "heliu-dili",
+          "name": "地理",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "heliu-dili-白马寺",
+              "name": "白马寺",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "heliu-dili-少林寺",
+              "name": "少林寺",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "heliu-dili-龙门石窟",
+              "name": "龙门石窟",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "heliu-dili-老君山",
+              "name": "老君山",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "heliu-dili-嵩阳书院",
+              "name": "嵩阳书院",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "liji",
+      "name": "【立极】基因",
+      "angle": 198,
+      "symbol": "pin",
+      "timeRange": [
+        -5000,
+        2026
+      ],
+      "tooltip": "<b>【立极】基因</b>",
+      "children": [
+        {
+          "id": "liji-renwu",
+          "name": "人物",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "liji-renwu-武则天",
+              "name": "武则天",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "liji-dili",
+          "name": "地理",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "liji-dili-洛阳",
+              "name": "洛阳",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "liji-dili-隋唐洛阳城遗址",
+              "name": "隋唐洛阳城遗址",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yaobian",
+      "name": "【窑变】基因",
+      "angle": 270,
+      "symbol": "circle",
+      "timeRange": [
+        -5000,
+        2026
+      ],
+      "tooltip": "<b>【窑变】基因</b>",
+      "children": [
+        {
+          "id": "yaobian-renwu",
+          "name": "人物",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "yaobian-renwu-柴世宗",
+              "name": "柴世宗柴荣",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "yaobian-dili",
+          "name": "地理",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "yaobian-dili-汝窑遗址",
+              "name": "汝窑遗址",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "yaobian-dili-神垕古镇",
+              "name": "神垕古镇",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "yaobian-wenwu",
+          "name": "文物",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "yaobian-wenwu-汝窑天青釉瓷器",
+              "name": "汝窑天青釉瓷器",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "yaobian-wenwu-钧瓷窑变作品",
+              "name": "钧瓷窑变作品",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "menghua",
+      "name": "【梦华】基因",
+      "angle": 342,
+      "symbol": "star",
+      "timeRange": [
+        -5000,
+        2026
+      ],
+      "tooltip": "<b>【梦华】基因</b>",
+      "children": [
+        {
+          "id": "menghua-renwu",
+          "name": "人物",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "menghua-renwu-孟元老",
+              "name": "孟元老",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "menghua-renwu-张择端",
+              "name": "张择端",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "menghua-renwu-包拯",
+              "name": "包拯",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "menghua-dili",
+          "name": "地理",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "menghua-dili-开封",
+              "name": "开封",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "menghua-dili-清明上河园",
+              "name": "清明上河园",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "menghua-dili-开封府",
+              "name": "开封府",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shengsheng",
+      "name": "【生生】基因",
+      "angle": 414,
+      "symbol": "heart",
+      "timeRange": [
+        -5000,
+        2026
+      ],
+      "tooltip": "<b>【生生】基因</b>",
+      "children": [
+        {
+          "id": "shengsheng-renwu",
+          "name": "人物",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "shengsheng-renwu-陈王廷",
+              "name": "陈王廷",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "shengsheng-renwu-常香玉",
+              "name": "常香玉",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        },
+        {
+          "id": "shengsheng-dili",
+          "name": "地理",
+          "timeRange": [
+            -5000,
+            2026
+          ],
+          "children": [
+            {
+              "id": "shengsheng-dili-陈家沟",
+              "name": "陈家沟",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            },
+            {
+              "id": "shengsheng-dili-朱仙镇",
+              "name": "朱仙镇",
+              "timeRange": [
+                -5000,
+                2026
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
