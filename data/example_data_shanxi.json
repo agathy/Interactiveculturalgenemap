@@ -10,7 +10,6 @@
     {
       "id": "genzhu",
       "name": "根祖文化",
-      "angle": -90,
       "symbol": "diamond",
       "timeRange": [
         -6000,
@@ -125,7 +124,6 @@
     {
       "id": "zhongyi",
       "name": "忠义文化",
-      "angle": -18,
       "symbol": "triangle",
       "timeRange": [
         -636,
@@ -248,7 +246,6 @@
     {
       "id": "shanhe",
       "name": "山河文化",
-      "angle": 54,
       "symbol": "roundRect",
       "timeRange": [
         -10000,
@@ -379,7 +376,6 @@
     {
       "id": "gujian",
       "name": "古建文化",
-      "angle": 126,
       "symbol": "rect",
       "timeRange": [
         386,
@@ -494,7 +490,6 @@
     {
       "id": "jiuhun",
       "name": "酒魂文化",
-      "angle": 198,
       "symbol": "pin",
       "timeRange": [
         -6000,
@@ -590,220 +585,6 @@
         },
         {
           "id": "jiuhun-4",
-          "name": "荣耀",
-          "timeRange": [
-            1915,
-            2026
-          ]
-        }
-      ]
-    },
-    {
-      "id": "test",
-      "name": "test文化",
-      "angle": 198,
-      "symbol": "pin",
-      "timeRange": [
-        -6000,
-        2026
-      ],
-      "tooltip": "<b>酒魂文化</b><br/>杏花村汾酒：6000年酿造史",
-      "children": [
-        {
-          "id": "test-1",
-          "name": "考古",
-          "timeRange": [
-            -6000,
-            -2000
-          ],
-          "children": [
-            {
-              "id": "t-1-1",
-              "name": "杏花村遗址",
-              "timeRange": [
-                -6000,
-                -2000
-              ]
-            },
-            {
-              "id": "t-1-2",
-              "name": "小口尖底瓶",
-              "timeRange": [
-                -5000,
-                -3000
-              ]
-            }
-          ]
-        },
-        {
-          "id": "test-2",
-          "name": "技艺",
-          "timeRange": [
-            550,
-            2026
-          ],
-          "children": [
-            {
-              "id": "t-2-1",
-              "name": "清蒸二次清",
-              "timeRange": [
-                550,
-                2026
-              ]
-            },
-            {
-              "id": "t-2-2",
-              "name": "地缸发酵",
-              "timeRange": [
-                1368,
-                2026
-              ]
-            },
-            {
-              "id": "t-2-3",
-              "name": "古法入库",
-              "timeRange": [
-                1644,
-                2026
-              ]
-            }
-          ]
-        },
-        {
-          "id": "test-3",
-          "name": "文学",
-          "timeRange": [
-            803,
-            2026
-          ],
-          "children": [
-            {
-              "id": "t-3-1",
-              "name": "牧童遥指",
-              "timeRange": [
-                803,
-                852
-              ]
-            },
-            {
-              "id": "t-3-2",
-              "name": "汾酒赋",
-              "timeRange": [
-                1915,
-                2026
-              ]
-            }
-          ]
-        },
-        {
-          "id": "test-4",
-          "name": "荣耀",
-          "timeRange": [
-            1915,
-            2026
-          ]
-        }
-      ]
-    },
-    {
-      "id": "test2",
-      "name": "test2文化",
-      "angle": 198,
-      "symbol": "pin",
-      "timeRange": [
-        -6000,
-        2026
-      ],
-      "tooltip": "<b>test2文化</b><br/>新增分类示例",
-      "children": [
-        {
-          "id": "test2-1",
-          "name": "考古",
-          "timeRange": [
-            -6000,
-            -2000
-          ],
-          "children": [
-            {
-              "id": "t2-1-1",
-              "name": "杏花村遗址",
-              "timeRange": [
-                -6000,
-                -2000
-              ]
-            },
-            {
-              "id": "t2-1-2",
-              "name": "小口尖底瓶",
-              "timeRange": [
-                -5000,
-                -3000
-              ]
-            }
-          ]
-        },
-        {
-          "id": "test2-2",
-          "name": "技艺",
-          "timeRange": [
-            550,
-            2026
-          ],
-          "children": [
-            {
-              "id": "t2-2-1",
-              "name": "清蒸二次清",
-              "timeRange": [
-                550,
-                2026
-              ]
-            },
-            {
-              "id": "t2-2-2",
-              "name": "地缸发酵",
-              "timeRange": [
-                1368,
-                2026
-              ]
-            },
-            {
-              "id": "t2-2-3",
-              "name": "古法入库",
-              "timeRange": [
-                1644,
-                2026
-              ]
-            }
-          ]
-        },
-        {
-          "id": "test2-3",
-          "name": "文学",
-          "timeRange": [
-            803,
-            2026
-          ],
-          "children": [
-            {
-              "id": "t2-3-1",
-              "name": "牧童遥指",
-              "timeRange": [
-                803,
-                852
-              ]
-            },
-            {
-              "id": "t2-3-2",
-              "name": "汾酒赋",
-              "timeRange": [
-                1915,
-                2026
-              ]
-            }
-          ]
-        },
-        {
-          "id": "test2-4",
           "name": "荣耀",
           "timeRange": [
             1915,

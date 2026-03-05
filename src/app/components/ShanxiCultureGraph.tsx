@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, Save, RotateCcw, LayoutGrid, FolderOpen, Dow
 import { toast } from 'sonner';
 import { RippleEffect } from './CulturalSymbols';
 import { getOptimizedNodes } from './OptimizedNodes';
-import { DEFAULT_GRAPH_DATA, generateLinksFromData, generateCategoriesFromData, validateGraphData, buildTimeRangeMap, type GraphData, type MapLightPointsData } from './graphData';
+import { generateLinksFromData, generateCategoriesFromData, validateGraphData, buildTimeRangeMap, type GraphData, type MapLightPointsData } from './graphData';
 import { loadRegionMap, getSupportedRegions, isRegionSupported, type MapBounds } from '../../services/mapService';
 import { MapLightPoints } from './MapLightPoints';
 
@@ -164,7 +164,8 @@ export default function ShanxiCultureGraph() {
   const [decorRadius, setDecorRadius] = useState(_saved?.decorRadius ?? 4);
 
   // 图谱节点数据（支持上传替换）
-  const [graphData, setGraphData] = useState<GraphData>(DEFAULT_GRAPH_DATA);
+  const [graphData, setGraphData] = useState<GraphData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const graphDataFileRef = useRef<HTMLInputElement>(null);
 
   // 地图光点数据
@@ -600,11 +601,37 @@ export default function ShanxiCultureGraph() {
   };
 
   // 重置图谱数据为默认
+  // 加载默认数据
+  const loadDefaultData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/data/example_data_shanxi.json');
+      if (!response.ok) {
+        throw new Error('Failed to load default data');
+      }
+      const data = await response.json();
+      const validation = validateGraphData(data);
+      if (validation.valid) {
+        setGraphData(data);
+        toast.info('图谱节点数据已重置为默认', {
+          style: { background: 'rgba(0, 0, 0, 0.8)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.1)' }
+        });
+      } else {
+        throw new Error(validation.error);
+      }
+    } catch (error) {
+      console.error('Failed to load default data:', error);
+      toast.error('加载默认数据失败', {
+        style: { background: 'rgba(0, 0, 0, 0.8)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.1)' }
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 重置数据到默认值
   const resetGraphData = () => {
-    setGraphData(DEFAULT_GRAPH_DATA);
-    toast.info('图谱节点数据已重置为默认', {
-      style: { background: 'rgba(0, 0, 0, 0.8)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.1)' }
-    });
+    loadDefaultData();
   };
 
   // 保存当前配置为默认
