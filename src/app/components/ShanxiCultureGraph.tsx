@@ -408,7 +408,7 @@ export default function ShanxiCultureGraph() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `shanxi-culture-config-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `culture-config-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
     toast.success('配置已导出', {
@@ -457,11 +457,17 @@ export default function ShanxiCultureGraph() {
 
   // 导出图谱节点数据为 JSON 文件
   const exportGraphData = () => {
-    const blob = new Blob([JSON.stringify(graphData, null, 2)], { type: 'application/json' });
+    // 创建带时间戳的数据副本
+    const exportData = {
+      ...graphData,
+      _version: `2026-03-06-v1.0.2`,
+      _exportedAt: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `shanxi-graph-data-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `graph-data-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
     toast.success('图谱节点数据已导出', {
