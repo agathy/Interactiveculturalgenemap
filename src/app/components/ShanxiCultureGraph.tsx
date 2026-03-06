@@ -924,7 +924,7 @@ export default function ShanxiCultureGraph() {
         borderWidth: 1,
         textStyle: { color: fenjiu_colors.ice_blue_light, fontSize: 13, lineHeight: 20 },
         padding: [15, 20],
-        extraCssText: 'box-shadow: 0 8px 32px rgba(135, 206, 250, 0.3); backdrop-filter: blur(12px);'
+        extraCssText: 'box-shadow: 0 8px 32px rgba(135, 206, 250, 0.3); backdrop-filter: blur(12px); z-index: 9999;'
       },
       series: [{
         type: 'graph',
