@@ -198,10 +198,10 @@ export function getOptimizedNodes(
         x: l1Positions[cat.id].x + initialDistance * Math.cos(angle),
         y: l1Positions[cat.id].y + initialDistance * Math.sin(angle),
         fixed: false,
-        symbol: customSymbols[l2.id] || l2.symbol || 'circle',
+        symbol: customSymbols[l2.id] || 'circle',
         symbolSize: nodeSizes.l2,
         itemStyle: {
-          color: (customSymbols[l2.id] || l2.symbol)?.startsWith('image://')
+          color: customSymbols[l2.id]?.startsWith('image://')
             ? 'transparent'
             : {
                 type: 'radial',
@@ -212,7 +212,7 @@ export function getOptimizedNodes(
                 ]
               },
           borderColor: catColor,
-          borderWidth: (customSymbols[l2.id] || l2.symbol)?.startsWith('image://') ? 2 : (nodeBorders.l2 ? 0.8 : 0),
+          borderWidth: customSymbols[l2.id]?.startsWith('image://') ? 2 : (nodeBorders.l2 ? 0.8 : 0),
           shadowBlur: 20,
           shadowColor: catColor
         },
