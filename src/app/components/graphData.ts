@@ -30,6 +30,7 @@ export interface L3Node {
 export interface L2Node {
   id: string;
   name: string;
+  symbol?: string;      // ECharts symbol，支持 'image://url' 格式
   children?: L3Node[];
   timeRange?: [number, number];
 }

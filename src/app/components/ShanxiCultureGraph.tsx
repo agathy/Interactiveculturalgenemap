@@ -621,7 +621,7 @@ export default function ShanxiCultureGraph() {
   const loadDefaultData = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('/data/example_data_shanxi.json');
+      const response = await fetch('/data/example_data_henan.json');
       if (!response.ok) {
         throw new Error('Failed to load default data');
       }
