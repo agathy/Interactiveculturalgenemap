@@ -9,8 +9,8 @@ import { generateLinksFromData, generateCategoriesFromData, validateGraphData, b
 import { loadRegionMap, getSupportedRegions, isRegionSupported, type MapBounds } from '../../services/mapService';
 import { MapLightPoints } from './MapLightPoints';
 
-// 将图片 URL 裁切成圆形，返回 base64 data URL
-async function makeCircularDataUrl(imageUrl: string, size = 200): Promise<string> {
+// 将图片 URL 裁切成圆形并绘制彩色边框，返回 image:// data URL
+async function makeCircularDataUrl(imageUrl: string, borderColor = '#00EAFF', size = 512): Promise<string> {
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => {
@@ -18,15 +18,27 @@ async function makeCircularDataUrl(imageUrl: string, size = 200): Promise<string
       canvas.width = size;
       canvas.height = size;
       const ctx = canvas.getContext('2d')!;
+      // 圆形裁切
+      ctx.save();
       ctx.beginPath();
-      ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
-      ctx.closePath();
+      ctx.arc(size / 2, size / 2, size / 2 - 10, 0, Math.PI * 2);
       ctx.clip();
       const scale = Math.max(size / img.naturalWidth, size / img.naturalHeight);
       const w = img.naturalWidth * scale;
       const h = img.naturalHeight * scale;
       ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
-      resolve(canvas.toDataURL('image/jpeg', 0.85));
+      ctx.restore();
+      // 彩色边框 + 发光（与 processCircularImage 一致）
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size / 2 - 12, 0, Math.PI * 2);
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = borderColor;
+      ctx.strokeStyle = borderColor;
+      ctx.lineWidth = 12;
+      ctx.stroke();
+      ctx.restore();
+      resolve(`image://${canvas.toDataURL('image/png')}`);
     };
     img.onerror = () => resolve('');
     img.src = imageUrl;
@@ -220,19 +232,19 @@ export default function ShanxiCultureGraph() {
   const [isLoading, setIsLoading] = useState(true);
   const graphDataFileRef = useRef<HTMLInputElement>(null);
 
-  // 二级节点图片预处理（圆形裁切），依赖 graphData，必须在 graphData 声明之后
+  // 二级节点默认图片自动加载：从 /img/{region}/{nodeName}.jpg 读取，裁成圆形嵌入节点
   useEffect(() => {
     if (!graphData) return;
+    const region = graphData.root.region || 'henan';
     const pairs: Array<[string, string]> = [];
-    const promises = graphData.categories.flatMap(cat =>
-      (cat.children || [])
-        .filter(l2 => l2.symbol?.startsWith('image://'))
-        .map(async l2 => {
-          const url = l2.symbol!.replace('image://', '');
-          const dataUrl = await makeCircularDataUrl(url);
-          if (dataUrl) pairs.push([l2.id, `image://${dataUrl}`]);
-        })
-    );
+    const promises = graphData.categories.flatMap((cat, catIndex) => {
+      const color = cultureColors[cat.name] || colorLibrary[catIndex % colorLibrary.length];
+      return (cat.children || []).map(async l2 => {
+        const url = `/img/${region}/${l2.name}.jpg`;
+        const dataUrl = await makeCircularDataUrl(url, color);
+        if (dataUrl) pairs.push([l2.id, dataUrl]);
+      });
+    });
     Promise.all(promises).then(() => setCircularL2Symbols(Object.fromEntries(pairs)));
   }, [graphData]);
 
