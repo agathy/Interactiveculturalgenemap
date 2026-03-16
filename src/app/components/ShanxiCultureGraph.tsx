@@ -327,21 +327,25 @@ export default function ShanxiCultureGraph() {
     });
   };
 
-  // 节点 ID 映射表（文件名关键字 → 节点ID）
-  const nodeIdMapping: Record<string, string> = {
-    '山西': 'root', '地图': 'root', '核心': 'root', 'root': 'root',
-    '根祖': 'genzhu', 'genzhu': 'genzhu',
-    '忠义': 'zhongyi', 'zhongyi': 'zhongyi',
-    '山河': 'shanhe', 'shanhe': 'shanhe',
-    '古建': 'gujian', 'gujian': 'gujian',
-    '酒魂': 'jiuhun', 'jiuhun': 'jiuhun',
-    // 二级节点映射
-    '祭祀': 'genzhu-1', '建筑': 'genzhu-2', '礼制': 'genzhu-3', '民俗': 'genzhu-4',
-    '人物': 'zhongyi-1', '商道': 'zhongyi-2', '信仰': 'zhongyi-3', '家训': 'zhongyi-4',
-    '河流': 'shanhe-1', '山脉': 'shanhe-2', '关隘': 'shanhe-3', '盆地': 'shanhe-4',
-    '木构': 'gujian-1', '彩塑': 'gujian-2', '石窟': 'gujian-3', '城池': 'gujian-4',
-    '考古': 'jiuhun-1', '技艺': 'jiuhun-2', '文学': 'jiuhun-3', '荣耀': 'jiuhun-4',
-  };
+  // 节点 ID 映射表：从当前 graphData 动态生成，文件名完整匹配或包含节点名即可匹配
+  const nodeIdMapping: Record<string, string> = useMemo(() => {
+    const map: Record<string, string> = { 'root': 'root' };
+    if (!graphData) return map;
+    // 根节点关键字
+    const rootName = graphData.root.name.replace(/\n/g, '');
+    if (rootName) map[rootName] = 'root';
+    // 一级节点：名称 + id
+    graphData.categories.forEach(cat => {
+      map[cat.name] = cat.id;
+      map[cat.id] = cat.id;
+      // 二级节点：名称 + id
+      (cat.children || []).forEach(l2 => {
+        map[l2.name] = l2.id;
+        map[l2.id] = l2.id;
+      });
+    });
+    return map;
+  }, [graphData]);
 
   // 从文件匹配节点 ID（支持文件名和路径中的关键字匹配）
   const matchFileToNodeId = (file: File): string => {
@@ -390,7 +394,7 @@ export default function ShanxiCultureGraph() {
       });
     } else {
       toast.warning(`扫描了 ${imageFiles.length} 张图片，未匹配到节点`, {
-        description: '请确保文件名包含节点关键字（如"根祖"、"酒魂"等）'
+        description: '请确保文件名与节点名称一致（如"农耕文化.jpg"）'
       });
     }
   };
@@ -1781,8 +1785,8 @@ export default function ShanxiCultureGraph() {
             
             <div className="space-y-4">
               <div className="p-3 rounded-lg bg-white/5 border border-white/10 space-y-2">
-                <p className="text-[10px] text-white/40 leading-relaxed">
-                  批量替换节点图标，文件名含关键字自动匹配（如“山西”、“根祖”、“酒魂”、“祭祀”）。支持 SVG/PNG/JPG，可直接上传整个文件夹。
+                <p className=”text-[10px] text-white/40 leading-relaxed”>
+                  批量替换节点图标，文件名与节点名称完整匹配自动识别（如”农耕文化.jpg”、”物质文化遗产.png”）。支持 SVG/PNG/JPG，可直接上传整个文件夹。
                 </p>
                 <div className="flex gap-2">
                   <label className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-dashed border-white/20 rounded-md hover:border-cyan-400/50 hover:bg-cyan-400/5 transition-all cursor-pointer group">
