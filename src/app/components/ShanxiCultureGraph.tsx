@@ -248,19 +248,29 @@ export default function ShanxiCultureGraph() {
   // 获取节点对应的配色（支持12色自动分配）
   const getColorForNodeId = (id: string, categoryIndex?: number): string => {
     if (id === 'root') return rootColor;
-    
-    // 如果是已知的五大文化基因，使用传统配色（兼容旧数据）
+
+    // 兼容旧版山西数据的硬编码
     if (id.startsWith('genzhu') || id.startsWith('gz-')) return cultureColors['根祖文化'];
     if (id.startsWith('zhongyi') || id.startsWith('zy-')) return cultureColors['忠义文化'];
     if (id.startsWith('shanhe') || id.startsWith('sh-')) return cultureColors['山河文化'];
     if (id.startsWith('gujian') || id.startsWith('gj-')) return cultureColors['古建文化'];
     if (id.startsWith('jiuhun') || id.startsWith('jh-')) return cultureColors['酒魂文化'];
-    
-    // 对于新分类，根据索引从颜色库中分配颜色
+
+    // 从当前 graphData 查找：先找一级，再找二级的父级
+    if (graphData) {
+      const catIndex = graphData.categories.findIndex(cat =>
+        cat.id === id || (cat.children || []).some(l2 => l2.id === id)
+      );
+      if (catIndex >= 0) {
+        const cat = graphData.categories[catIndex];
+        return cultureColors[cat.name] || colorLibrary[catIndex % colorLibrary.length];
+      }
+    }
+
     if (categoryIndex !== undefined && categoryIndex >= 0 && categoryIndex < colorLibrary.length) {
       return colorLibrary[categoryIndex];
     }
-    
+
     return '#00EAFF';
   };
 
