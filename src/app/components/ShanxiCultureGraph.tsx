@@ -161,6 +161,9 @@ export default function ShanxiCultureGraph() {
   const [rootShadowColor, setRootShadowColor] = useState(_saved?.rootShadowColor ?? '#6aa2b6');
   const [rootTitleShadowColor, setRootTitleShadowColor] = useState(_saved?.rootTitleShadowColor ?? '#94e3fe');
 
+  // 一级节点标题字体大小
+  const [l1LabelFontSize, setL1LabelFontSize] = useState(_saved?.l1LabelFontSize ?? 21);
+
   // 装饰环自转速度（面板"旋转速度"滑杆控制），呼吸频率系数（控制节点本体缩放+投影闪烁）
   const [rotationSpeed, setRotationSpeed] = useState(_saved?.rotationSpeed ?? 0.34);
   const [breathFrequency, setBreathFrequency] = useState(_saved?.breathFrequency ?? 0.095);
@@ -360,7 +363,7 @@ export default function ShanxiCultureGraph() {
     setRotationSpeed(0.34);
     setBreathFrequency(0.095);
     setDecorRadius(4);
-    setNodeSizes({
+    setL1LabelFontSize(21);
       root: 360,
       l1: 130,
       l2: 40,
@@ -402,7 +405,8 @@ export default function ShanxiCultureGraph() {
       showCenterText,
       rotationSpeed,
       breathFrequency,
-      decorRadius
+      decorRadius,
+      l1LabelFontSize
     };
     const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -441,6 +445,7 @@ export default function ShanxiCultureGraph() {
         if (config.rotationSpeed !== undefined) setRotationSpeed(config.rotationSpeed);
         if (config.breathFrequency !== undefined) setBreathFrequency(config.breathFrequency);
         if (config.decorRadius !== undefined) setDecorRadius(config.decorRadius);
+        if (config.l1LabelFontSize !== undefined) setL1LabelFontSize(config.l1LabelFontSize);
         toast.success('配置已导入并应用', {
           style: { background: 'rgba(0, 0, 0, 0.8)', color: '#00EAFF', border: '1px solid rgba(0, 234, 255, 0.2)' }
         });
@@ -663,6 +668,7 @@ export default function ShanxiCultureGraph() {
       rotationSpeed,
       breathFrequency,
       decorRadius,
+      l1LabelFontSize,
       timelineColor
     };
     localStorage.setItem('shanxi_culture_graph_config', JSON.stringify(config));
@@ -681,12 +687,12 @@ export default function ShanxiCultureGraph() {
         l1Radius, timelineRadius, rootColor, rootTitleFontSize,
         rootGlowIntensity, rootShadowColor, rootTitleShadowColor, showRootLabels,
         showCenterText, rotationSpeed, breathFrequency, decorRadius,
-        timelineColor
+        l1LabelFontSize, timelineColor
       };
       localStorage.setItem('shanxi_culture_graph_config', JSON.stringify(config));
     }, 300);
     return () => clearTimeout(autoSaveTimerRef.current);
-  }, [bgColor, cultureColors, colorLibrary, nodeSizes, nodeBorders, l1Radius, timelineRadius, rootColor, rootTitleFontSize, rootGlowIntensity, rootShadowColor, rootTitleShadowColor, showRootLabels, showCenterText, rotationSpeed, breathFrequency, decorRadius, timelineColor]);
+  }, [bgColor, cultureColors, colorLibrary, nodeSizes, nodeBorders, l1Radius, timelineRadius, rootColor, rootTitleFontSize, rootGlowIntensity, rootShadowColor, rootTitleShadowColor, showRootLabels, showCenterText, rotationSpeed, breathFrequency, decorRadius, l1LabelFontSize, timelineColor]);
 
   // 根据数据中的 region 动态加载地图
   useEffect(() => {
@@ -1005,7 +1011,7 @@ export default function ShanxiCultureGraph() {
               padding: [8, 0, 0, 0],
               lineHeight: 20
             },
-            title: { fontFamily: 'KingHwa_OldSong, serif', fontSize: 21, fontWeight: 'bold', color: '#fff', align: 'center', lineHeight: 28 },
+            title: { fontFamily: 'KingHwa_OldSong, serif', fontSize: l1LabelFontSize, fontWeight: 'bold', color: '#fff', align: 'center', lineHeight: Math.round(l1LabelFontSize * 1.35) },
             desc: { fontFamily: 'Source Han Sans, sans-serif', fontSize: 11, fontWeight: 'normal', color: 'rgba(255, 255, 255, 0.8)', align: 'center', paddingTop: 2 }
           }
         },
@@ -1016,7 +1022,7 @@ export default function ShanxiCultureGraph() {
         }
       }]
     };
-  }, [nodes, links, categories, showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, fenjiu_colors, graphData]);
+  }, [nodes, links, categories, showRootLabels, rootTitleFontSize, l1LabelFontSize, rootColor, rootGlowIntensity, rootShadowColor, fenjiu_colors, graphData]);
 
   useEffect(() => {
     const canvas = document.createElement('canvas');
@@ -1471,10 +1477,22 @@ export default function ShanxiCultureGraph() {
                   <span>一级节点 (基因层)</span>
                   <span className="font-mono">{nodeSizes.l1}px</span>
                 </div>
-                <input 
+                <input
                   type="range" min="40" max="250" step="5"
                   value={nodeSizes.l1}
                   onChange={(e) => setNodeSizes(prev => ({ ...prev, l1: parseInt(e.target.value) }))}
+                  className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                />
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between text-[10px] text-white/50">
+                  <span>一级节点标题字号</span>
+                  <span className="font-mono">{l1LabelFontSize}px</span>
+                </div>
+                <input
+                  type="range" min="8" max="40" step="1"
+                  value={l1LabelFontSize}
+                  onChange={(e) => setL1LabelFontSize(parseInt(e.target.value))}
                   className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-cyan-400"
                 />
               </div>
