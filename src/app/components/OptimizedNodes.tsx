@@ -70,7 +70,7 @@ export function getOptimizedNodes(
     id: 'root',
     name: graphData.root.name.replace(/\n/g, ' '),
     symbol: customSymbols['root'] || getShanxiMapSVG(),
-    symbolSize: nodeSizes.root / currentZoom,
+    symbolSize: nodeSizes.root * currentZoom,
     x: centerX,
     y: centerY,
     fixed: true,

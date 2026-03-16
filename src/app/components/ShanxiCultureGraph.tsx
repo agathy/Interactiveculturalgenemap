@@ -1011,9 +1011,9 @@ export default function ShanxiCultureGraph() {
           rich: {
             rootTitle: {
               fontFamily: 'root-title-font',
-              fontSize: rootTitleFontSize / currentZoom,
+              fontSize: rootTitleFontSize * currentZoom,
               fontWeight: 'bold',
-              lineHeight: (rootTitleFontSize / currentZoom) * 1.3,
+              lineHeight: rootTitleFontSize * currentZoom * 1.3,
               align: 'center',
               color: rootColor,
               textShadowBlur: rootGlowIntensity,
@@ -1023,7 +1023,7 @@ export default function ShanxiCultureGraph() {
             },
             rootSubtitle: {
               fontFamily: 'Source Han Sans, sans-serif',
-              fontSize: 14 / currentZoom,
+              fontSize: 14 * currentZoom,
               fontWeight: 'normal',
               color: '#B0E2FF',
               align: 'center',
