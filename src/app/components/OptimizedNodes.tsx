@@ -212,7 +212,7 @@ export function getOptimizedNodes(
                 ]
               },
           borderColor: catColor,
-          borderWidth: (customSymbols[l2.id] || l2.symbol)?.startsWith('image://') ? 0 : (nodeBorders.l2 ? 0.8 : 0),
+          borderWidth: (customSymbols[l2.id] || l2.symbol)?.startsWith('image://') ? 2 : (nodeBorders.l2 ? 0.8 : 0),
           shadowBlur: 20,
           shadowColor: catColor
         },

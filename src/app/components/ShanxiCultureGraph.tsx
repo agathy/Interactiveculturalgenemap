@@ -9,6 +9,30 @@ import { generateLinksFromData, generateCategoriesFromData, validateGraphData, b
 import { loadRegionMap, getSupportedRegions, isRegionSupported, type MapBounds } from '../../services/mapService';
 import { MapLightPoints } from './MapLightPoints';
 
+// 将图片 URL 裁切成圆形，返回 base64 data URL
+async function makeCircularDataUrl(imageUrl: string, size = 200): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d')!;
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+      const scale = Math.max(size / img.naturalWidth, size / img.naturalHeight);
+      const w = img.naturalWidth * scale;
+      const h = img.naturalHeight * scale;
+      ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+      resolve(canvas.toDataURL('image/jpeg', 0.85));
+    };
+    img.onerror = () => resolve('');
+    img.src = imageUrl;
+  });
+}
+
 // Helper: convert hex color to rgba string
 function hexToRgba(hex: string, alpha: number): string {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -147,6 +171,23 @@ export default function ShanxiCultureGraph() {
   // 自定义节点形状状态
   const [customSymbols, setCustomSymbols] = useState<Record<string, string>>({});
   const [rawImages, setRawImages] = useState<Record<string, { file: File, color: string }>>({});
+
+  // 二级节点图片预处理（圆形裁切）
+  const [circularL2Symbols, setCircularL2Symbols] = useState<Record<string, string>>({});
+  useEffect(() => {
+    if (!graphData) return;
+    const pairs: Array<[string, string]> = [];
+    const promises = graphData.categories.flatMap(cat =>
+      (cat.children || [])
+        .filter(l2 => l2.symbol?.startsWith('image://'))
+        .map(async l2 => {
+          const url = l2.symbol!.replace('image://', '');
+          const dataUrl = await makeCircularDataUrl(url);
+          if (dataUrl) pairs.push([l2.id, `image://${dataUrl}`]);
+        })
+    );
+    Promise.all(promises).then(() => setCircularL2Symbols(Object.fromEntries(pairs)));
+  }, [graphData]);
 
   // 节点大小状态
   const [nodeSizes, setNodeSizes] = useState(_saved?.nodeSizes ?? {
@@ -778,12 +819,17 @@ export default function ShanxiCultureGraph() {
 
   // 构建节点数据（纯静态，不含呼吸动画）
   // 使用 useMemo 缓存节点数据，防止频繁重渲染导致 ECharts 内部状态异常
+  // circularL2Symbols 优先级低于用户手动上传的 customSymbols
+  const mergedSymbols = useMemo(
+    () => ({ ...circularL2Symbols, ...customSymbols }),
+    [circularL2Symbols, customSymbols]
+  );
   const nodes = useMemo(() => getOptimizedNodes(
     fenjiu_colors,
     cultureColors,
     getRegionMapSVG,
     nodeSizes,
-    customSymbols,
+    mergedSymbols,
     l1Radius,
     {
       showRootLabels,
@@ -797,7 +843,7 @@ export default function ShanxiCultureGraph() {
     },
     graphData,
     colorLibrary
-  ), [fenjiu_colors, cultureColors, getRegionMapSVG, nodeSizes, customSymbols, l1Radius, showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, rootTitleShadowColor, nodeBorders, graphData, colorLibrary, currentZoom]);
+  ), [fenjiu_colors, cultureColors, getRegionMapSVG, nodeSizes, mergedSymbols, l1Radius, showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, rootTitleShadowColor, nodeBorders, graphData, colorLibrary, currentZoom]);
 
   // 呼吸动画已完全移至 BreathingNodes Canvas 叠加层
   // 不再调用 chartInstance.setOption()，力导向布局零干扰

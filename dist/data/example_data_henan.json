@@ -20,7 +20,7 @@
         {
           "id": "a1",
           "name": "世界文化遗产",
-          "symbol": "image:///img/henan/a1.png",
+          "symbol": "image:///img/henan/世界文化遗产.jpg",
           "timeRange": [
             -1300,
             2026
@@ -55,7 +55,7 @@
         {
           "id": "a2",
           "name": "不可移动文物",
-          "symbol": "image:///img/henan/a2.png",
+          "symbol": "image:///img/henan/不可移动文物.jpg",
           "timeRange": [
             -6000,
             1911
@@ -82,7 +82,7 @@
         {
           "id": "a3",
           "name": "可移动文物",
-          "symbol": "image:///img/henan/a3.png",
+          "symbol": "image:///img/henan/可移动文物.jpg",
           "timeRange": [
             -1300,
             2026
@@ -129,7 +129,7 @@
         {
           "id": "b1",
           "name": "传统技艺",
-          "symbol": "image:///img/henan/b1.png",
+          "symbol": "image:///img/henan/传统技艺.jpg",
           "timeRange": [
             -5000,
             2026
@@ -164,7 +164,7 @@
         {
           "id": "b2",
           "name": "传统艺术",
-          "symbol": "image:///img/henan/b2.png",
+          "symbol": "image:///img/henan/传统艺术.jpg",
           "timeRange": [
             495,
             2026
@@ -191,7 +191,7 @@
         {
           "id": "b3",
           "name": "传统医药",
-          "symbol": "image:///img/henan/b3.png",
+          "symbol": "image:///img/henan/传统医药.jpg",
           "timeRange": [
             -400,
             2026
@@ -210,7 +210,7 @@
         {
           "id": "b4",
           "name": "民间文学",
-          "symbol": "image:///img/henan/b4.png",
+          "symbol": "image:///img/henan/民间文学.jpg",
           "timeRange": [
             -2000,
             2026
@@ -229,7 +229,7 @@
         {
           "id": "b5",
           "name": "传统体育杂技",
-          "symbol": "image:///img/henan/b5.png",
+          "symbol": "image:///img/henan/传统体育杂技.jpg",
           "timeRange": [
             495,
             2026
@@ -260,7 +260,7 @@
         {
           "id": "c1",
           "name": "特色菜肴",
-          "symbol": "image:///img/henan/c1.png",
+          "symbol": "image:///img/henan/特色菜肴.jpg",
           "timeRange": [
             618,
             2026
@@ -279,7 +279,7 @@
         {
           "id": "c2",
           "name": "面点小吃",
-          "symbol": "image:///img/henan/c2.png",
+          "symbol": "image:///img/henan/面点小吃.jpg",
           "timeRange": [
             -200,
             2026
@@ -298,7 +298,7 @@
         {
           "id": "c3",
           "name": "茶文化",
-          "symbol": "image:///img/henan/c3.png",
+          "symbol": "image:///img/henan/茶文化.jpg",
           "timeRange": [
             618,
             2026
@@ -329,7 +329,7 @@
         {
           "id": "d1",
           "name": "古建筑",
-          "symbol": "image:///img/henan/d1.png",
+          "symbol": "image:///img/henan/古建筑.jpg",
           "timeRange": [
             220,
             1911
@@ -356,7 +356,7 @@
         {
           "id": "d2",
           "name": "历史文化名城",
-          "symbol": "image:///img/henan/d2.png",
+          "symbol": "image:///img/henan/历史文化名城.jpg",
           "timeRange": [
             -2000,
             2026
@@ -375,7 +375,7 @@
         {
           "id": "d3",
           "name": "古村落",
-          "symbol": "image:///img/henan/d3.png",
+          "symbol": "image:///img/henan/古村落.jpg",
           "timeRange": [
             618,
             2026
@@ -406,7 +406,7 @@
         {
           "id": "e1",
           "name": "传统节日",
-          "symbol": "image:///img/henan/e1.png",
+          "symbol": "image:///img/henan/传统节日.jpg",
           "timeRange": [
             -2000,
             2026
@@ -425,7 +425,7 @@
         {
           "id": "e2",
           "name": "地方节庆",
-          "symbol": "image:///img/henan/e2.png",
+          "symbol": "image:///img/henan/地方节庆.jpg",
           "timeRange": [
             386,
             2026
@@ -464,7 +464,7 @@
         {
           "id": "f1",
           "name": "方言",
-          "symbol": "image:///img/henan/f1.png",
+          "symbol": "image:///img/henan/方言.jpg",
           "timeRange": [
             -2000,
             2026
@@ -483,7 +483,7 @@
         {
           "id": "f2",
           "name": "文字与书法",
-          "symbol": "image:///img/henan/f2.png",
+          "symbol": "image:///img/henan/文字与书法.jpg",
           "timeRange": [
             -1300,
             2026
@@ -522,7 +522,7 @@
         {
           "id": "g1",
           "name": "佛教文化",
-          "symbol": "image:///img/henan/g1.png",
+          "symbol": "image:///img/henan/佛教文化.jpg",
           "timeRange": [
             67,
             2026
@@ -549,7 +549,7 @@
         {
           "id": "g2",
           "name": "道教文化",
-          "symbol": "image:///img/henan/g2.png",
+          "symbol": "image:///img/henan/道教文化.jpg",
           "timeRange": [
             -200,
             2026
@@ -568,7 +568,7 @@
         {
           "id": "g3",
           "name": "儒学文化",
-          "symbol": "image:///img/henan/g3.png",
+          "symbol": "image:///img/henan/儒学文化.jpg",
           "timeRange": [
             -551,
             2026
@@ -599,7 +599,7 @@
         {
           "id": "h1",
           "name": "古代人物",
-          "symbol": "image:///img/henan/h1.png",
+          "symbol": "image:///img/henan/古代人物.jpg",
           "timeRange": [
             -2100,
             1840
@@ -642,7 +642,7 @@
         {
           "id": "h2",
           "name": "近现代人物",
-          "symbol": "image:///img/henan/h2.png",
+          "symbol": "image:///img/henan/近现代人物.jpg",
           "timeRange": [
             1840,
             2026
@@ -677,7 +677,7 @@
         {
           "id": "h3",
           "name": "重要事件",
-          "symbol": "image:///img/henan/h3.png",
+          "symbol": "image:///img/henan/重要事件.jpg",
           "timeRange": [
             -2100,
             2026
@@ -724,7 +724,7 @@
         {
           "id": "i1",
           "name": "农业文化",
-          "symbol": "image:///img/henan/i1.png",
+          "symbol": "image:///img/henan/农业文化.jpg",
           "timeRange": [
             -6000,
             2026
@@ -743,7 +743,7 @@
         {
           "id": "i2",
           "name": "工业文化",
-          "symbol": "image:///img/henan/i2.png",
+          "symbol": "image:///img/henan/工业文化.jpg",
           "timeRange": [
             -2000,
             2026
@@ -762,7 +762,7 @@
         {
           "id": "i3",
           "name": "旅游文化",
-          "symbol": "image:///img/henan/i3.png",
+          "symbol": "image:///img/henan/旅游文化.jpg",
           "timeRange": [
             1978,
             2026
@@ -793,7 +793,7 @@
         {
           "id": "j1",
           "name": "名山大川",
-          "symbol": "image:///img/henan/j1.png",
+          "symbol": "image:///img/henan/名山大川.jpg",
           "timeRange": [
             -10000,
             2026
@@ -820,7 +820,7 @@
         {
           "id": "j2",
           "name": "生物资源",
-          "symbol": "image:///img/henan/j2.png",
+          "symbol": "image:///img/henan/生物资源.jpg",
           "timeRange": [
             -10000,
             2026
@@ -839,7 +839,7 @@
         {
           "id": "j3",
           "name": "地质景观",
-          "symbol": "image:///img/henan/j3.png",
+          "symbol": "image:///img/henan/地质景观.jpg",
           "timeRange": [
             -10000,
             2026
@@ -870,7 +870,7 @@
         {
           "id": "k1",
           "name": "革命遗址遗迹",
-          "symbol": "image:///img/henan/k1.png",
+          "symbol": "image:///img/henan/革命遗址遗迹.jpg",
           "timeRange": [
             1927,
             1949
@@ -897,7 +897,7 @@
         {
           "id": "k2",
           "name": "革命纪念设施",
-          "symbol": "image:///img/henan/k2.png",
+          "symbol": "image:///img/henan/革命纪念设施.jpg",
           "timeRange": [
             1949,
             2026
@@ -916,7 +916,7 @@
         {
           "id": "k3",
           "name": "革命文物藏品",
-          "symbol": "image:///img/henan/k3.png",
+          "symbol": "image:///img/henan/革命文物藏品.jpg",
           "timeRange": [
             1921,
             2026
@@ -935,7 +935,7 @@
         {
           "id": "k4",
           "name": "革命精神传承",
-          "symbol": "image:///img/henan/k4.png",
+          "symbol": "image:///img/henan/革命精神传承.jpg",
           "timeRange": [
             1927,
             2026
@@ -982,7 +982,7 @@
         {
           "id": "l1",
           "name": "姓氏祖根地",
-          "symbol": "image:///img/henan/l1.png",
+          "symbol": "image:///img/henan/姓氏祖根地.jpg",
           "timeRange": [
             -3000,
             2026
@@ -1009,7 +1009,7 @@
         {
           "id": "l2",
           "name": "姓氏文化",
-          "symbol": "image:///img/henan/l2.png",
+          "symbol": "image:///img/henan/姓氏文化.jpg",
           "timeRange": [
             -2000,
             2026
@@ -1028,7 +1028,7 @@
         {
           "id": "l3",
           "name": "客家文化",
-          "symbol": "image:///img/henan/l3.png",
+          "symbol": "image:///img/henan/客家文化.jpg",
           "timeRange": [
             317,
             2026
@@ -1047,7 +1047,7 @@
         {
           "id": "l4",
           "name": "宗亲联谊",
-          "symbol": "image:///img/henan/l4.png",
+          "symbol": "image:///img/henan/宗亲联谊.jpg",
           "timeRange": [
             1949,
             2026
@@ -1078,7 +1078,7 @@
         {
           "id": "m1",
           "name": "黄河文明遗址",
-          "symbol": "image:///img/henan/m1.png",
+          "symbol": "image:///img/henan/黄河文明遗址.jpg",
           "timeRange": [
             -5000,
             -1500
@@ -1105,7 +1105,7 @@
         {
           "id": "m2",
           "name": "治黄文化",
-          "symbol": "image:///img/henan/m2.png",
+          "symbol": "image:///img/henan/治黄文化.jpg",
           "timeRange": [
             -200,
             2026
@@ -1132,7 +1132,7 @@
         {
           "id": "m3",
           "name": "黄河生态文化",
-          "symbol": "image:///img/henan/m3.png",
+          "symbol": "image:///img/henan/黄河生态文化.jpg",
           "timeRange": [
             -10000,
             2026
@@ -1151,7 +1151,7 @@
         {
           "id": "m4",
           "name": "黄河文学艺术",
-          "symbol": "image:///img/henan/m4.png",
+          "symbol": "image:///img/henan/黄河文学艺术.jpg",
           "timeRange": [
             -2000,
             2026
@@ -1182,7 +1182,7 @@
         {
           "id": "n1",
           "name": "传统村落",
-          "symbol": "image:///img/henan/n1.png",
+          "symbol": "image:///img/henan/传统村落.jpg",
           "timeRange": [
             618,
             2026
@@ -1209,7 +1209,7 @@
         {
           "id": "n2",
           "name": "农耕文化",
-          "symbol": "image:///img/henan/n2.png",
+          "symbol": "image:///img/henan/农耕文化.jpg",
           "timeRange": [
             -6000,
             2026
@@ -1228,7 +1228,7 @@
         {
           "id": "n3",
           "name": "乡村民俗",
-          "symbol": "image:///img/henan/n3.png",
+          "symbol": "image:///img/henan/乡村民俗.jpg",
           "timeRange": [
             -2000,
             2026
@@ -1247,7 +1247,7 @@
         {
           "id": "n4",
           "name": "乡村景观",
-          "symbol": "image:///img/henan/n4.png",
+          "symbol": "image:///img/henan/乡村景观.jpg",
           "timeRange": [
             -10000,
             2026
@@ -1278,7 +1278,7 @@
         {
           "id": "o1",
           "name": "政治建设",
-          "symbol": "image:///img/henan/o1.png",
+          "symbol": "image:///img/henan/政治建设.jpg",
           "timeRange": [
             1949,
             2026
@@ -1305,7 +1305,7 @@
         {
           "id": "o2",
           "name": "经济发展",
-          "symbol": "image:///img/henan/o2.png",
+          "symbol": "image:///img/henan/经济发展.jpg",
           "timeRange": [
             1978,
             2026
@@ -1340,7 +1340,7 @@
         {
           "id": "o3",
           "name": "社会事业",
-          "symbol": "image:///img/henan/o3.png",
+          "symbol": "image:///img/henan/社会事业.jpg",
           "timeRange": [
             1949,
             2026
@@ -1375,7 +1375,7 @@
         {
           "id": "o4",
           "name": "科技创新",
-          "symbol": "image:///img/henan/o4.png",
+          "symbol": "image:///img/henan/科技创新.jpg",
           "timeRange": [
             1978,
             2026
@@ -1402,7 +1402,7 @@
         {
           "id": "o5",
           "name": "城乡发展",
-          "symbol": "image:///img/henan/o5.png",
+          "symbol": "image:///img/henan/城乡发展.jpg",
           "timeRange": [
             1949,
             2026
@@ -1429,7 +1429,7 @@
         {
           "id": "o6",
           "name": "文化交流",
-          "symbol": "image:///img/henan/o6.png",
+          "symbol": "image:///img/henan/文化交流.jpg",
           "timeRange": [
             1949,
             2026
