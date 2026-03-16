@@ -42,7 +42,7 @@ export default function ShanxiCultureGraph() {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapSVGPath, setMapSVGPath] = useState<string>('');
   const [showPanels, setShowPanels] = useState(false);
-  const [showLeftPanel, setShowLeftPanel] = useState(true);
+  const [showLeftPanel, setShowLeftPanel] = useState(false);
   const [bgColor, setBgColor] = useState(_saved?.bgColor ?? '#020b22');
   const [timelineColor, setTimelineColor] = useState(_saved?.timelineColor ?? '#22d3ee');
   const rippleCanvasRef = useRef<HTMLCanvasElement | null>(null);
