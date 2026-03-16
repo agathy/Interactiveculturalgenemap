@@ -1,0 +1,143 @@
+{
+  "_version": "2026-03-06-v1.0.2",
+  "_exportedAt": "2026-03-05T20:25:00.000Z",
+  "region": "shanxi",
+  "regionName": "山西省",
+  "points": [
+    {
+      "id": "pingyao",
+      "name": "平遥古城",
+      "lng": 112.177,
+      "lat": 37.189,
+      "color": "#FF2222",
+      "size": 6,
+      "category": "古建文化"
+    },
+    {
+      "id": "yungang",
+      "name": "云冈石窟",
+      "lng": 113.131,
+      "lat": 40.114,
+      "color": "#FF2222",
+      "size": 6,
+      "category": "古建文化"
+    },
+    {
+      "id": "wutai",
+      "name": "五台山",
+      "lng": 113.565,
+      "lat": 38.943,
+      "color": "#FF2222",
+      "size": 5,
+      "category": "根祖文化"
+    },
+    {
+      "id": "hukou",
+      "name": "壶口瀑布",
+      "lng": 110.435,
+      "lat": 36.108,
+      "color": "#FF2222",
+      "size": 5,
+      "category": "山河文化"
+    },
+    {
+      "id": "jinci",
+      "name": "晋祠",
+      "lng": 112.434,
+      "lat": 37.708,
+      "color": "#FF2222",
+      "size": 5,
+      "category": "根祖文化"
+    },
+    {
+      "id": "yingxian",
+      "name": "应县木塔",
+      "lng": 113.185,
+      "lat": 39.554,
+      "color": "#FF2222",
+      "size": 6,
+      "category": "古建文化"
+    },
+    {
+      "id": "fenjiu",
+      "name": "杏花村汾酒",
+      "lng": 111.771,
+      "lat": 37.268,
+      "color": "#FFD700",
+      "size": 6,
+      "category": "酒魂文化"
+    },
+    {
+      "id": "guandi",
+      "name": "解州关帝庙",
+      "lng": 110.848,
+      "lat": 35.049,
+      "color": "#FF2222",
+      "size": 5,
+      "category": "忠义文化"
+    },
+    {
+      "id": "huangcheng",
+      "name": "皇城相府",
+      "lng": 112.631,
+      "lat": 35.695,
+      "color": "#FF2222",
+      "size": 4,
+      "category": "忠义文化"
+    },
+    {
+      "id": "qiaojia",
+      "name": "乔家大院",
+      "lng": 112.443,
+      "lat": 37.517,
+      "color": "#FF2222",
+      "size": 4,
+      "category": "忠义文化"
+    },
+    {
+      "id": "xuankong",
+      "name": "悬空寺",
+      "lng": 113.684,
+      "lat": 39.659,
+      "color": "#FF2222",
+      "size": 5,
+      "category": "古建文化"
+    },
+    {
+      "id": "huashan",
+      "name": "北武当山",
+      "lng": 111.174,
+      "lat": 36.923,
+      "color": "#FF2222",
+      "size": 4,
+      "category": "山河文化"
+    },
+    {
+      "id": "yanmenguan",
+      "name": "雁门关",
+      "lng": 112.932,
+      "lat": 39.282,
+      "color": "#FF2222",
+      "size": 5,
+      "category": "山河文化"
+    },
+    {
+      "id": "taiyuan",
+      "name": "太原",
+      "lng": 112.549,
+      "lat": 37.857,
+      "color": "#FF4444",
+      "size": 4,
+      "category": "根祖文化"
+    },
+    {
+      "id": "datong",
+      "name": "大同",
+      "lng": 113.295,
+      "lat": 40.09,
+      "color": "#FF4444",
+      "size": 4,
+      "category": "古建文化"
+    }
+  ]
+}

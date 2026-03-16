@@ -364,7 +364,7 @@ export default function ShanxiCultureGraph() {
     setBreathFrequency(0.095);
     setDecorRadius(4);
     setL1LabelFontSize(21);
-      root: 360,
+    setNodeSizes({
       l1: 130,
       l2: 40,
       l3: 20
