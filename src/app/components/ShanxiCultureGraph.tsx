@@ -49,6 +49,8 @@ export default function ShanxiCultureGraph() {
   const rippleEffectRef = useRef<RippleEffect | null>(null);
   const [chartInstance, setChartInstance] = useState<any>(null);
   const viewStateRef = useRef({ zoom: 1, center: [500, 375] as [number, number] });
+  const [currentZoom, setCurrentZoom] = useState(1);
+  const roamRafRef = useRef<number | null>(null);
 
   const [focusedTimeRange, setFocusedTimeRange] = useState<[number, number] | null>(null);
 
@@ -64,10 +66,16 @@ export default function ShanxiCultureGraph() {
     const handleRoam = () => {
       const opt = chartInstance.getOption();
       if (opt.series && opt.series[0]) {
+        const zoom = opt.series[0].zoom || 1;
         viewStateRef.current = {
-          zoom: opt.series[0].zoom || 1,
+          zoom,
           center: opt.series[0].center || [500, 375]
         };
+        if (roamRafRef.current) cancelAnimationFrame(roamRafRef.current);
+        roamRafRef.current = requestAnimationFrame(() => {
+          setCurrentZoom(zoom);
+          roamRafRef.current = null;
+        });
       }
     };
 
@@ -784,11 +792,12 @@ export default function ShanxiCultureGraph() {
       rootGlowIntensity,
       rootShadowColor,
       rootTitleShadowColor,
-      nodeBorders
+      nodeBorders,
+      currentZoom
     },
     graphData,
     colorLibrary
-  ), [fenjiu_colors, cultureColors, getRegionMapSVG, nodeSizes, customSymbols, l1Radius, showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, rootTitleShadowColor, nodeBorders, graphData, colorLibrary]);
+  ), [fenjiu_colors, cultureColors, getRegionMapSVG, nodeSizes, customSymbols, l1Radius, showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, rootTitleShadowColor, nodeBorders, graphData, colorLibrary, currentZoom]);
 
   // 呼吸动画已完全移至 BreathingNodes Canvas 叠加层
   // 不再调用 chartInstance.setOption()，力导向布局零干扰
@@ -1002,9 +1011,9 @@ export default function ShanxiCultureGraph() {
           rich: {
             rootTitle: {
               fontFamily: 'root-title-font',
-              fontSize: rootTitleFontSize,
+              fontSize: rootTitleFontSize / currentZoom,
               fontWeight: 'bold',
-              lineHeight: rootTitleFontSize * 1.3,
+              lineHeight: (rootTitleFontSize / currentZoom) * 1.3,
               align: 'center',
               color: rootColor,
               textShadowBlur: rootGlowIntensity,
@@ -1014,7 +1023,7 @@ export default function ShanxiCultureGraph() {
             },
             rootSubtitle: {
               fontFamily: 'Source Han Sans, sans-serif',
-              fontSize: 14,
+              fontSize: 14 / currentZoom,
               fontWeight: 'normal',
               color: '#B0E2FF',
               align: 'center',
@@ -1032,7 +1041,7 @@ export default function ShanxiCultureGraph() {
         }
       }]
     };
-  }, [nodes, links, categories, showRootLabels, rootTitleFontSize, l1LabelFontSize, rootColor, rootGlowIntensity, rootShadowColor, fenjiu_colors, graphData]);
+  }, [nodes, links, categories, showRootLabels, rootTitleFontSize, l1LabelFontSize, rootColor, rootGlowIntensity, rootShadowColor, fenjiu_colors, graphData, currentZoom]);
 
   useEffect(() => {
     const canvas = document.createElement('canvas');

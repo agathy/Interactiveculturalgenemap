@@ -21,7 +21,7 @@ export function getOptimizedNodes(
   const centerX = 500;
   const centerY = 375;
   
-  const { showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, rootTitleShadowColor, nodeBorders } = rootParams;
+  const { showRootLabels, rootTitleFontSize, rootColor, rootGlowIntensity, rootShadowColor, rootTitleShadowColor, nodeBorders, currentZoom = 1 } = rootParams;
 
   if (!graphData) return [];
 
@@ -70,7 +70,7 @@ export function getOptimizedNodes(
     id: 'root',
     name: graphData.root.name.replace(/\n/g, ' '),
     symbol: customSymbols['root'] || getShanxiMapSVG(),
-    symbolSize: nodeSizes.root,
+    symbolSize: nodeSizes.root / currentZoom,
     x: centerX,
     y: centerY,
     fixed: true,
