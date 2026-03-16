@@ -174,20 +174,6 @@ export default function ShanxiCultureGraph() {
 
   // 二级节点图片预处理（圆形裁切）
   const [circularL2Symbols, setCircularL2Symbols] = useState<Record<string, string>>({});
-  useEffect(() => {
-    if (!graphData) return;
-    const pairs: Array<[string, string]> = [];
-    const promises = graphData.categories.flatMap(cat =>
-      (cat.children || [])
-        .filter(l2 => l2.symbol?.startsWith('image://'))
-        .map(async l2 => {
-          const url = l2.symbol!.replace('image://', '');
-          const dataUrl = await makeCircularDataUrl(url);
-          if (dataUrl) pairs.push([l2.id, `image://${dataUrl}`]);
-        })
-    );
-    Promise.all(promises).then(() => setCircularL2Symbols(Object.fromEntries(pairs)));
-  }, [graphData]);
 
   // 节点大小状态
   const [nodeSizes, setNodeSizes] = useState(_saved?.nodeSizes ?? {
@@ -233,6 +219,22 @@ export default function ShanxiCultureGraph() {
   const [graphData, setGraphData] = useState<GraphData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const graphDataFileRef = useRef<HTMLInputElement>(null);
+
+  // 二级节点图片预处理（圆形裁切），依赖 graphData，必须在 graphData 声明之后
+  useEffect(() => {
+    if (!graphData) return;
+    const pairs: Array<[string, string]> = [];
+    const promises = graphData.categories.flatMap(cat =>
+      (cat.children || [])
+        .filter(l2 => l2.symbol?.startsWith('image://'))
+        .map(async l2 => {
+          const url = l2.symbol!.replace('image://', '');
+          const dataUrl = await makeCircularDataUrl(url);
+          if (dataUrl) pairs.push([l2.id, `image://${dataUrl}`]);
+        })
+    );
+    Promise.all(promises).then(() => setCircularL2Symbols(Object.fromEntries(pairs)));
+  }, [graphData]);
 
   // 地图光点数据
   const [lightPointsData, setLightPointsData] = useState<MapLightPointsData | null>(null);
