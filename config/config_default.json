@@ -1,13 +1,23 @@
 {
-  "_version": "2026-03-06-v1.0.2",
-  "_exportedAt": "2026-03-05T20:25:00.000Z",
+  "_version": 1,
+  "_exportedAt": "2026-03-16T04:57:59.327Z",
   "bgColor": "#020b22",
   "cultureColors": {
-    "根祖文化": "#DAA520",
-    "忠义文化": "#CD5C5C",
-    "山河文化": "#87CEFA",
-    "古建文化": "#A0826D",
-    "酒魂文化": "#20B2AA"
+    "物质文化遗产": "#DAA520",
+    "非物质文化遗产": "#CD5C5C",
+    "饮食文化": "#87CEFA",
+    "建筑与园林": "#A0826D",
+    "民俗与节庆": "#20B2AA",
+    "语言与方言": "#C0C0C0",
+    "宗教与哲学": "#4A8FD4",
+    "历史文化": "#68B08C",
+    "区域经济文化": "#9B7EC8",
+    "自然与生态": "#E07840",
+    "红色文化": "#82a0ef",
+    "根亲文化": "#7ECECE",
+    "黄河文化": "#DAA520",
+    "乡村文化": "#CD5C5C",
+    "现代发展": "#87CEFA"
   },
   "colorLibrary": [
     "#DAA520",
@@ -24,10 +34,10 @@
     "#7ECECE"
   ],
   "nodeSizes": {
-    "root": 360,
-    "l1": 130,
-    "l2": 40,
-    "l3": 20
+    "root": 370,
+    "l1": 70,
+    "l2": 30,
+    "l3": 10
   },
   "nodeBorders": {
     "root": true,
@@ -35,16 +45,17 @@
     "l2": true,
     "l3": true
   },
-  "l1Radius": 285,
+  "l1Radius": 500,
   "timelineRadius": 190,
   "rootColor": "#FFFFFF",
-  "rootTitleFontSize": 38,
-  "rootGlowIntensity": 11,
-  "rootShadowColor": "#6aa2b6",
+  "rootTitleFontSize": 42,
+  "rootGlowIntensity": 3,
+  "rootShadowColor": "#84c0d5",
   "rootTitleShadowColor": "#94e3fe",
   "showRootLabels": true,
   "showCenterText": true,
-  "rotationSpeed": 0.34,
-  "breathFrequency": 0.095,
-  "decorRadius": 4
+  "rotationSpeed": 0.48,
+  "breathFrequency": 0.045,
+  "decorRadius": 2,
+  "l1LabelFontSize": 12
 }

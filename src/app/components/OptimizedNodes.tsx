@@ -198,10 +198,10 @@ export function getOptimizedNodes(
         x: l1Positions[cat.id].x + initialDistance * Math.cos(angle),
         y: l1Positions[cat.id].y + initialDistance * Math.sin(angle),
         fixed: false,
-        symbol: customSymbols[l2.id] || l2.symbol || 'circle',
+        symbol: customSymbols[l2.id] || 'circle',
         symbolSize: nodeSizes.l2,
         itemStyle: {
-          color: (customSymbols[l2.id] || l2.symbol)?.startsWith('image://')
+          color: customSymbols[l2.id]?.startsWith('image://')
             ? 'transparent'
             : {
                 type: 'radial',
