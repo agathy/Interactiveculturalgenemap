@@ -16,6 +16,7 @@ interface BreathingNodesProps {
   graphData: GraphData;
   showCenterText?: boolean;
   colorLibrary?: string[]; // 颜色库，用于超过5个分类的节点
+  l1FontSize?: number;     // 一级节点字体大小（px）
 }
 
 export function BreathingNodes({
@@ -30,6 +31,7 @@ export function BreathingNodes({
   graphData,
   showCenterText = true,
   colorLibrary = [],
+  l1FontSize = 36,
 }: BreathingNodesProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rotationRef = useRef(0);
@@ -268,7 +270,7 @@ export function BreathingNodes({
         if (showCenterText) {
           ctx.save();
           // 字体大小跟随节点大小和图表缩放比例，保持与节点圆圈同比例（增大比例）
-          const fontSize = Math.round(l1NodeSize * 0.28 * chartZoom);
+          const fontSize = Math.round(l1FontSize * chartZoom);
           // 使用自定义字体文件（不使用 bold，避免过粗）
           ctx.font = `${fontSize}px "zihun266hao-shenshihei", "Source Han Sans", sans-serif`;
           ctx.textAlign = 'center';

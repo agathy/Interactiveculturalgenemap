@@ -181,6 +181,8 @@ export default function ShanxiCultureGraph() {
 
   // 显示中心文字开关
   const [showCenterText, setShowCenterText] = useState(_saved?.showCenterText ?? true);
+  // 一级节点字体大小
+  const [l1FontSize, setL1FontSize] = useState(_saved?.l1FontSize ?? 36);
 
   // 获取节点对应的配色（支持12色自动分配）
   const getColorForNodeId = (id: string, categoryIndex?: number): string => {
@@ -400,6 +402,7 @@ export default function ShanxiCultureGraph() {
       rootTitleShadowColor,
       showRootLabels,
       showCenterText,
+      l1FontSize,
       rotationSpeed,
       breathFrequency,
       decorRadius
@@ -438,6 +441,7 @@ export default function ShanxiCultureGraph() {
         if (config.rootTitleShadowColor) setRootTitleShadowColor(config.rootTitleShadowColor);
         if (config.showRootLabels !== undefined) setShowRootLabels(config.showRootLabels);
         if (config.showCenterText !== undefined) setShowCenterText(config.showCenterText);
+        if (config.l1FontSize !== undefined) setL1FontSize(config.l1FontSize);
         if (config.rotationSpeed !== undefined) setRotationSpeed(config.rotationSpeed);
         if (config.breathFrequency !== undefined) setBreathFrequency(config.breathFrequency);
         if (config.decorRadius !== undefined) setDecorRadius(config.decorRadius);
@@ -680,13 +684,13 @@ export default function ShanxiCultureGraph() {
         bgColor, cultureColors, colorLibrary, nodeSizes, nodeBorders,
         l1Radius, timelineRadius, rootColor, rootTitleFontSize,
         rootGlowIntensity, rootShadowColor, rootTitleShadowColor, showRootLabels,
-        showCenterText, rotationSpeed, breathFrequency, decorRadius,
+        showCenterText, l1FontSize, rotationSpeed, breathFrequency, decorRadius,
         timelineColor
       };
       localStorage.setItem('shanxi_culture_graph_config', JSON.stringify(config));
     }, 300);
     return () => clearTimeout(autoSaveTimerRef.current);
-  }, [bgColor, cultureColors, colorLibrary, nodeSizes, nodeBorders, l1Radius, timelineRadius, rootColor, rootTitleFontSize, rootGlowIntensity, rootShadowColor, rootTitleShadowColor, showRootLabels, showCenterText, rotationSpeed, breathFrequency, decorRadius, timelineColor]);
+  }, [bgColor, cultureColors, colorLibrary, nodeSizes, nodeBorders, l1Radius, timelineRadius, rootColor, rootTitleFontSize, rootGlowIntensity, rootShadowColor, rootTitleShadowColor, showRootLabels, showCenterText, l1FontSize, rotationSpeed, breathFrequency, decorRadius, timelineColor]);
 
   // 根据数据中的 region 动态加载地图
   useEffect(() => {
@@ -1693,6 +1697,19 @@ export default function ShanxiCultureGraph() {
                 {showCenterText ? '显示中心文字' : '隐藏中心文字'}
               </button>
             </div>
+
+            <div className="space-y-2">
+              <div className="flex justify-between text-[10px] text-white/50">
+                <span>一级节点字体</span>
+                <span className="font-mono">{l1FontSize}px</span>
+              </div>
+              <input
+                type="range" min="10" max="60" step="1"
+                value={l1FontSize}
+                onChange={(e) => setL1FontSize(parseInt(e.target.value))}
+                className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+              />
+            </div>
             
             <div className="space-y-4">
               <div className="p-3 rounded-lg bg-white/5 border border-white/10 space-y-2">
@@ -1773,7 +1790,7 @@ export default function ShanxiCultureGraph() {
 
       {/* BreathingNodes 单独放在 z-20，确保在 ECharts (z-10) 之上 */}
       <div className="absolute inset-0 z-20 pointer-events-none">
-        <BreathingNodes fenjiu_colors={fenjiu_colors} colors={cultureColors} chartInstance={chartInstance} l1Radius={l1Radius} decorSpinSpeed={rotationSpeed} breathFrequency={breathFrequency} l1NodeSize={nodeSizes.l1} decorRadius={decorRadius} graphData={graphData} showCenterText={showCenterText} colorLibrary={colorLibrary} />
+        <BreathingNodes fenjiu_colors={fenjiu_colors} colors={cultureColors} chartInstance={chartInstance} l1Radius={l1Radius} decorSpinSpeed={rotationSpeed} breathFrequency={breathFrequency} l1NodeSize={nodeSizes.l1} decorRadius={decorRadius} graphData={graphData} showCenterText={showCenterText} colorLibrary={colorLibrary} l1FontSize={l1FontSize} />
       </div>
 
       
