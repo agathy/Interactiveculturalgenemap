@@ -327,36 +327,23 @@ export default function ShanxiCultureGraph() {
     });
   };
 
-  // 节点 ID 映射表：从当前 graphData 动态生成，文件名完整匹配或包含节点名即可匹配
-  const nodeIdMapping: Record<string, string> = useMemo(() => {
-    const map: Record<string, string> = { 'root': 'root' };
-    if (!graphData) return map;
-    // 根节点关键字
-    const rootName = graphData.root.name.replace(/\n/g, '');
-    if (rootName) map[rootName] = 'root';
-    // 一级节点：名称 + id
-    graphData.categories.forEach(cat => {
-      map[cat.name] = cat.id;
-      map[cat.id] = cat.id;
-      // 二级节点：名称 + id
-      (cat.children || []).forEach(l2 => {
-        map[l2.name] = l2.id;
-        map[l2.id] = l2.id;
-      });
-    });
-    return map;
-  }, [graphData]);
-
-  // 从文件匹配节点 ID（支持文件名和路径中的关键字匹配）
+  // 从文件匹配节点 ID：直接从 graphData 动态查找，支持节点名称和 ID 匹配
   const matchFileToNodeId = (file: File): string => {
     const fileName = file.name.split('.')[0];
-    // 也检查 webkitRelativePath（文件夹上传时包含子目录路径）
     const relativePath = (file as any).webkitRelativePath || '';
     const searchText = `${fileName} ${relativePath}`;
 
-    for (const [key, id] of Object.entries(nodeIdMapping)) {
-      if (searchText.includes(key) || fileName.toLowerCase() === key.toLowerCase()) {
-        return id;
+    if (!graphData) return '';
+
+    // 根节点
+    const rootName = graphData.root.name.replace(/\n/g, '');
+    if (fileName === 'root' || (rootName && (fileName === rootName || searchText.includes(rootName)))) return 'root';
+
+    // 一级和二级节点
+    for (const cat of graphData.categories) {
+      if (fileName === cat.name || fileName === cat.id || searchText.includes(cat.name)) return cat.id;
+      for (const l2 of (cat.children || [])) {
+        if (fileName === l2.name || fileName === l2.id || searchText.includes(l2.name)) return l2.id;
       }
     }
     return '';
@@ -1785,8 +1772,8 @@ export default function ShanxiCultureGraph() {
             
             <div className="space-y-4">
               <div className="p-3 rounded-lg bg-white/5 border border-white/10 space-y-2">
-                <p className=”text-[10px] text-white/40 leading-relaxed”>
-                  批量替换节点图标，文件名与节点名称完整匹配自动识别（如”农耕文化.jpg”、”物质文化遗产.png”）。支持 SVG/PNG/JPG，可直接上传整个文件夹。
+                <p className="text-[10px] text-white/40 leading-relaxed">
+                  批量替换节点图标，文件名与节点名称完整匹配自动识别（如 农耕文化.jpg、物质文化遗产.png）。支持 SVG/PNG/JPG，可直接上传整个文件夹。
                 </p>
                 <div className="flex gap-2">
                   <label className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-dashed border-white/20 rounded-md hover:border-cyan-400/50 hover:bg-cyan-400/5 transition-all cursor-pointer group">
