@@ -96,32 +96,41 @@ export default function ShanxiCultureGraph() {
     apricot_pink: '#FFC0CB'  // 杏花微雨粉
   }), [bgColor]);
 
-  // 定义12色标题颜色库（支持最多12个分类）
-  // 注意：前5个是五大文化基因的固定配色，新增分类从第6个开始使用
+  // 定义12色标题颜色库
   const defaultColorLibrary = [
-    '#DAA520',      // 1. 高粱琥珀金 (根祖文化)
-    '#CD5C5C',      // 2. 陶土赭 (忠义文化)
-    '#87CEFA',      // 3. 冰蓝 (山河文化)
-    '#A0826D',      // 4. 古木棕 (古建文化)
-    '#20B2AA',      // 5. 汾酒青 (酒魂文化)
-    '#C0C0C0',      // 6. 银灰 (中性色，作为缓冲)
-    '#4A8FD4',      // 7. 靛青 (比 #87CEFA 更深的蓝，增加层次对比)
-    '#68B08C',      // 8. 松石绿 (自然色系，与 #20B2AA 相邻但偏黄绿)
-    '#9B7EC8',      // 9. 紫韵 (填补紫色维度，与 #87CEFA 冷色系呼应)
-    '#E07840',      // 10. 琉璃橙 (暖色过渡，介于金 #DAA520 与红 #CD5C5C 之间)
+    '#DAA520',      // 1. 琥珀金
+    '#CD5C5C',      // 2. 陶土赭
+    '#87CEFA',      // 3. 冰蓝
+    '#A0826D',      // 4. 古木棕
+    '#20B2AA',      // 5. 青碧
+    '#C0C0C0',      // 6. 银灰
+    '#4A8FD4',      // 7. 靛青
+    '#68B08C',      // 8. 松石绿
+    '#9B7EC8',      // 9. 紫韵
+    '#E07840',      // 10. 琉璃橙
     '#82a0ef',      // 11. 淡紫蓝
     '#7ECECE',      // 12. 碧水
   ];
 
   const [colorLibrary, setColorLibrary] = useState(_saved?.colorLibrary ?? defaultColorLibrary);
 
-  // 定义五大文化基因的初始配色（兼容旧数据）
+  // 定义文化基因的初始配色（河南数据）
   const initialCultureColors = {
-    '根祖文化': fenjiu_colors.amber_gold,      
-    '忠义文化': fenjiu_colors.terracotta_red,  
-    '山河文化': fenjiu_colors.ice_blue,        
-    '古建文化': '#A0826D',                      
-    '酒魂文化': '#20B2AA'                       
+    '物质文化遗产': '#DAA520',
+    '非物质文化遗产': '#CD5C5C',
+    '饮食文化': '#87CEFA',
+    '建筑与园林': '#A0826D',
+    '民俗与节庆': '#20B2AA',
+    '语言与方言': '#C0C0C0',
+    '宗教与哲学': '#4A8FD4',
+    '历史文化': '#68B08C',
+    '区域经济文化': '#9B7EC8',
+    '自然与生态': '#E07840',
+    '红色文化': '#82a0ef',
+    '根亲文化': '#7ECECE',
+    '黄河文化': '#DAA520',
+    '乡村文化': '#CD5C5C',
+    '现代发展': '#87CEFA',
   };
 
   // 定义五大文化基因的颜色状态
@@ -133,10 +142,10 @@ export default function ShanxiCultureGraph() {
 
   // 节点大小状态
   const [nodeSizes, setNodeSizes] = useState(_saved?.nodeSizes ?? {
-    root: 360,
-    l1: 130,
-    l2: 40,
-    l3: 20
+    root: 370,
+    l1: 70,
+    l2: 30,
+    l3: 10
   });
 
   // 描边显隐状态
@@ -148,28 +157,28 @@ export default function ShanxiCultureGraph() {
   });
 
   // 一级节点轨道半径状态
-  const [l1Radius, setL1Radius] = useState(_saved?.l1Radius ?? 495);
+  const [l1Radius, setL1Radius] = useState(_saved?.l1Radius ?? 500);
 
   // 环形时间轴半径状态
   const [timelineRadius, setTimelineRadius] = useState(_saved?.timelineRadius ?? 190);
 
   // 新增：中心节点视觉参数
   const [rootColor, setRootColor] = useState(_saved?.rootColor ?? '#FFFFFF');
-  const [rootTitleFontSize, setRootTitleFontSize] = useState(_saved?.rootTitleFontSize ?? 38);
-  const [rootGlowIntensity, setRootGlowIntensity] = useState(_saved?.rootGlowIntensity ?? 11);
+  const [rootTitleFontSize, setRootTitleFontSize] = useState(_saved?.rootTitleFontSize ?? 42);
+  const [rootGlowIntensity, setRootGlowIntensity] = useState(_saved?.rootGlowIntensity ?? 3);
   const [showRootLabels, setShowRootLabels] = useState(_saved?.showRootLabels ?? true);
-  const [rootShadowColor, setRootShadowColor] = useState(_saved?.rootShadowColor ?? '#6aa2b6');
+  const [rootShadowColor, setRootShadowColor] = useState(_saved?.rootShadowColor ?? '#84c0d5');
   const [rootTitleShadowColor, setRootTitleShadowColor] = useState(_saved?.rootTitleShadowColor ?? '#94e3fe');
 
   // 一级节点标题字体大小
-  const [l1LabelFontSize, setL1LabelFontSize] = useState(_saved?.l1LabelFontSize ?? 21);
+  const [l1LabelFontSize, setL1LabelFontSize] = useState(_saved?.l1LabelFontSize ?? 12);
 
-  // 装饰环自转速度（面板"旋转速度"滑杆控制），呼吸频率系数（控制节点本体缩放+投影闪烁）
-  const [rotationSpeed, setRotationSpeed] = useState(_saved?.rotationSpeed ?? 0.34);
-  const [breathFrequency, setBreathFrequency] = useState(_saved?.breathFrequency ?? 0.095);
+  // 装饰环自转速度，呼吸频率系数
+  const [rotationSpeed, setRotationSpeed] = useState(_saved?.rotationSpeed ?? 0.48);
+  const [breathFrequency, setBreathFrequency] = useState(_saved?.breathFrequency ?? 0.045);
 
   // 装饰圆盘半径偏移量
-  const [decorRadius, setDecorRadius] = useState(_saved?.decorRadius ?? 4);
+  const [decorRadius, setDecorRadius] = useState(_saved?.decorRadius ?? 2);
 
   // 图谱节点数据（支持上传替换）
   const [graphData, setGraphData] = useState<GraphData | null>(null);
@@ -354,20 +363,21 @@ export default function ShanxiCultureGraph() {
     setShowCenterText(true);
     setShowRootLabels(true);
     setRootColor('#FFFFFF');
-    setRootTitleFontSize(38);
-    setRootGlowIntensity(11);
-    setRootShadowColor('#6aa2b6');
+    setRootTitleFontSize(42);
+    setRootGlowIntensity(3);
+    setRootShadowColor('#84c0d5');
     setRootTitleShadowColor('#94e3fe');
-    setL1Radius(495);
+    setL1Radius(500);
     setTimelineRadius(190);
-    setRotationSpeed(0.34);
-    setBreathFrequency(0.095);
-    setDecorRadius(4);
-    setL1LabelFontSize(21);
+    setRotationSpeed(0.48);
+    setBreathFrequency(0.045);
+    setDecorRadius(2);
+    setL1LabelFontSize(12);
     setNodeSizes({
-      l1: 130,
-      l2: 40,
-      l3: 20
+      root: 370,
+      l1: 70,
+      l2: 30,
+      l3: 10
     });
     setNodeBorders({
       root: true,
