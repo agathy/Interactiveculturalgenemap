@@ -320,7 +320,7 @@ export function validateGraphData(data: any): { valid: boolean; error?: string }
     const cat = data.categories[i];
     if (!cat.id || !cat.name) return { valid: false, error: `categories[${i}] 缺少 id 或 name` };
     if (!Array.isArray(cat.children)) return { valid: false, error: `categories[${i}] (${cat.id}) 缺少 children 数组` };
-    if (data.categories.length > 12) return { valid: false, error: `分类数量不能超过 12 个，当前有 ${data.categories.length} 个` };
+    if (data.categories.length > 15) return { valid: false, error: `分类数量不能超过 15 个，当前有 ${data.categories.length} 个` };
     for (let j = 0; j < cat.children.length; j++) {
       const l2 = cat.children[j];
       if (!l2.id || !l2.name) return { valid: false, error: `${cat.id}.children[${j}] 缺少 id 或 name` };
