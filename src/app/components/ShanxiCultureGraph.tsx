@@ -198,9 +198,7 @@ export default function ShanxiCultureGraph() {
     panelSide: 'left' | 'right';
   } | null>(null);
   const graphDataRef = useRef<GraphData | null>(null);
-  useEffect(() => { graphDataRef.current = graphData; }, [graphData]);
   const circularL2SymbolsRef = useRef<Record<string, string>>({});
-  useEffect(() => { circularL2SymbolsRef.current = circularL2Symbols; }, [circularL2Symbols]);
 
   // 节点大小状态
   const [nodeSizes, setNodeSizes] = useState(_saved?.nodeSizes ?? {
@@ -246,6 +244,9 @@ export default function ShanxiCultureGraph() {
   const [graphData, setGraphData] = useState<GraphData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const graphDataFileRef = useRef<HTMLInputElement>(null);
+  // 将 graphData / circularL2Symbols 同步到 ref，供 handleClick 闭包读取最新值
+  useEffect(() => { graphDataRef.current = graphData; }, [graphData]);
+  useEffect(() => { circularL2SymbolsRef.current = circularL2Symbols; }, [circularL2Symbols]);
 
   // 二级节点默认图片自动加载：从 /img/{region}/{nodeName}.jpg 读取，裁成圆形嵌入节点
   useEffect(() => {
