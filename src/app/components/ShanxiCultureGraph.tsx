@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts';
-import { ChevronLeft, ChevronRight, Save, RotateCcw, LayoutGrid, FolderOpen, Download, Upload } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Save, RotateCcw, LayoutGrid, FolderOpen, Download, Upload, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { RippleEffect } from './CulturalSymbols';
 import { getOptimizedNodes } from './OptimizedNodes';
@@ -186,6 +186,21 @@ export default function ShanxiCultureGraph() {
 
   // 二级节点图片预处理（圆形裁切）
   const [circularL2Symbols, setCircularL2Symbols] = useState<Record<string, string>>({});
+
+  // 节点详情弹窗
+  const [selectedNode, setSelectedNode] = useState<{
+    id: string;
+    name: string;
+    tooltip: string;
+    image?: string;
+    timeRange?: [number, number];
+    color: string;
+    panelSide: 'left' | 'right';
+  } | null>(null);
+  const graphDataRef = useRef<GraphData | null>(null);
+  useEffect(() => { graphDataRef.current = graphData; }, [graphData]);
+  const circularL2SymbolsRef = useRef<Record<string, string>>({});
+  useEffect(() => { circularL2SymbolsRef.current = circularL2Symbols; }, [circularL2Symbols]);
 
   // 节点大小状态
   const [nodeSizes, setNodeSizes] = useState(_saved?.nodeSizes ?? {
@@ -1280,20 +1295,64 @@ export default function ShanxiCultureGraph() {
           
           toast.info(`已聚焦至：${nodeData.name}`, {
             duration: 1500,
-            style: { 
-              background: 'rgba(0, 0, 0, 0.8)', 
-              color: color, 
+            style: {
+              background: 'rgba(0, 0, 0, 0.8)',
+              color: color,
               border: `1px solid ${color}40`,
               fontSize: '10px'
             }
           });
         }
+
+        // 4. 查找并展示节点详情弹窗
+        const gd = graphDataRef.current;
+        let nodeTooltip = '';
+        let nodeTimeRange: [number, number] | undefined;
+        if (gd) {
+          if (nodeData.id === 'root') {
+            nodeTooltip = gd.root.tooltip || '';
+          } else {
+            outer: for (const cat of gd.categories) {
+              if (cat.id === nodeData.id) {
+                nodeTooltip = cat.tooltip || '';
+                nodeTimeRange = cat.timeRange;
+                break;
+              }
+              for (const l2 of cat.children || []) {
+                if (l2.id === nodeData.id) {
+                  nodeTooltip = l2.tooltip || '';
+                  nodeTimeRange = l2.timeRange;
+                  break outer;
+                }
+                for (const l3 of (l2.children || [])) {
+                  if (l3.id === nodeData.id) {
+                    nodeTooltip = l3.tooltip || '';
+                    nodeTimeRange = l3.timeRange;
+                    break outer;
+                  }
+                }
+              }
+            }
+          }
+        }
+        const clickX = params.event?.event?.clientX ?? 0;
+        const panelSide: 'left' | 'right' = clickX > window.innerWidth / 2 ? 'right' : 'left';
+        setSelectedNode({
+          id: nodeData.id,
+          name: nodeData.name,
+          tooltip: nodeTooltip,
+          image: circularL2SymbolsRef.current[nodeData.id],
+          timeRange: nodeTimeRange,
+          color,
+          panelSide,
+        });
       }
     };
 
     const handleZrClick = (params: any) => {
       if (!params.target) {
         setFocusedTimeRange(null);
+        setSelectedNode(null);
       }
     };
 
@@ -1942,6 +2001,88 @@ export default function ShanxiCultureGraph() {
           </div>
         </button>
       </div>
+
+      {/* 节点详情弹窗 */}
+      {selectedNode && (
+        <div
+          className={`absolute top-1/2 -translate-y-1/2 z-[55] pointer-events-auto w-64
+            transition-all duration-300
+            ${selectedNode.panelSide === 'right' ? 'right-8' : 'left-8'}`}
+        >
+          <div
+            className="rounded-2xl bg-black/75 backdrop-blur-xl border overflow-hidden"
+            style={{ borderColor: `${selectedNode.color}30` }}
+          >
+            {/* 关闭按钮 */}
+            <button
+              onClick={() => setSelectedNode(null)}
+              className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center text-white/30 hover:text-white/70 transition-colors z-10"
+            >
+              <X size={13} />
+            </button>
+
+            {/* 图片模块 */}
+            <div className="flex justify-center pt-6 pb-4">
+              {selectedNode.image ? (
+                <img
+                  src={selectedNode.image}
+                  alt={selectedNode.name}
+                  className="w-20 h-20 rounded-full"
+                  style={{ boxShadow: `0 0 18px ${selectedNode.color}40` }}
+                />
+              ) : (
+                <div
+                  className="w-20 h-20 rounded-full border flex items-center justify-center"
+                  style={{
+                    borderColor: `${selectedNode.color}50`,
+                    background: `radial-gradient(circle, ${selectedNode.color}10, transparent)`,
+                  }}
+                >
+                  <span className="text-2xl" style={{ color: `${selectedNode.color}90` }}>✦</span>
+                </div>
+              )}
+            </div>
+
+            {/* 名称模块 */}
+            <div
+              className="px-5 pb-3 border-b"
+              style={{ borderColor: `${selectedNode.color}15` }}
+            >
+              <h3
+                className="text-sm font-bold tracking-wider text-center"
+                style={{ color: selectedNode.color }}
+              >
+                {selectedNode.name}
+              </h3>
+              {selectedNode.timeRange && (
+                <p className="text-[10px] text-white/30 mt-1 tracking-widest text-center">
+                  {selectedNode.timeRange[0] < 0
+                    ? `前${Math.abs(selectedNode.timeRange[0])}年`
+                    : `${selectedNode.timeRange[0]}年`}
+                  {' — '}
+                  {selectedNode.timeRange[1] >= 2024
+                    ? '现代'
+                    : selectedNode.timeRange[1] < 0
+                      ? `前${Math.abs(selectedNode.timeRange[1])}年`
+                      : `${selectedNode.timeRange[1]}年`}
+                </p>
+              )}
+            </div>
+
+            {/* 详情模块 */}
+            <div className="px-5 py-4">
+              {selectedNode.tooltip ? (
+                <div
+                  className="text-[11px] text-white/55 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: selectedNode.tooltip }}
+                />
+              ) : (
+                <p className="text-[11px] text-white/20 italic text-center">暂无详细介绍</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
