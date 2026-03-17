@@ -64,7 +64,7 @@ export const DEFAULT_GRAPH_DATA: GraphData = {
   root: {
     name: '山西省\n文化基因库',
     subtitle: '三晋文脉 · 万代共根',
-    tooltip: '<b>山西文化体系</b><br/>华夏文明的摇篮，五大文化基因在此交汇',
+    tooltip: '华夏文明的摇篮，五大文化基因在此交汇',
     region: 'shanxi',
     regionName: '山西省'
   },
@@ -74,7 +74,7 @@ export const DEFAULT_GRAPH_DATA: GraphData = {
       name: '根祖文化',
       symbol: 'diamond',
       timeRange: [-6000, -2100], // 仰韶文化到夏商
-      tooltip: '<b>根祖文化</b><br/>临汾：尧都、丁村遗址<br/>运城：舜都、后土祠',
+      tooltip: '临汾：尧都、丁村遗址<br/>运城：舜都、后土祠',
       children: [
         {
           id: 'genzhu-1', name: '祭祀',
@@ -110,7 +110,7 @@ export const DEFAULT_GRAPH_DATA: GraphData = {
       name: '忠义文化',
       symbol: 'triangle',
       timeRange: [-636, 1912], // 春秋到清末
-      tooltip: '<b>忠义文化</b><br/>关公故里：忠肝义胆<br/>晋商精神：诚实守信',
+      tooltip: '关公故里：忠肝义胆<br/>晋商精神：诚实守信',
       children: [
         {
           id: 'zhongyi-1', name: '人物',
@@ -147,7 +147,7 @@ export const DEFAULT_GRAPH_DATA: GraphData = {
       name: '山河文化',
       symbol: 'roundRect',
       timeRange: [-10000, 2026], // 亿万年到现代
-      tooltip: '<b>山河文化</b><br/>表里山河：黄河、太行、汾河',
+      tooltip: '表里山河：黄河、太行、汾河',
       children: [
         {
           id: 'shanhe-1', name: '河流',
@@ -185,7 +185,7 @@ export const DEFAULT_GRAPH_DATA: GraphData = {
       name: '古建文化',
       symbol: 'rect',
       timeRange: [386, 1912], // 北魏到清
-      tooltip: '<b>古建文化</b><br/>地上文物博物馆：应县木塔、佛光寺',
+      tooltip: '地上文物博物馆：应县木塔、佛光寺',
       children: [
         {
           id: 'gujian-1', name: '木构',
@@ -221,7 +221,7 @@ export const DEFAULT_GRAPH_DATA: GraphData = {
       name: '酒魂文化',
       symbol: 'pin',
       timeRange: [-6000, 2026],
-      tooltip: '<b>酒魂文化</b><br/>杏花村汾酒：6000年酿造史',
+      tooltip: '杏花村汾酒：6000年酿造史',
       children: [
         {
           id: 'jiuhun-1', name: '考古',

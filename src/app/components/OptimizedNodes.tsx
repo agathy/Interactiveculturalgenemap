@@ -129,7 +129,9 @@ export function getOptimizedNodes(
     },
     category: 'root',
     tooltip: {
-      formatter: graphData.root.tooltip || `<b>${graphData.root.name.replace(/\n/g, '')}</b>`
+      formatter: graphData.root.tooltip
+        ? `<b>${graphData.root.name.replace(/\n/g, '')}</b><br/>${graphData.root.tooltip}`
+        : `<b>${graphData.root.name.replace(/\n/g, '')}</b>`
     }
   });
 
@@ -184,7 +186,7 @@ export function getOptimizedNodes(
           },
       category: cat.id,
       tooltip: {
-        formatter: cat.tooltip || `<b>${cat.name}</b>`
+        formatter: cat.tooltip ? `<b>${cat.name}</b><br/>${cat.tooltip}` : `<b>${cat.name}</b>`
       }
     });
 
@@ -229,7 +231,7 @@ export function getOptimizedNodes(
         category: cat.id,
         draggable: true,
         tooltip: {
-          formatter: l2.tooltip || ''
+          formatter: l2.tooltip ? `<b>${l2.name}</b><br/>${l2.tooltip}` : ''
         }
       });
 
@@ -261,7 +263,7 @@ export function getOptimizedNodes(
             },
             category: cat.id,
             tooltip: {
-              formatter: l3.tooltip || ''
+              formatter: l3.tooltip ? `<b>${l3.name}</b><br/>${l3.tooltip}` : ''
             }
           });
         });
