@@ -24,6 +24,7 @@ export interface L3Node {
   id: string;
   name: string;
   timeRange?: [number, number]; // [startYear, endYear]
+  tooltip?: string;     // HTML 格式的提示文本
 }
 
 /** 二级节点（含可选三级子节点） */
@@ -33,6 +34,7 @@ export interface L2Node {
   symbol?: string;      // ECharts symbol，支持 'image://url' 格式
   children?: L3Node[];
   timeRange?: [number, number];
+  tooltip?: string;     // HTML 格式的提示文本
 }
 
 /** 一级节点（文化基因分类） */

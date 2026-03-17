@@ -229,7 +229,7 @@ export function getOptimizedNodes(
         category: cat.id,
         draggable: true,
         tooltip: {
-          formatter: `<b>${l2.name}</b><br/>山西${cat.name}相关节点`
+          formatter: l2.tooltip || ''
         }
       });
 
@@ -261,7 +261,7 @@ export function getOptimizedNodes(
             },
             category: cat.id,
             tooltip: {
-              formatter: `<b>${l3.name}</b><br/>三晋文化代表性内容`
+              formatter: l3.tooltip || ''
             }
           });
         });
