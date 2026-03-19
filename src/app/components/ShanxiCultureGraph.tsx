@@ -1351,14 +1351,60 @@ export default function ShanxiCultureGraph() {
     };
 
     const handleZrClick = (params: any) => {
-      if (!params.target) {
+      if (!params.target && !isDraggingRef.current) {
         setFocusedTimeRange(null);
         setSelectedNode(null);
       }
     };
 
+    // 空白处拖拽平移
+    const isDraggingRef = { current: false };
+    const dragStartRef = { current: { x: 0, y: 0, cx: 0, cy: 0 } };
+    const DRAG_THRESHOLD = 5;
+
+    const handleZrMousedown = (params: any) => {
+      if (params.target) return; // 点到节点不触发拖拽
+      isDraggingRef.current = false;
+      dragStartRef.current = {
+        x: params.offsetX,
+        y: params.offsetY,
+        cx: viewStateRef.current.center[0],
+        cy: viewStateRef.current.center[1],
+      };
+      // 标记 mousedown 已发生，用 mousemove 判断是否真正拖动
+      dragStartRef.current.x = params.offsetX;
+      dragStartRef.current.y = params.offsetY;
+    };
+
+    const handleZrMousemove = (params: any) => {
+      const s = dragStartRef.current;
+      if (s.x === 0 && s.y === 0) return;
+      const dx = params.offsetX - s.x;
+      const dy = params.offsetY - s.y;
+      if (!isDraggingRef.current && Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
+      isDraggingRef.current = true;
+      const zoom = viewStateRef.current.zoom;
+      const newCenter: [number, number] = [
+        s.cx - dx / zoom,
+        s.cy - dy / zoom,
+      ];
+      viewStateRef.current.center = newCenter;
+      if (!chartInstance.isDisposed()) {
+        chartInstance.setOption({ series: [{ center: newCenter, zoom }] });
+      }
+    };
+
+    const handleZrMouseup = () => {
+      dragStartRef.current = { x: 0, y: 0, cx: 0, cy: 0 };
+      // isDraggingRef 延迟清除，让 click 事件先判断
+      setTimeout(() => { isDraggingRef.current = false; }, 0);
+    };
+
     chartInstance.on('click', handleClick);
     chartInstance.getZr().on('click', handleZrClick);
+    chartInstance.getZr().on('mousedown', handleZrMousedown);
+    chartInstance.getZr().on('mousemove', handleZrMousemove);
+    chartInstance.getZr().on('mouseup', handleZrMouseup);
 
     const handleResize = () => {
       canvas.width = window.innerWidth;
@@ -1372,6 +1418,9 @@ export default function ShanxiCultureGraph() {
       if (chartInstance && !chartInstance.isDisposed()) {
         chartInstance.off('click', handleClick);
         chartInstance.getZr().off('click', handleZrClick);
+        chartInstance.getZr().off('mousedown', handleZrMousedown);
+        chartInstance.getZr().off('mousemove', handleZrMousemove);
+        chartInstance.getZr().off('mouseup', handleZrMouseup);
       }
       document.body.removeChild(canvas);
     };
