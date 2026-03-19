@@ -48,23 +48,41 @@ npm run build
 
 ```
 ├── src/
-│   ├── app/components/
-│   │   ├── ShanxiCultureGraph.tsx  # 主图谱组件（含节点详情弹窗）
-│   │   ├── BreathingNodes.tsx      # 呼吸节点效果
-│   │   ├── MapLightPoints.tsx      # 地图光点效果
-│   │   ├── OptimizedNodes.tsx      # 节点数据生成
-│   │   ├── OrbitRings.tsx          # 轨道环效果
-│   │   └── graphData.ts            # 数据模型与工具函数
+│   ├── main.tsx                    # 应用入口
+│   ├── app/
+│   │   ├── App.tsx                 # 根组件
+│   │   └── components/
+│   │       ├── ShanxiCultureGraph.tsx  # 主图谱组件（含节点详情弹窗）
+│   │       ├── OptimizedNodes.tsx      # 节点数据生成
+│   │       ├── graphData.ts            # 数据模型与工具函数
+│   │       ├── BreathingNodes.tsx      # 呼吸节点动画
+│   │       ├── OrbitRings.tsx          # 轨道环 + 时间轴
+│   │       ├── Timeline.tsx            # 时间轴组件
+│   │       ├── MapLightPoints.tsx      # 地图光点效果
+│   │       ├── AnimatedBackground.tsx  # 动态背景
+│   │       ├── StarField.tsx           # 星空粒子
+│   │       ├── LatticeGrid.tsx         # 格栅装饰
+│   │       ├── BrickPattern.tsx        # 砖纹装饰
+│   │       ├── DataStats.tsx           # 数据统计面板
+│   │       ├── CulturalSymbols.tsx     # 涟漪等文化符号
+│   │       └── ui/                     # shadcn 通用 UI 组件
 │   ├── services/
-│   │   └── mapService.ts           # 地图服务
-│   └── styles/                     # 样式文件
+│   │   └── mapService.ts           # 地图 GeoJSON 加载服务
+│   └── styles/
+│       ├── index.css               # 样式入口
+│       ├── theme.css               # 主题变量（Tailwind v4）
+│       ├── tailwind.css            # Tailwind 配置
+│       └── fonts.css               # 字体声明
 ├── public/
 │   ├── data/
-│   │   ├── example_data_shanxi.json            # 山西文化基因数据
-│   │   ├── example_data_heluo.json             # 河洛文化基因数据
+│   │   ├── example_data_shanxi.json             # 山西文化基因数据
+│   │   ├── example_data_heluo.json              # 河洛文化基因数据
+│   │   ├── example_data_henan.json              # 河南文化基因数据
 │   │   └── example_data_lightpoints_shanxi.json # 山西地图光点数据
-│   ├── img/                        # 节点配图（按地区/名称自动匹配）
-│   └── fonts/                      # 自定义字体
+│   ├── img/
+│   │   ├── henan/                  # 河南节点配图（按节点名自动匹配）
+│   │   └── *.png                   # 通用备用图片
+│   └── font/                       # 自定义字体文件
 ```
 
 ## 数据格式
